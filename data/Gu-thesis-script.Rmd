@@ -1,0 +1,739 @@
+---
+title: "Effect of Parental Absence on Adolescents' Academic Performance"
+output: html_notebook
+---
+
+Load packages
+```{r}
+library(tidyverse) 
+library(haven)
+library(fixest)
+library(modelsummary)
+```
+
+## Data cleaning
+Read CEPS data
+```{r}
+d_stu1 <- read_dta('cepsw1studentCN.dta') #wave 1 student
+d_stu2 <- read_dta('cepsw2studentCN.dta') #wave 2 student
+d_par1 <- read_dta('cepsw1parentCN.dta') #wave 1 parent
+d_par2 <- read_dta('cepsw2parentCN.dta') #wave 2 parent
+```
+
+Remove wave 1's observations of grade 9; they were not followed up in wave 2
+```{r}
+d_stu1 <- d_stu1 %>% 
+  subset(grade9==0) %>% 
+  select(!c(frame, subsample, sweight, grade9))
+d_stu2 <- d_stu2 %>% 
+  select(!c(w2frame, w2subsample, w2sweight, w1w2sweight))
+d_par1 <- d_par1 %>% 
+  subset(grade9==0) %>% 
+  select(!c(frame, subsample, grade9))
+```
+
+Assemble a panel dataset in wide format
+```{r}
+d_1 <- d_stu1 %>% left_join(d_par1, by=c('ids', 'clsids', 'schids', 'ctyids', 'fall')) 
+d_2 <- d_stu2 %>% left_join(d_par2, by=c('ids', 'clsids', 'w2clsids', 'schids', 'ctyids', 'w2fall'))
+d <- d_1 %>% right_join(d_2, by=c('ids', 'clsids', 'schids', 'ctyids'))
+```
+
+```{r}
+d <- d %>% mutate(
+  age = 2013 - a02a, #children's age at baseline
+  local.resi = age - a07 #years of residence at the current county05
+)
+```
+
+Sample
+```{r}
+d_cl <- d %>% 
+  filter(w2a0801==1) %>% #parents who are married (and alive)
+  filter(be1201==1 & be1202==1) %>% #both parents stay with children at baseline
+  filter(local.resi>=5)
+```
+
+## Variables 
+Compute standardized exam grades (within-school z-scores)
+```{r}
+d_cl <- d_cl %>% #Total exam grades at wave 1 and at wave 2
+  mutate(w1ttl = tr_chn + tr_mat + tr_eng, 
+         w2ttl = w2chn + w2mat + w2eng) 
+d_cl <- d_cl %>% #Within-school z-scores for Chinese, math, English exams and their total, respectively
+  group_by(schids) %>%
+  mutate(w1chn_std = as.numeric(scale(tr_chn)),
+         w1mat_std = as.numeric(scale(tr_mat)),
+         w1eng_std = as.numeric(scale(tr_eng)),
+         w1ttl_std = as.numeric(scale(w1ttl)),
+         w2chn_std = as.numeric(scale(w2chn)),
+         w2mat_std = as.numeric(scale(w2mat)),
+         w2eng_std = as.numeric(scale(w2eng)),
+         w2ttl_std = as.numeric(scale(w2ttl))
+         ) %>% ungroup()
+```
+
+Dependent variables: Outcome differences between wave 2 and wave 1
+```{r}
+d_cl <- d_cl %>% mutate(
+  chn_std = w2chn_std - w1chn_std,
+  mat_std = w2mat_std - w1mat_std,
+  eng_std = w2eng_std - w1eng_std,
+  ttl_std = w2ttl_std - w1ttl_std,
+  cog = w2cog3pl - cog3pl #Cognitive test score, standardized
+) %>%
+  drop_na(cog, chn_std, mat_std, eng_std, ttl_std)
+```
+
+Control variables
+```{r}
+d_cl <- d_cl %>% mutate(
+         is.girl = if_else(a01 == 2, 1, 0), #student is girl
+         is.rural = if_else(bd05 == 1, 1, 0), #student holds rural (agricultural) hukou
+         is.only.child = if_else(b01 == 1, 1, 0), #student is only child
+         is.boarding = if_else(c18 == 1 & w2b15 == 1, 1, 0), #student is boarding at school at both baseline and endline
+         is.fa.mid.sch = if_else(b07 != 1 & b07 != 2, 1, 0), #father finished junior high school
+         is.mo.mid.sch = if_else(b06 != 1 & b06 != 2, 1, 0) #mother finished junior high school
+) %>% drop_na(
+  is.girl, is.rural, is.only.child, is.boarding, is.fa.mid.sch, is.mo.mid.sch)
+```
+
+## Treatment groups
+At least one parent migrated (Control group as no parent migrated)
+```{r}
+d_cl <- d_cl %>% mutate(
+  treat_leave = if_else((w2ba0201==0 | w2ba0202==0), 1, 0), #Any parent became absent from household between baseline and endline survey
+  treat_fa_only = NA,
+  treat_mo_only = NA,
+  treat_both = NA
+  )
+```
+
+Only mother migrated
+```{r}
+d_cl$treat_mo_only[d_cl$treat_leave == 0] <- 0
+d_cl$treat_mo_only[d_cl$w2ba0201==1 & d_cl$w2ba0202==0] <- 1 
+```
+
+Mother migrated
+```{r}
+d_cl$treat_mo[d_cl$treat_leave == 0] <- 0
+d_cl$treat_mo[d_cl$w2ba0202==0] <- 1
+```
+
+Only father migrated
+```{r}
+d_cl$treat_fa_only[d_cl$treat_leave == 0] <- 0
+d_cl$treat_fa_only[d_cl$w2ba0201==0 & d_cl$w2ba0202==1] <- 1 
+```
+
+Father migrated
+```{r}
+d_cl$treat_fa[d_cl$treat_leave == 0] <- 0
+d_cl$treat_fa[d_cl$w2ba0201==0] <- 1
+```
+
+Both parents migrated
+```{r}
+d_cl$treat_both[d_cl$treat_leave == 0] <- 0
+d_cl$treat_both[d_cl$w2ba0201==0 & d_cl$w2ba0202==0] <- 1
+```
+
+## Descriptive statistics
+```{r}
+des_gender <- d_cl %>% count(is.girl)
+des_rural <- d_cl %>% count(is.rural)
+des_only.child <- d_cl %>% count(is.only.child)
+des_boarding <- d_cl %>% count(is.boarding)
+des_fa.mid.sch <- d_cl %>% count(is.fa.mid.sch)
+des_mo.mid.sch <- d_cl %>% count(is.mo.mid.sch)
+des_gender
+des_rural
+des_only.child
+des_boarding
+des_fa.mid.sch
+des_mo.mid.sch
+```
+
+
+### Wave 2 outcomes of treatment group vs control group
+```{r}
+d_cl %>%
+  group_by(treat_leave) %>% 
+  summarise(n_cases = n(),
+            mean_cog = mean(w2cog3pl, na.rm=T),
+            mean_ttl = mean(w2ttl_std, na.rm=T),
+            mean_chn = mean(w2chn_std, na.rm=T),
+            mean_mat = mean(w2mat_std, na.rm=T),
+            mean_eng = mean(w2eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_mo_only) %>% 
+  summarise(n_cases = n(),
+            mean_cog = mean(w2cog3pl, na.rm=T),
+            mean_ttl = mean(w2ttl_std, na.rm=T),
+            mean_chn = mean(w2chn_std, na.rm=T),
+            mean_mat = mean(w2mat_std, na.rm=T),
+            mean_eng = mean(w2eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_mo) %>% 
+  summarise(n_cases = n(),
+            mean_cog = mean(w2cog3pl, na.rm=T),
+            mean_ttl = mean(w2ttl_std, na.rm=T),
+            mean_chn = mean(w2chn_std, na.rm=T),
+            mean_mat = mean(w2mat_std, na.rm=T),
+            mean_eng = mean(w2eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_fa_only) %>% 
+  summarise(n_cases = n(),
+            mean_cog = mean(w2cog3pl, na.rm=T),
+            mean_ttl = mean(w2ttl_std, na.rm=T),
+            mean_chn = mean(w2chn_std, na.rm=T),
+            mean_mat = mean(w2mat_std, na.rm=T),
+            mean_eng = mean(w2eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_fa) %>% 
+  summarise(n_cases = n(),
+            mean_cog = mean(w2cog3pl, na.rm=T),
+            mean_ttl = mean(w2ttl_std, na.rm=T),
+            mean_chn = mean(w2chn_std, na.rm=T),
+            mean_mat = mean(w2mat_std, na.rm=T),
+            mean_eng = mean(w2eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_both) %>% 
+  summarise(n_cases = n(),
+            mean_cog = mean(w2cog3pl, na.rm=T),
+            mean_ttl = mean(w2ttl_std, na.rm=T),
+            mean_chn = mean(w2chn_std, na.rm=T),
+            mean_mat = mean(w2mat_std, na.rm=T),
+            mean_eng = mean(w2eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+### Change in outcomes of treatment group vs control group
+```{r}
+d_cl %>%
+  group_by(treat_leave) %>% 
+  summarise(n_cases = n(),
+            mean_change_cog = mean(cog, na.rm=T),
+            mean_change_ttl = mean(ttl_std, na.rm=T),
+            mean_change_chn = mean(chn_std, na.rm=T),
+            mean_change_mat = mean(mat_std, na.rm=T),
+            mean_change_eng = mean(eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_mo_only) %>% 
+  summarise(n_cases = n(),
+            mean_cog = mean(w2cog3pl, na.rm=T),
+            mean_ttl = mean(w2ttl_std, na.rm=T),
+            mean_chn = mean(w2chn_std, na.rm=T),
+            mean_mat = mean(w2mat_std, na.rm=T),
+            mean_eng = mean(w2eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_mo) %>% 
+  summarise(n_cases = n(),
+            mean_change_cog = mean(cog, na.rm=T),
+            mean_change_ttl = mean(ttl_std, na.rm=T),
+            mean_change_chn = mean(chn_std, na.rm=T),
+            mean_change_mat = mean(mat_std, na.rm=T),
+            mean_change_eng = mean(eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_fa_only) %>% 
+  summarise(n_cases = n(),
+            mean_change_cog = mean(cog, na.rm=T),
+            mean_change_ttl = mean(ttl_std, na.rm=T),
+            mean_change_chn = mean(chn_std, na.rm=T),
+            mean_change_mat = mean(mat_std, na.rm=T),
+            mean_change_eng = mean(eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_fa) %>% 
+  summarise(n_cases = n(),
+            mean_change_cog = mean(cog, na.rm=T),
+            mean_change_ttl = mean(ttl_std, na.rm=T),
+            mean_change_chn = mean(chn_std, na.rm=T),
+            mean_change_mat = mean(mat_std, na.rm=T),
+            mean_change_eng = mean(eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+```{r}
+d_cl %>%
+  group_by(treat_both) %>% 
+  summarise(n_cases = n(),
+            mean_change_cog = mean(cog, na.rm=T),
+            mean_change_ttl = mean(ttl_std, na.rm=T),
+            mean_change_chn = mean(chn_std, na.rm=T),
+            mean_change_mat = mean(mat_std, na.rm=T),
+            mean_change_eng = mean(eng_std, na.rm=T)
+            ) %>%
+  drop_na()
+```
+
+## DID basic
+Regressing on cognitive test score (standardized)
+```{r}
+did_cog <- feols(cog ~ treat_leave | schids + ctyids, data = d_cl) 
+did_cog_m_only <- feols(cog ~ treat_mo_only | schids + ctyids, data = d_cl) 
+did_cog_m <- feols(cog ~ treat_mo | schids + ctyids, data = d_cl) 
+did_cog_f_only <- feols(cog ~ treat_fa_only | schids + ctyids, data = d_cl) 
+did_cog_f <- feols(cog ~ treat_fa | schids + ctyids, data = d_cl) 
+did_cog_both <- feols(cog ~ treat_both | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_cog <- list(
+did_cog,
+did_cog_m_only,
+did_cog_m,
+did_cog_f,
+did_cog_f_only,
+did_cog_both) 
+models_cog %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+Regressing on total exam score
+```{r}
+did_ttl <- feols(ttl_std ~ treat_leave | schids + ctyids, data = d_cl) 
+did_ttl_m_only <- feols(ttl_std ~ treat_mo_only | schids + ctyids, data = d_cl) 
+did_ttl_m <- feols(ttl_std ~ treat_mo | schids + ctyids, data = d_cl) 
+did_ttl_f <- feols(ttl_std ~ treat_fa | schids + ctyids, data = d_cl) 
+did_ttl_f_only <- feols(ttl_std ~ treat_fa_only | schids + ctyids, data = d_cl) 
+did_ttl_both <- feols(ttl_std ~ treat_both | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_ttl <- list(
+did_ttl,
+did_ttl_m_only,
+did_ttl_m,
+did_ttl_f,
+did_ttl_f_only,
+did_ttl_both) 
+models_ttl %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on Chinese exam score
+```{r}
+did_chn <- feols(chn_std ~ treat_leave | schids + ctyids, data = d_cl) 
+did_chn_m_only <- feols(chn_std ~ treat_mo_only | schids + ctyids, data = d_cl) 
+did_chn_m <- feols(chn_std ~ treat_mo | schids + ctyids, data = d_cl) 
+did_chn_f_only <- feols(chn_std ~ treat_fa_only | schids + ctyids, data = d_cl) 
+did_chn_f <- feols(chn_std ~ treat_fa | schids + ctyids, data = d_cl) 
+did_chn_both <- feols(chn_std ~ treat_both | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_chn <- list(
+did_chn,
+did_chn_m_only,
+did_chn_m,
+did_chn_f,
+did_chn_f_only,
+did_chn_both) 
+models_chn %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on Math score
+```{r}
+did_mat <- feols(mat_std ~ treat_leave | schids + ctyids, data = d_cl) 
+did_mat_m_only <- feols(mat_std ~ treat_mo_only | schids + ctyids, data = d_cl) 
+did_mat_m <- feols(mat_std ~ treat_mo | schids + ctyids, data = d_cl) 
+did_mat_f_only <- feols(mat_std ~ treat_fa_only | schids + ctyids, data = d_cl) 
+did_mat_f <- feols(mat_std ~ treat_fa | schids + ctyids, data = d_cl) 
+did_mat_both <- feols(mat_std ~ treat_both | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_mat <- list(
+did_mat,
+did_mat_m_only,
+did_mat_m,
+did_mat_f,
+did_mat_f_only,
+did_mat_both) 
+models_mat %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on English score
+```{r}
+did_eng <- feols(eng_std ~ treat_leave | schids + ctyids, data = d_cl) 
+did_eng_m <- feols(eng_std ~ treat_mo | schids + ctyids, data = d_cl)
+did_eng_m_only <- feols(eng_std ~ treat_mo_only | schids + ctyids, data = d_cl) 
+did_eng_f <- feols(eng_std ~ treat_fa | schids + ctyids, data = d_cl) 
+did_eng_f_only <- feols(eng_std ~ treat_fa_only | schids + ctyids, data = d_cl) 
+did_eng_both <- feols(eng_std ~ treat_both | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_eng <- list(
+did_eng,
+did_eng_m_only,
+did_eng_m,
+did_eng_f,
+did_eng_f_only,
+did_eng_both) 
+models_eng %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+
+## DID unrestricted
+Regressing on cognitive test score (standardized)
+```{r}
+did_unres_cog <- feols(cog ~ treat_leave + cog3pl | schids + ctyids, data = d_cl) 
+did_unres_cog_m_only <- feols(cog ~ treat_mo_only + cog3pl | schids + ctyids, data = d_cl) 
+did_unres_cog_m <- feols(cog ~ treat_mo + cog3pl | schids + ctyids, data = d_cl) 
+did_unres_cog_f_only <- feols(cog ~ treat_fa_only + cog3pl | schids + ctyids, data = d_cl) 
+did_unres_cog_f <- feols(cog ~ treat_fa + cog3pl | schids + ctyids, data = d_cl) 
+did_unres_cog_both <- feols(cog ~ treat_both + cog3pl | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_unres_cog <- list(
+did_unres_cog,
+did_unres_cog_m_only,
+did_unres_cog_m,
+did_unres_cog_f,
+did_unres_cog_f_only,
+did_unres_cog_both) 
+models_unres_cog %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+Regressing on total exam score
+```{r}
+did_unres_ttl <- feols(ttl_std ~ treat_leave + w1ttl_std | schids + ctyids, data = d_cl) 
+did_unres_ttl_m_only <- feols(ttl_std ~ treat_mo_only + w1ttl_std | schids + ctyids, data = d_cl) 
+did_unres_ttl_m <- feols(ttl_std ~ treat_mo + w1ttl_std | schids + ctyids, data = d_cl) 
+did_unres_ttl_f <- feols(ttl_std ~ treat_fa + w1ttl_std | schids + ctyids, data = d_cl) 
+did_unres_ttl_f_only <- feols(ttl_std ~ treat_fa_only + w1ttl_std | schids + ctyids, data = d_cl) 
+did_unres_ttl_both <- feols(ttl_std ~ treat_both + w1ttl_std | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_unres_ttl <- list(
+did_unres_ttl,
+did_unres_ttl_m_only,
+did_unres_ttl_m,
+did_unres_ttl_f,
+did_unres_ttl_f_only,
+did_unres_ttl_both) 
+models_unres_ttl %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on Chinese exam score
+```{r}
+did_unres_chn <- feols(chn_std ~ treat_leave + w1chn_std | schids + ctyids, data = d_cl) 
+did_unres_chn_m_only <- feols(chn_std ~ treat_mo_only + w1chn_std | schids + ctyids, data = d_cl) 
+did_unres_chn_m <- feols(chn_std ~ treat_mo + w1chn_std | schids + ctyids, data = d_cl) 
+did_unres_chn_f_only <- feols(chn_std ~ treat_fa_only + w1chn_std | schids + ctyids, data = d_cl) 
+did_unres_chn_f <- feols(chn_std ~ treat_fa + w1chn_std | schids + ctyids, data = d_cl) 
+did_unres_chn_both <- feols(chn_std ~ treat_both + w1chn_std | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_unres_chn <- list(
+did_unres_chn,
+did_unres_chn_m_only,
+did_unres_chn_m,
+did_unres_chn_f,
+did_unres_chn_f_only,
+did_unres_chn_both) 
+models_unres_chn %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on Math score
+```{r}
+did_unres_mat <- feols(mat_std ~ treat_leave + w1mat_std | schids + ctyids, data = d_cl) 
+did_unres_mat_m_only <- feols(mat_std ~ treat_mo_only + w1mat_std | schids + ctyids, data = d_cl) 
+did_unres_mat_m <- feols(mat_std ~ treat_mo + w1mat_std | schids + ctyids, data = d_cl) 
+did_unres_mat_f_only <- feols(mat_std ~ treat_fa_only + w1mat_std | schids + ctyids, data = d_cl) 
+did_unres_mat_f <- feols(mat_std ~ treat_fa + w1mat_std | schids + ctyids, data = d_cl) 
+did_unres_mat_both <- feols(mat_std ~ treat_both + w1mat_std | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_unres_mat <- list(
+did_unres_mat,
+did_unres_mat_m_only,
+did_unres_mat_m,
+did_unres_mat_f,
+did_unres_mat_f_only,
+did_unres_mat_both) 
+models_unres_mat %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on English score
+```{r}
+did_unres_eng <- feols(eng_std ~ treat_leave + w1eng_std | schids + ctyids, data = d_cl) 
+did_unres_eng_m <- feols(eng_std ~ treat_mo + w1eng_std | schids + ctyids, data = d_cl)
+did_unres_eng_m_only <- feols(eng_std ~ treat_mo_only + w1eng_std | schids + ctyids, data = d_cl) 
+did_unres_eng_f <- feols(eng_std ~ treat_fa + w1eng_std | schids + ctyids, data = d_cl) 
+did_unres_eng_f_only <- feols(eng_std ~ treat_fa_only + w1eng_std | schids + ctyids, data = d_cl) 
+did_unres_eng_both <- feols(eng_std ~ treat_both + w1eng_std | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_unres_eng <- list(
+did_unres_eng,
+did_unres_eng_m_only,
+did_unres_eng_m,
+did_unres_eng_f,
+did_unres_eng_f_only,
+did_unres_eng_both) 
+models_unres_eng %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+
+## DID adjusted
+Regressing on cognitive test score (standardized)
+```{r}
+did_adj_cog <- feols(cog ~ treat_leave + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_cog_m_only <- feols(cog ~ treat_mo_only  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_cog_m <- feols(cog ~ treat_mo  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_cog_f_only <- feols(cog ~ treat_fa_only  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_cog_f <- feols(cog ~ treat_fa  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_cog_both <- feols(cog ~ treat_both  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_adj_cog <- list(
+did_adj_cog,
+did_adj_cog_m_only,
+did_adj_cog_m,
+did_adj_cog_f,
+did_adj_cog_f_only,
+did_adj_cog_both) 
+models_adj_cog %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+Regressing on total exam score
+```{r}
+did_adj_ttl <- feols(ttl_std ~ treat_leave  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_ttl_m_only <- feols(ttl_std ~ treat_mo_only  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_ttl_m <- feols(ttl_std ~ treat_mo  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_ttl_f <- feols(ttl_std ~ treat_fa  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_ttl_f_only <- feols(ttl_std ~ treat_fa_only  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_ttl_both <- feols(ttl_std ~ treat_both  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_adj_ttl <- list(
+did_adj_ttl,
+did_adj_ttl_m_only,
+did_adj_ttl_m,
+did_adj_ttl_f,
+did_adj_ttl_f_only,
+did_adj_ttl_both) 
+models_adj_ttl %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on Chinese exam score
+```{r}
+did_adj_chn <- feols(chn_std ~ treat_leave  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_chn_m_only <- feols(chn_std ~ treat_mo_only  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_chn_m <- feols(chn_std ~ treat_mo  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_chn_f_only <- feols(chn_std ~ treat_fa_only  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_chn_f <- feols(chn_std ~ treat_fa  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_chn_both <- feols(chn_std ~ treat_both  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_adj_chn <- list(
+did_adj_chn,
+did_adj_chn_m_only,
+did_adj_chn_m,
+did_adj_chn_f,
+did_adj_chn_f_only,
+did_adj_chn_both) 
+models_adj_chn %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on Math score
+```{r}
+did_adj_mat <- feols(mat_std ~ treat_leave  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_mat_m_only <- feols(mat_std ~ treat_mo_only  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_mat_m <- feols(mat_std ~ treat_mo  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_mat_f_only <- feols(mat_std ~ treat_fa_only  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_mat_f <- feols(mat_std ~ treat_fa  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_mat_both <- feols(mat_std ~ treat_both  + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_adj_mat <- list(
+did_adj_mat,
+did_adj_mat_m_only,
+did_adj_mat_m,
+did_adj_mat_f,
+did_adj_mat_f_only,
+did_adj_mat_both) 
+models_adj_mat %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on English score
+```{r}
+did_adj_eng <- feols(eng_std ~ treat_leave + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl) 
+did_adj_eng_m <- feols(eng_std ~ treat_mo + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl)
+did_adj_eng_m_only <- feols(eng_std ~ treat_mo_only + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl) 
+did_adj_eng_f <- feols(eng_std ~ treat_fa + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl) 
+did_adj_eng_f_only <- feols(eng_std ~ treat_fa_only + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl) 
+did_adj_eng_both <- feols(eng_std ~ treat_both + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_adj_eng <- list(
+did_adj_eng,
+did_adj_eng_m_only,
+did_adj_eng_m,
+did_adj_eng_f,
+did_adj_eng_f_only,
+did_adj_eng_both) 
+models_adj_eng %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+
+## DID adjusted unrestricted
+Regressing on cognitive test score (standardized)
+```{r}
+did_adj_unres_cog <- feols(cog ~ treat_leave + cog3pl + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_cog_m_only <- feols(cog ~ treat_mo_only + cog3pl + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_cog_m <- feols(cog ~ treat_mo + cog3pl + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_cog_f_only <- feols(cog ~ treat_fa_only + cog3pl + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_cog_f <- feols(cog ~ treat_fa + cog3pl + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_cog_both <- feols(cog ~ treat_both + cog3pl + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_adj_unres_cog <- list(
+did_adj_unres_cog,
+did_adj_unres_cog_m_only,
+did_adj_unres_cog_m,
+did_adj_unres_cog_f,
+did_adj_unres_cog_f_only,
+did_adj_unres_cog_both) 
+models_adj_unres_cog %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+Regressing on total exam score
+```{r}
+did_adj_unres_ttl <- feols(ttl_std ~ treat_leave + w1ttl_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_ttl_m_only <- feols(ttl_std ~ treat_mo_only + w1ttl_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_ttl_m <- feols(ttl_std ~ treat_mo + w1ttl_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_ttl_f <- feols(ttl_std ~ treat_fa + w1ttl_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_ttl_f_only <- feols(ttl_std ~ treat_fa_only + w1ttl_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_ttl_both <- feols(ttl_std ~ treat_both + w1ttl_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_adj_unres_ttl <- list(
+did_adj_unres_ttl,
+did_adj_unres_ttl_m_only,
+did_adj_unres_ttl_m,
+did_adj_unres_ttl_f,
+did_adj_unres_ttl_f_only,
+did_adj_unres_ttl_both) 
+models_adj_unres_ttl %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on Chinese exam score
+```{r}
+did_adj_unres_chn <- feols(chn_std ~ treat_leave + w1chn_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_chn_m_only <- feols(chn_std ~ treat_mo_only + w1chn_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_chn_m <- feols(chn_std ~ treat_mo + w1chn_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_chn_f_only <- feols(chn_std ~ treat_fa_only + w1chn_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_chn_f <- feols(chn_std ~ treat_fa + w1chn_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_chn_both <- feols(chn_std ~ treat_both + w1chn_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_adj_unres_chn <- list(
+did_adj_unres_chn,
+did_adj_unres_chn_m_only,
+did_adj_unres_chn_m,
+did_adj_unres_chn_f,
+did_adj_unres_chn_f_only,
+did_adj_unres_chn_both) 
+models_adj_unres_chn %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on Math score
+```{r}
+did_adj_unres_mat <- feols(mat_std ~ treat_leave + w1mat_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_mat_m_only <- feols(mat_std ~ treat_mo_only + w1mat_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_mat_m <- feols(mat_std ~ treat_mo + w1mat_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_mat_f_only <- feols(mat_std ~ treat_fa_only + w1mat_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_mat_f <- feols(mat_std ~ treat_fa + w1mat_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl) 
+did_adj_unres_mat_both <- feols(mat_std ~ treat_both + w1mat_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_mat_adj_unres <- list(
+did_adj_unres_mat,
+did_adj_unres_mat_m_only,
+did_adj_unres_mat_m,
+did_adj_unres_mat_f,
+did_adj_unres_mat_f_only,
+did_adj_unres_mat_both) 
+models_mat_adj_unres %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
+Regressing on English score
+```{r}
+did_adj_unres_eng <- feols(eng_std ~ treat_leave + w1eng_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl) 
+did_adj_unres_eng_m <- feols(eng_std ~ treat_mo + w1eng_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl)
+did_adj_unres_eng_m_only <- feols(eng_std ~ treat_mo_only + w1eng_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl) 
+did_adj_unres_eng_f <- feols(eng_std ~ treat_fa + w1eng_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl) 
+did_adj_unres_eng_f_only <- feols(eng_std ~ treat_fa_only + w1eng_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl) 
+did_adj_unres_eng_both <- feols(eng_std ~ treat_both + w1eng_std + is.girl + is.rural + is.only.child + is.boarding + is.fa.mid.sch + is.mo.mid.sch  | schids + ctyids, data = d_cl)
+```
+Results
+```{r}
+models_adj_unres_eng <- list(
+did_adj_unres_eng,
+did_adj_unres_eng_m_only,
+did_adj_unres_eng_m,
+did_adj_unres_eng_f,
+did_adj_unres_eng_f_only,
+did_adj_unres_eng_both) 
+models_adj_unres_eng %>% msummary(stars = c('*' = .1, '**' = .05, '***' = .01))
+```
+
