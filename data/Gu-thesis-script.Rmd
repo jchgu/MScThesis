@@ -1,5 +1,5 @@
 ---
-title: "Effect of Parental Absence on Adolescents' Academic Performance"
+title: "Parental migration, cognitive development and educational performance"
 output: html_notebook
 ---
 
@@ -41,26 +41,17 @@ d <- d_1 %>% right_join(d_2, by=c('ids', 'clsids', 'schids', 'ctyids'))
 
 ```{r}
 d <- d %>% mutate(
-  age = 2013 - a02a, #children's age at baseline
+  age = 2014 - a02a, #children's age at baseline
   local.resi = age - a07 #years of residence at the current county05
 )
 ```
 
-Sample
-```{r}
-d_cl <- d %>% 
-  filter(w2a0801==1) %>% #parents who are married (and alive)
-  filter(be1201==1 & be1202==1) %>% #both parents stay with children at baseline
-  filter(local.resi>=5)
-```
-
-## Variables 
 Compute standardized exam grades (within-school z-scores)
 ```{r}
-d_cl <- d_cl %>% #Total exam grades at wave 1 and at wave 2
+d <- d %>% #Total exam grades at wave 1 and at wave 2
   mutate(w1ttl = tr_chn + tr_mat + tr_eng, 
          w2ttl = w2chn + w2mat + w2eng) 
-d_cl <- d_cl %>% #Within-school z-scores for Chinese, math, English exams and their total, respectively
+d <- d %>% #Within-school z-scores for Chinese, math, English exams and their total, respectively
   group_by(schids) %>%
   mutate(w1chn_std = as.numeric(scale(tr_chn)),
          w1mat_std = as.numeric(scale(tr_mat)),
@@ -73,6 +64,15 @@ d_cl <- d_cl %>% #Within-school z-scores for Chinese, math, English exams and th
          ) %>% ungroup()
 ```
 
+Sample
+```{r}
+d_cl <- d_cl %>% 
+  filter(w2a0801==1) %>% #parents who are married (and alive)
+  filter(be1201==1 & be1202==1) %>% #both parents stay with children at baseline
+  filter(local.resi>=7)
+```
+
+## Variables 
 Dependent variables: Outcome differences between wave 2 and wave 1
 ```{r}
 d_cl <- d_cl %>% mutate(
