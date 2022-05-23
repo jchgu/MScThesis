@@ -56,7 +56,7 @@ acknowledgements: |
 #   (for LaTeX) and the R bookdown package, in general.
   
 # Specify the location of the bibliography below
-bibliography: bib/thesis.bib
+bibliography: references.bib
 # Download your specific csl file and refer to it in the line below.
 csl: csl/apa.csl
 # list of tabs?
