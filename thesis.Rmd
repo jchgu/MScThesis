@@ -1,21 +1,33 @@
 ---
-title             : "Parental Migration and Left-Behind Adolescent's School Performance"
-shorttitle        : "Left-Behind Adolescent"
+title             : "Parental Migration and Children's School Performance"
+shorttitle        : "Title"
 
 author: 
-  - name          : "Jiancheng Gu"
+  - name          : "First Author"
     affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
     address       : "Postal address"
-    email         : "j4.gu@student.vu.nl"
-    
+    email         : "my@email.com"
+    role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+  - name          : "Ernst-August Doelle"
+    affiliation   : "1,2"
+    role:
+      - "Writing - Review & Editing"
+      - "Supervision"
 
 affiliation:
   - id            : "1"
-    institution   : "Faculty of Social Sciences, Vrije Universiteit Amsterdam"
-
+    institution   : "Wilhelm-Wundt-University"
+  - id            : "2"
+    institution   : "Konstanz Business School"
 
 authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
 
 abstract: |
   One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
@@ -38,7 +50,7 @@ keywords          : "keywords"
 wordcount         : "X"
 
 floatsintext      : no
-linenumbers       : no
+linenumbers       : yes
 draft             : no
 mask              : no
 
@@ -46,26 +58,9 @@ figurelist        : no
 tablelist         : no
 footnotelist      : no
 
-header-includes:
-  - |
-    \makeatletter
-    \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
-      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-      {-1em}%
-      {\normalfont\normalsize\bfseries\typesectitle}}
-    
-    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
-      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-      {-\z@\relax}%
-      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
-    \makeatother
-
-csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
-documentclass     : "apa7"
-
 classoption       : "man"
 output            : papaja::apa6_pdf
-bibliography      : references.bib
+bibliography: references.bib
 ---
 
 ```{r setup, include = FALSE}
@@ -81,9 +76,9 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 
 # Introduction
 
-Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work. These so-called "left behind children" are common in migrant-sending regions in the Global South. Their exact numbers in total are unavailable, but surveys provide some estimation. According to the Mexican and Latin American Migration Projects, around 15 percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s [@dewaard2018]. The World Bank's Migration and Remittances Surveys indicated that about one-third of the children live in migrant-sending households in Kenya, Senegal, and Burkina Faso around 2010 [@chae2019]. In China, the 2015 one-percent National Population Sample Survey showed that 25 percent of children lived under parental absence induced by migration [@nbs2017].
+Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work. These so-called "left behind children" are common in migrant-sending regions in the Global South. Their exact numbers in total are unavailable, but surveys provide some estimation. According to the Mexican and Latin American Migration Projects, around 15 percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s [@dewaard2018]. The World Bank's Migration and Remittances Surveys indicated that about one-third of the children live in migrant-sending households in Kenya, Senegal, and Burkina Faso around 2010 [@chae2019]. In China, the 2015 one percent National Population Sample Survey showed that 25 percent of children lived under parental absence induced by migration [@nbs2017].
 
-Parental migration can alter children's life course [@murphy2020].
+Parental migration can alter children's life course.
 
 # Methods
 
@@ -103,3 +98,6 @@ We used `r cite_r("r-references.bib")` for all our analyses.
 
 ::: {#refs custom-style="Bibliography"}
 :::
+
+<!--chapter:end:MScThesisText.Rmd-->
+
