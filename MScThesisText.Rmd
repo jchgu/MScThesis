@@ -83,7 +83,7 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 
 Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work. These so-called "left behind children" are common in migrant-sending regions in the Global South. Their exact numbers in total are unavailable, but surveys provide some estimation. According to the Mexican and Latin American Migration Projects, around 15 percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s [@dewaard2018]. The World Bank's Migration and Remittances Surveys indicated that about one-third of the children live in migrant-sending households in Kenya, Senegal, and Burkina Faso around 2010 [@chae2019]. In China, the 2015 one-percent National Population Sample Survey showed that 25 percent of children lived under parental absence induced by migration [@nbs2017].
 
-Parental migration can alter children's life course [@murphy2020].
+Parental migration can alter children's life course.
 
 # Methods
 
