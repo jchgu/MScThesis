@@ -120,7 +120,7 @@ d_cl$par.edu.year[d_cl$par.edu == 8] <- 16
 d_cl$par.edu.year[d_cl$par.edu == 9] <- 19
 ```
 
-```{r}
+```
 d_cl <- d_cl %>% mutate(fa.edu.year = NA)
 d_cl$fa.edu.year[d_cl$fa.edu == 1] <- 0
 d_cl$fa.edu.year[d_cl$fa.edu == 2] <- 6
@@ -131,7 +131,7 @@ d_cl$fa.edu.year[d_cl$fa.edu == 8] <- 16
 d_cl$fa.edu.year[d_cl$fa.edu == 9] <- 19
 ```
 
-```{r}
+```
 d_cl <- d_cl %>% mutate(mo.edu.year = NA)
 d_cl$mo.edu.year[d_cl$mo.edu == 1] <- 0
 d_cl$mo.edu.year[d_cl$mo.edu == 2] <- 6
