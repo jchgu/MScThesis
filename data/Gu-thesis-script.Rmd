@@ -90,15 +90,22 @@ Control variables
 d_cl <- d_cl %>% mutate(
          is.girl = if_else(a01 == 2, 1, 0), #student is girl
          is.rural = if_else(bd05 == 1, 1, 0), #student holds rural (agricultural) hukou
-         is.only.child = if_else(b01 == 1, 1, 0), #student is only child
+         #is.only.child = if_else(b01 == 1, 1, 0), #student is only child
          is.boarding = if_else(c18 == 1 & w2b15 == 1, 1, 0), #student is boarding at school at both baseline and endline
+         is.ethn.minority = if_else(a03 != 1, 1, 0), #student is ethnic minority
          par.edu = if_else(b06 > b07, b06, b07), #best educated parent
          #fa.edu = b07,
          #mo.edu = b06,
          home.internet = if_else(b13 == 2, 1, 0), #student has internet access at home
          home.book = b12 #Amount of book at home, student self-rated 
 ) %>% drop_na(
-  is.girl, is.rural, is.only.child, is.boarding, par.edu, home.internet, home.book)
+  is.girl, is.rural, is.boarding, is.ethn.minority, par.edu, home.internet, home.book)
+```
+
+```{r}
+d_cl <- d_cl %>% mutate_at(c('b0201', 'b0202', 'b0203', 'b0204'), ~replace(., is.na(.), 0))
+d_cl <- d_cl %>% mutate(sibling = if_else(b01 == 1, 0, b0201 + b0202 + b0203 + b0204)) %>% #number of siblings
+  drop_na(sibling)
 ```
 
 Best-educated parent's years of education
@@ -183,18 +190,20 @@ d_cl$migr_both[d_cl$w2ba0201==0 & d_cl$w2ba0202==0] <- 1
 ```{r}
 des_gender <- d_cl %>% count(is.girl)
 des_rural <- d_cl %>% count(is.rural)
-des_only.child <- d_cl %>% count(is.only.child)
+des_sibling <- d_cl %>% group_by(sibling) %>% count
 des_boarding <- d_cl %>% count(is.boarding)
 des_book <- d_cl %>% group_by(home.book) %>% count
 des_internet <- d_cl %>% group_by(home.internet) %>% count
 des_par.edu.year <- d_cl %>% group_by(par.edu.year) %>% count
+des_ethn.minority <- d_cl %>% group_by(is.ethn.minority) %>% count
 des_gender
 des_rural
-des_only.child
+des_sibling
 des_boarding
 des_par.edu.year
 des_book
 des_internet
+des_ethn.minority
 ```
 
 
@@ -376,10 +385,10 @@ models_cog <- list(
 did_cog,
 did_cog_m_only,
 did_cog_m,
-did_cog_f,
 did_cog_f_only,
+did_cog_f,
 did_cog_both) 
-models_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on total exam score
@@ -398,10 +407,10 @@ models_ttl <- list(
 did_ttl,
 did_ttl_m_only,
 did_ttl_m,
-did_ttl_f,
 did_ttl_f_only,
+did_ttl_f,
 did_ttl_both) 
-models_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on Chinese exam score
@@ -420,10 +429,10 @@ models_chn <- list(
 did_chn,
 did_chn_m_only,
 did_chn_m,
-did_chn_f,
 did_chn_f_only,
+did_chn_f,
 did_chn_both) 
-models_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on Math score
@@ -442,10 +451,10 @@ models_mat <- list(
 did_mat,
 did_mat_m_only,
 did_mat_m,
-did_mat_f,
 did_mat_f_only,
+did_mat_f,
 did_mat_both) 
-models_mat %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_mat %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on English score
@@ -464,10 +473,10 @@ models_eng <- list(
 did_eng,
 did_eng_m_only,
 did_eng_m,
-did_eng_f,
 did_eng_f_only,
+did_eng_f,
 did_eng_both) 
-models_eng %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_eng %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 ## DID unrestricted
@@ -490,10 +499,10 @@ models_unres_cog <- list(
 did_unres_cog,
 did_unres_cog_m_only,
 did_unres_cog_m,
-did_unres_cog_f,
 did_unres_cog_f_only,
+did_unres_cog_f,
 did_unres_cog_both) 
-models_unres_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_unres_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on total exam score
@@ -512,10 +521,10 @@ models_unres_ttl <- list(
 did_unres_ttl,
 did_unres_ttl_m_only,
 did_unres_ttl_m,
-did_unres_ttl_f,
 did_unres_ttl_f_only,
+did_unres_ttl_f,
 did_unres_ttl_both) 
-models_unres_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_unres_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on Chinese exam score
@@ -534,10 +543,10 @@ models_unres_chn <- list(
 did_unres_chn,
 did_unres_chn_m_only,
 did_unres_chn_m,
-did_unres_chn_f,
 did_unres_chn_f_only,
+did_unres_chn_f,
 did_unres_chn_both) 
-models_unres_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_unres_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on Math score
@@ -556,10 +565,10 @@ models_unres_mat <- list(
 did_unres_mat,
 did_unres_mat_m_only,
 did_unres_mat_m,
-did_unres_mat_f,
 did_unres_mat_f_only,
+did_unres_mat_f,
 did_unres_mat_both) 
-models_unres_mat %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_unres_mat %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on English score
@@ -578,10 +587,10 @@ models_unres_eng <- list(
 did_unres_eng,
 did_unres_eng_m_only,
 did_unres_eng_m,
-did_unres_eng_f,
 did_unres_eng_f_only,
+did_unres_eng_f,
 did_unres_eng_both) 
-models_unres_eng %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_unres_eng %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 
@@ -591,12 +600,12 @@ $$X_{i,s}$$ denotes a vector of covariates about the characteristics of students
 
 Regressing on cognitive test score (standardized)
 ```{r}
-did_adj_cog <- feols(cog ~ migr  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_cog_m_only <- feols(cog ~ migr_mo_only   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_cog_m <- feols(cog ~ migr_mo   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_cog_f_only <- feols(cog ~ migr_fa_only   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_cog_f <- feols(cog ~ migr_fa   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_cog_both <- feols(cog ~ migr_both   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_cog <- feols(cog ~ migr  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_cog_m_only <- feols(cog ~ migr_mo_only   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_cog_m <- feols(cog ~ migr_mo   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_cog_f_only <- feols(cog ~ migr_fa_only   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_cog_f <- feols(cog ~ migr_fa   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_cog_both <- feols(cog ~ migr_both   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -605,20 +614,20 @@ models_adj_cog <- list(
 did_adj_cog,
 did_adj_cog_m_only,
 did_adj_cog_m,
-did_adj_cog_f,
 did_adj_cog_f_only,
+did_adj_cog_f,
 did_adj_cog_both) 
-models_adj_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_adj_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on total exam score
 ```{r}
-did_adj_ttl <- feols(ttl_std ~ migr   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_ttl_m_only <- feols(ttl_std ~ migr_mo_only   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_ttl_m <- feols(ttl_std ~ migr_mo   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_ttl_f <- feols(ttl_std ~ migr_fa   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_ttl_f_only <- feols(ttl_std ~ migr_fa_only   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_ttl_both <- feols(ttl_std ~ migr_both   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_ttl <- feols(ttl_std ~ migr   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_ttl_m_only <- feols(ttl_std ~ migr_mo_only   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_ttl_m <- feols(ttl_std ~ migr_mo   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_ttl_f <- feols(ttl_std ~ migr_fa   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_ttl_f_only <- feols(ttl_std ~ migr_fa_only   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_ttl_both <- feols(ttl_std ~ migr_both   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -627,20 +636,20 @@ models_adj_ttl <- list(
 did_adj_ttl,
 did_adj_ttl_m_only,
 did_adj_ttl_m,
-did_adj_ttl_f,
 did_adj_ttl_f_only,
+did_adj_ttl_f,
 did_adj_ttl_both) 
-models_adj_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_adj_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on Chinese exam score
 ```{r}
-did_adj_chn <- feols(chn_std ~ migr   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_chn_m_only <- feols(chn_std ~ migr_mo_only   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_chn_m <- feols(chn_std ~ migr_mo   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_chn_f_only <- feols(chn_std ~ migr_fa_only   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_chn_f <- feols(chn_std ~ migr_fa   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_chn_both <- feols(chn_std ~ migr_both   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_chn <- feols(chn_std ~ migr   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_chn_m_only <- feols(chn_std ~ migr_mo_only   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_chn_m <- feols(chn_std ~ migr_mo   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_chn_f_only <- feols(chn_std ~ migr_fa_only   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_chn_f <- feols(chn_std ~ migr_fa   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_chn_both <- feols(chn_std ~ migr_both   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -649,20 +658,20 @@ models_adj_chn <- list(
 did_adj_chn,
 did_adj_chn_m_only,
 did_adj_chn_m,
-did_adj_chn_f,
 did_adj_chn_f_only,
+did_adj_chn_f,
 did_adj_chn_both) 
-models_adj_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_adj_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on Math score
 ```{r}
-did_adj_mat <- feols(mat_std ~ migr   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_mat_m_only <- feols(mat_std ~ migr_mo_only   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_mat_m <- feols(mat_std ~ migr_mo   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_mat_f_only <- feols(mat_std ~ migr_fa_only   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_mat_f <- feols(mat_std ~ migr_fa   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_mat_both <- feols(mat_std ~ migr_both   + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_mat <- feols(mat_std ~ migr   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_mat_m_only <- feols(mat_std ~ migr_mo_only   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_mat_m <- feols(mat_std ~ migr_mo   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_mat_f_only <- feols(mat_std ~ migr_fa_only   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_mat_f <- feols(mat_std ~ migr_fa   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_mat_both <- feols(mat_std ~ migr_both   + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -671,20 +680,20 @@ models_adj_mat <- list(
 did_adj_mat,
 did_adj_mat_m_only,
 did_adj_mat_m,
-did_adj_mat_f,
 did_adj_mat_f_only,
+did_adj_mat_f,
 did_adj_mat_both) 
-models_adj_mat %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_adj_mat %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on English score
 ```{r}
-did_adj_eng <- feols(eng_std ~ migr  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_eng_m <- feols(eng_std ~ migr_mo  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
-did_adj_eng_m_only <- feols(eng_std ~ migr_mo_only  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_eng_f <- feols(eng_std ~ migr_fa  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_eng_f_only <- feols(eng_std ~ migr_fa_only  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_eng_both <- feols(eng_std ~ migr_both  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_eng <- feols(eng_std ~ migr  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_eng_m <- feols(eng_std ~ migr_mo  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_eng_m_only <- feols(eng_std ~ migr_mo_only  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_eng_f <- feols(eng_std ~ migr_fa  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_eng_f_only <- feols(eng_std ~ migr_fa_only  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_eng_both <- feols(eng_std ~ migr_both  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -693,10 +702,10 @@ models_adj_eng <- list(
 did_adj_eng,
 did_adj_eng_m_only,
 did_adj_eng_m,
-did_adj_eng_f,
 did_adj_eng_f_only,
+did_adj_eng_f,
 did_adj_eng_both) 
-models_adj_eng %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_adj_eng %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 
@@ -705,12 +714,12 @@ $$\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \
 
 Regressing on cognitive test score (standardized)
 ```{r}
-did_adj_unres_cog <- feols(cog ~ migr + cog3pl  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_m_only <- feols(cog ~ migr_mo_only + cog3pl  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_m <- feols(cog ~ migr_mo + cog3pl  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_f_only <- feols(cog ~ migr_fa_only + cog3pl  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_f <- feols(cog ~ migr_fa + cog3pl  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_both <- feols(cog ~ migr_both + cog3pl  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_unres_cog <- feols(cog ~ migr + cog3pl  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_m_only <- feols(cog ~ migr_mo_only + cog3pl  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_m <- feols(cog ~ migr_mo + cog3pl  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_f_only <- feols(cog ~ migr_fa_only + cog3pl  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_f <- feols(cog ~ migr_fa + cog3pl  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_both <- feols(cog ~ migr_both + cog3pl  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 Results
 ```{r}
@@ -718,19 +727,19 @@ models_adj_unres_cog <- list(
 did_adj_unres_cog,
 did_adj_unres_cog_m_only,
 did_adj_unres_cog_m,
-did_adj_unres_cog_f,
 did_adj_unres_cog_f_only,
+did_adj_unres_cog_f,
 did_adj_unres_cog_both) 
-models_adj_unres_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_adj_unres_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 Regressing on total exam score
 ```{r}
-did_adj_unres_ttl <- feols(ttl_std ~ migr + w1ttl_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_m_only <- feols(ttl_std ~ migr_mo_only + w1ttl_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_m <- feols(ttl_std ~ migr_mo + w1ttl_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_f <- feols(ttl_std ~ migr_fa + w1ttl_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_f_only <- feols(ttl_std ~ migr_fa_only + w1ttl_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_both <- feols(ttl_std ~ migr_both + w1ttl_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_unres_ttl <- feols(ttl_std ~ migr + w1ttl_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_m_only <- feols(ttl_std ~ migr_mo_only + w1ttl_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_m <- feols(ttl_std ~ migr_mo + w1ttl_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_f <- feols(ttl_std ~ migr_fa + w1ttl_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_f_only <- feols(ttl_std ~ migr_fa_only + w1ttl_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_both <- feols(ttl_std ~ migr_both + w1ttl_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 Results
 ```{r}
@@ -738,20 +747,20 @@ models_adj_unres_ttl <- list(
 did_adj_unres_ttl,
 did_adj_unres_ttl_m_only,
 did_adj_unres_ttl_m,
-did_adj_unres_ttl_f,
 did_adj_unres_ttl_f_only,
+did_adj_unres_ttl_f,
 did_adj_unres_ttl_both) 
-models_adj_unres_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_adj_unres_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on Chinese exam score
 ```{r}
-did_adj_unres_chn <- feols(chn_std ~ migr + w1chn_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_m_only <- feols(chn_std ~ migr_mo_only + w1chn_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_m <- feols(chn_std ~ migr_mo + w1chn_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_f_only <- feols(chn_std ~ migr_fa_only + w1chn_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_f <- feols(chn_std ~ migr_fa + w1chn_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_both <- feols(chn_std ~ migr_both + w1chn_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_unres_chn <- feols(chn_std ~ migr + w1chn_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_m_only <- feols(chn_std ~ migr_mo_only + w1chn_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_m <- feols(chn_std ~ migr_mo + w1chn_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_f_only <- feols(chn_std ~ migr_fa_only + w1chn_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_f <- feols(chn_std ~ migr_fa + w1chn_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_both <- feols(chn_std ~ migr_both + w1chn_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 Results
 ```{r}
@@ -759,20 +768,20 @@ models_adj_unres_chn <- list(
 did_adj_unres_chn,
 did_adj_unres_chn_m_only,
 did_adj_unres_chn_m,
-did_adj_unres_chn_f,
 did_adj_unres_chn_f_only,
+did_adj_unres_chn_f,
 did_adj_unres_chn_both) 
-models_adj_unres_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_adj_unres_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on Math score
 ```{r}
-did_adj_unres_mat <- feols(mat_std ~ migr + w1mat_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_m_only <- feols(mat_std ~ migr_mo_only + w1mat_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_m <- feols(mat_std ~ migr_mo + w1mat_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_f_only <- feols(mat_std ~ migr_fa_only + w1mat_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_f <- feols(mat_std ~ migr_fa + w1mat_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_both <- feols(mat_std ~ migr_both + w1mat_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_unres_mat <- feols(mat_std ~ migr + w1mat_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_m_only <- feols(mat_std ~ migr_mo_only + w1mat_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_m <- feols(mat_std ~ migr_mo + w1mat_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_f_only <- feols(mat_std ~ migr_fa_only + w1mat_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_f <- feols(mat_std ~ migr_fa + w1mat_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_both <- feols(mat_std ~ migr_both + w1mat_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 Results
 ```{r}
@@ -780,20 +789,20 @@ models_mat_adj_unres <- list(
 did_adj_unres_mat,
 did_adj_unres_mat_m_only,
 did_adj_unres_mat_m,
-did_adj_unres_mat_f,
 did_adj_unres_mat_f_only,
+did_adj_unres_mat_f,
 did_adj_unres_mat_both) 
-models_mat_adj_unres %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_mat_adj_unres %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
 Regressing on English score
 ```{r}
-did_adj_unres_eng <- feols(eng_std ~ migr + w1eng_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_eng_m <- feols(eng_std ~ migr_mo + w1eng_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
-did_adj_unres_eng_m_only <- feols(eng_std ~ migr_mo_only + w1eng_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_eng_f <- feols(eng_std ~ migr_fa + w1eng_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_eng_f_only <- feols(eng_std ~ migr_fa_only + w1eng_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_eng_both <- feols(eng_std ~ migr_both + w1eng_std  + age + is.girl + is.rural + is.only.child + is.boarding + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_unres_eng <- feols(eng_std ~ migr + w1eng_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_eng_m <- feols(eng_std ~ migr_mo + w1eng_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
+did_adj_unres_eng_m_only <- feols(eng_std ~ migr_mo_only + w1eng_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_eng_f <- feols(eng_std ~ migr_fa + w1eng_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_eng_f_only <- feols(eng_std ~ migr_fa_only + w1eng_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_eng_both <- feols(eng_std ~ migr_both + w1eng_std  + age + is.girl + is.rural + sibling + is.boarding + is.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl)
 ```
 Results
 ```{r}
@@ -804,6 +813,7 @@ did_adj_unres_eng_m,
 did_adj_unres_eng_f,
 did_adj_unres_eng_f_only,
 did_adj_unres_eng_both) 
-models_adj_unres_eng %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001))
+models_adj_unres_eng %>% 
+  msummary(stars = c('*' = .05, '**' = .01, '***' = .001), coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator"))
 ```
 
