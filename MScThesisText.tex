@@ -204,33 +204,24 @@ Correspondence concerning this article should be addressed to Jiancheng Gu, Post
 
 \affiliation{\vspace{0.5cm}\textsuperscript{1} Faculty of Social Sciences, Vrije Universiteit Amsterdam}
 
-\abstract{%
-One or two sentences providing a \textbf{basic introduction} to the field, comprehensible to a scientist in any discipline.
-
-Two to three sentences of \textbf{more detailed background}, comprehensible to scientists in related disciplines.
-
-One sentence clearly stating the \textbf{general problem} being addressed by this particular study.
-
-One sentence summarizing the main result (with the words ``\textbf{here we show}'' or their equivalent).
-
-Two or three sentences explaining what the \textbf{main result} reveals in direct comparison to what was thought to be the case previously, or how the main result adds to previous knowledge.
-
-One or two sentences to put the results into a more \textbf{general context}.
-
-Two or three sentences to provide a \textbf{broader perspective}, readily comprehensible to a scientist in any discipline.
-}
-
-
-
 \begin{document}
 \maketitle
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work. These so-called ``left behind children'' are common in migrant-sending regions in the Global South. Their exact numbers in total are unavailable, but surveys provide some estimation. According to the Mexican and Latin American Migration Projects, around 15 percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s (DeWaard et al., 2018). The World Bank's Migration and Remittances Surveys indicated that about one-third of the children live in migrant-sending households in Kenya, Senegal, and Burkina Faso around 2010 (Chae \& Glick, 2019). In China, the 2015 one-percent National Population Sample Survey showed that 25 percent of children lived under parental absence induced by migration (NBS et al., 2017).
+Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work. These are the so-called ``left behind children'' who are common in migrant-sending regions in the Global South. Their exact numbers in total are unavailable, but surveys provide some estimation. (DeWaard et al., 2018) analyzed the Mexican and Latin American Migration Projects and estimated that around 15 percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s. (Chae \& Glick, 2019) studied the World Bank's Migration and Remittances Surveys and indicated that about one-third of the children live in migrant-sending households in Kenya, Senegal, and Burkina Faso around 2010. In China, the 2015 one-percent National Population Sample Survey showed that 25 percent of children lived under parental absence induced by migration (NBS et al., 2017).
 
-Parental migration can alter children's life course (Murphy, 2020).
+Parental migration shapes child development -- such as human capital accumulation -- by exerting different effects that work oppositely. Labor migrants send remittances back home, boosting the family income. Higher income can fund children's schooling as well as improve their nutritional and living conditions. All these may enhance children's educational outcome. The inflow of remittances, however, cannot substitute for the loss of parental care. Parental migration halts the day-to-day, face-to-face contact between parents and children. It decreases the amount and quality of parental guidance, protection, and support. All these may hinder children's school performance. It is uncertain how these two opposing effects affect children's educational performance, which merits empirical investigation.
+
+For studying left behind children, a suitable case is China. The country has seen a huge scale of internal migration and salient challenges facing migrant parents and left behind children. More than 285 million Chinese people were in-country migrant workers. According to (Gu, 2021), current policy still limits internal migrants' access to public services and social benefits outside their hometowns, including public school for their children. Facing financial and policy constraints, many migrant laborers have to leave children in their original domiciles. The number of left behind Chinese children reached 68.7 million in 2015 (NBS et al., 2017).
+
+The research on China's left behind children has three major shortcomings. First, most literature focuses on children left behind in rural areas while negleting the urban counterparts. As (NBS et al., 2017) stated, the number of urban left behind children had been growing, and the trend would continue expectedly. Meanwhile, in-situ urbanization has turned a small proportion of children left behind in the countryside as urban residents. The second shortcoming lies in data and sampling. Some studies draw from cross-sectional surveys, making it hard to infer causal relations (Wen et al., 2020; Zhou et al., 2014). Others suffer from a limited sample size of less than one thousand participants (Liu et al., 2021; Yang et al., 2022) or a limited geographic coverage of one or a few towns (Shu, 2021; Yang et al., 2022). The third shortcoming lies in the selection and measurement of outcome. Wang et al. (2019) measure students' educational performance with the test score of only one academic subject, such as English or mathematics. The test results of multiple subjects should be included, as parental migration's impact may vary across subject areas.
+
+This thesis aims to address the shortcomings in the study of parental migration's effect on left behind children's educational performance. I analyze the data from a nationally representative two-wave panel survey. The sample includes children in both urban and rural areas. I develop a difference-in-differences design for causal inference. The dependent variables include children's cognitive test scores and their Chinese, mathematics, and English exam scores.
+
+\hypertarget{literature-review}{%
+\section{Literature Review}\label{literature-review}}
 
 \hypertarget{methods}{%
 \section{Methods}\label{methods}}
@@ -258,23 +249,47 @@ We used R (Version 4.2.0; R Core Team, 2022) and the R-packages \emph{papaja} (V
 \leavevmode\vadjust pre{\hypertarget{ref-R-papaja}{}}%
 Aust, F., \& Barth, M. (2020). \emph{{papaja}: {Prepare} reproducible {APA} journal articles with {R Markdown}}. \url{https://github.com/crsh/papaja}
 
+\leavevmode\vadjust pre{\hypertarget{ref-bai2018}{}}%
+Bai, Y., Zhang, L., Liu, C., Shi, Y., Mo, D., \& Rozelle, S. (2018). Effect of parental migration on the academic performance of left behind children in north western china. \emph{The Journal of Development Studies}, \emph{54}(7), 1154--1170. \url{https://doi.org/10.1080/00220388.2017.1333108}
+
 \leavevmode\vadjust pre{\hypertarget{ref-R-tinylabels}{}}%
 Barth, M. (2022). \emph{{tinylabels}: Lightweight variable labels}. \url{https://cran.r-project.org/package=tinylabels}
 
 \leavevmode\vadjust pre{\hypertarget{ref-chae2019}{}}%
 Chae, S., \& Glick, J. E. (2019). Educational Selectivity of Migrants and Current School Enrollment of Children Left behind: Analyses in Three African Countries. \emph{International Migration Review}, \emph{53}(3), 736--769. \url{https://doi.org/10.1177/0197918318772261}
 
+\leavevmode\vadjust pre{\hypertarget{ref-chang2019}{}}%
+Chang, F., Jiang, Y., Loyalka, P., Chu, J., Shi, Y., Osborn, A., \& Rozelle, S. (2019). Parental migration, educational achievement, and mental health of junior high school students in rural China. \emph{China Economic Review}, \emph{54}, 337--349. \url{https://doi.org/10.1016/j.chieco.2019.01.007}
+
 \leavevmode\vadjust pre{\hypertarget{ref-dewaard2018}{}}%
 DeWaard, J., Nobles, J., \& Donato, K. M. (2018). Migration and parental absence: A comparative assessment of transnational families in Latin America. \emph{Population, Space and Place}, \emph{24}(7), e2166. \url{https://doi.org/10.1002/psp.2166}
 
-\leavevmode\vadjust pre{\hypertarget{ref-murphy2020}{}}%
-Murphy, R. (2020). \emph{The children of china's great migration}. Cambridge University Press. \url{https://doi.org/10.1017/9781108877251}
+\leavevmode\vadjust pre{\hypertarget{ref-gu2021}{}}%
+Gu, X. (2021). {`}Save the children!{'}: Governing left-behind children through family in China{'}s Great Migration. \emph{Current Sociology}, 0011392120985874. \url{https://doi.org/10.1177/0011392120985874}
+
+\leavevmode\vadjust pre{\hypertarget{ref-liu2021}{}}%
+Liu, Y., Deng, Z., \& Katz, I. (2021). Transmission of Educational Outcomes Across Three Generations: Evidence From Migrant Workers{'} Children in China. \emph{Applied Research in Quality of Life}. \url{https://doi.org/10.1007/s11482-021-09990-y}
 
 \leavevmode\vadjust pre{\hypertarget{ref-nbs2017}{}}%
 NBS, UNICEF, \& UNFPA. (2017). \emph{Population Status of Children in China in 2015: Facts and Figures}. \url{https://www.unicef.cn/media/9901/file/Population\%20Status\%20of\%20Children\%20in\%20China\%20in\%202015\%20Facts\%20and\%20Figures.pdf}
 
 \leavevmode\vadjust pre{\hypertarget{ref-R-base}{}}%
 R Core Team. (2022). \emph{R: A language and environment for statistical computing}. R Foundation for Statistical Computing. \url{https://www.R-project.org/}
+
+\leavevmode\vadjust pre{\hypertarget{ref-shu2021}{}}%
+Shu, B. (2021). Parental Migration, Parental Emotional Support, and Adolescent Children{'}s Life Satisfaction in Rural China: The Roles of Parent and Child Gender. \emph{Journal of Family Issues}, \emph{42}(8), 1663--1705. \url{https://doi.org/10.1177/0192513X20946345}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wang2019}{}}%
+Wang, L., Zheng, Y., Li, G., Li, Y., Fang, Z., Abbey, C., \& Rozelle, S. (2019). Academic achievement and mental health of left-behind children in rural china: A causal study on parental migration. \emph{China Agricultural Economic Review}, \emph{11}(4), 569--582. \url{https://doi.org/10.1108/CAER-09-2018-0194}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wen2020}{}}%
+Wen, M., Wang, W., Wan, N., \& Su, D. (2020). Family Income and Student Educational and Cognitive Outcomes in China: Exploring the Material and Psychosocial Mechanisms. \emph{Social Sciences}, \emph{9}(12), 225. \url{https://doi.org/10.3390/socsci9120225}
+
+\leavevmode\vadjust pre{\hypertarget{ref-yang2022}{}}%
+Yang, F., Wang, Z., Liu, J., \& Tang, S. (2022). The Effect of Social Interaction on Rural Children{'}s Self-identity: an Empirical Study Based on Survey Data from Jintang County, China. \emph{Child Indicators Research}, \emph{15}(3), 839--861. \url{https://doi.org/10.1007/s12187-021-09887-0}
+
+\leavevmode\vadjust pre{\hypertarget{ref-zhou2014}{}}%
+Zhou, M., Murphy, R., \& Tao, R. (2014). Effects of Parents' Migration on the Education of Children Left Behind in Rural China. \emph{Population and Development Review}, \emph{40}(2), 273--292. \url{https://doi.org/10.1111/j.1728-4457.2014.00673.x}
 
 \end{CSLReferences}
 

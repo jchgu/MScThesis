@@ -18,21 +18,7 @@ affiliation:
 authornote: |
 
 abstract: |
-  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
   
-  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
-  
-  One sentence clearly stating the **general problem** being addressed by  this particular study.
-  
-  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
-  
-  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
-  
-  One or two sentences to put the results into a more **general context**.
-  
-  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
-  
-  <!-- https://tinyurl.com/ybremelq -->
   
 keywords          : "keywords"
 wordcount         : "X"
@@ -65,7 +51,8 @@ documentclass     : "apa7"
 
 classoption       : "man"
 output            : papaja::apa6_pdf
-bibliography      : references.bib
+
+bibliography: references.bib
 ---
 
 ```{r setup, include = FALSE}
@@ -81,17 +68,49 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 
 # Introduction
 
-Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work. These so-called "left behind children" are common in migrant-sending regions in the Global South. Their exact numbers in total are unavailable, but surveys provide some estimation. According to the Mexican and Latin American Migration Projects, around 15 percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s [@dewaard2018]. The World Bank's Migration and Remittances Surveys indicated that about one-third of the children live in migrant-sending households in Kenya, Senegal, and Burkina Faso around 2010 [@chae2019]. In China, the 2015 one-percent National Population Sample Survey showed that 25 percent of children lived under parental absence induced by migration [@nbs2017].
+Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work. These are the so-called "left behind children" who are common in migrant-sending regions in the Global South. The global size of left behind children population is unavailable, but in-country surveys provide some estimation. [@dewaard2018] analyzed the Mexican and Latin American Migration Projects and estimated that around 15 percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s. [@popova2018] cited a 2016 study by UN Children's Fund Bulgaria, suggesting that one-fifth of Bulgarian children had one or both parents working abroad. In China, the 2015 one-percent National Population Sample Survey showed that one out of four children lived under parental absence induced by migration [@nbs2017].
 
-Parental migration can alter children's life course.
+Parental migration shapes child-and-adolescence development by exerting different effects that work oppositely. Consider children's human capital accumulation. Labor migrants send remittances back home, boosting the family income. Higher income can fund children's schooling as well as improve their nutritional and living conditions. All these may enhance children's educational outcome. The inflow of remittances, however, cannot substitute for the loss of parental care. Parental migration halts the day-to-day, face-to-face contact between parents and children. It decreases the amount and quality of parental guidance, protection, and support. All these may hinder children's school performance. It is uncertain how these two opposing effects affect children's educational performance, which merits empirical investigation.
+
+A challenge arises in the methodology for assessing the causal relation between parental migration and children's education. It is unfeasible and unethical to design an experiment that randomly assigns parents to migrate without their children. Statistical advances in causal inference provides an alternative. We can infer causality from a quasi-experimental design -- that is, only if the cause is as good as randomly assigned to individuals in the analysis, conditional on identification assumptions.
+
+For studying left behind children, a suitable case is China. The country has seen a huge scale of internal migration and salient challenges facing migrant parents and left behind children. The National Bureau of Statistics reported that the number of in-country migrant workers exceeded 292.5 million by 2021[@nbs2022]. According to [@gu2021], current policy still limits internal migrants' access to public services and social benefits outside their hometowns, including public school for their children. Facing financial and policy constraints, many migrant laborers have to leave children in their original domiciles. The number of left behind Chinese children reached 68.7 million in 2015 [@nbs2017].
+
+To what extent do parental migration affect the cognitive development and academic performance of left-behind children? This thesis aims to address the shortcomings in the existing literature. I analyze the data from a nationally representative two-wave panel survey. The sample includes children in both urban and rural areas. I develop a difference-in-differences design for causal inference. The dependent variables include children's cognitive test scores and their Chinese, mathematics, and English exam scores.
+
+# Literature Review
+
+Researchers obtained mixed results regarding how migration-induced parental absence affects children's education. Using data collected from junior high school students, [@li2017] found that parental migration negatively impacts left-behind children's achievement in standardized mathematical test. [@wang2019] also collected data from students of junior high school, but discovered no overall effect of parental migration on the mathematical test grades of children left behind. [@bai2018] gathered data from primary school pupils. They reported that parental migration "does not appear to have a negative effect" on the standardized English test scores of left-behind children, and "in some cases even appears to have a positive effect" (p. 1165). The inconsistency can result from factors such as the left-behind children's age and gender, the migrant parent's original domicile and eventual destination, and the arrangement of which parent migrate for how long.
+
+Two competing theoretical frameworks, one of which is the resource generation model. According to this model, parental migration brings forth greater economic capital to improve household environment. Economic capital is, in Bourdieu's words, "immediately and directly convertible into money and may be institutionalized in the form of property rights" [-@bourdieu2002, p.16]. [@chang2019] provided evidence through interviews with migrant workers and their families. They said that labor migration can boost household income, as the city offers more jobs and higher pay than does the countryside.
+
+The other theoretical model is the family disruption model. Children flourish under parental nurturing care. This term refers to the "stable environments that promote health and adequate nutrition, protect from threats, and provide opportunities for learning and responsive, emotionally supportive and developmentally enriching relationships" [@black2021, p.1]. Parental migration decreases nurturing care, thereby hindering children's developmental outcomes. The loss of nurturing care represents a decreased investment in children's human capital. Human capital is the stock of "skills, talents, health, and expertise" in people that enhance their productivity [@goldin2016, @botev2019]. In disadvantaged families, the migrant parent is likely the best educated adult in the household. Their absence makes it harder for children to overcome learning obstacles.
+
+The research on China's left behind children has three major shortcomings. First, most literature focuses on children left behind in rural areas while neglecting the urban counterparts. As [@nbs2017] stated, the number of urban left behind children had been growing, and the trend would continue. The second shortcoming lies in data and sampling. Some studies draw from cross-sectional data, making it hard to infer causal relations [@zhou2014; @jin2020]. Others suffer from a limited sample size of less than one thousand participants [@liu2021; @yang2022] or a limited geographic coverage of one or a few towns [@yang2022; @shu2021; @jin2020]. The third shortcoming lies in the selection and measurement of outcome. [@chang2019; @wang2019] measure students' educational performance with the test score of only one academic subject, namely mathematics. The test results of multiple subjects should be included, as parental migration's impact may vary across subject areas.
 
 # Methods
 
-We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
+## Participants
+
+I obtained the data from the China Education Panel Survey (CEPS). It is a nationally representative, school-based survey featuring junior high school students. The survey administrator is the National Survey Research Center at Renmin University of China. The survey's sampling adopted a multi-stage stratified probability proportional to size approach. Moreover, designed deliberately to focus on migrant children, the survey also oversampled those counties with large intranational migrant populations. The baseline survey took place in the 2013-2014 academic year with a sample size of about twenty thousand students in seventh and ninth grades. These students were nested in 438 classrooms of 112 schools in 28 urban districts or rural counties. I only kept the 9,449 observations of seventh grade students and their parents, who completed the follow-up survey in the 2014-2015 academic year.
+
+## Measurement
+
+~~I explored two categories of adolescence development: academic and cognitive abilities. One key dependent variable, the student's cognitive skill, is measured by a fifteen-minute standardized test. The test covered three types of reasoning: verbal, visuospatial, and numerical. The raw scores of cognitive skill were then standardized. The other~~ set of dependent variables concern students' academic performance. This is measured by the mid-term exam scores in three subjects: Chinese, mathematics, and English. To facilitate comparison across schools and counties, I use standardized test scores instead of raw test scores.
+
+The key independent variable, the parental migration status, was identified by two items in the parent survey. In both the baseline and the follow-up surveys, parents specified the family members living in the same household at the time. I identified seven types of migration arrangement: both parents absent, only father absent, only mother absent, father absent, mother absent, and both parents at home. I then removed the observations that reported other types of parental absence induced by divorce or death.
 
 ## Data analysis
 
-We used `r cite_r("r-references.bib")` for all our analyses.
+I adopted `r cite_r("r-references.bib")` for all the analyses.
+
+Following [@bai2018], I adopted a difference-in-differences design to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. The model is:
+
+$$
+\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \theta \cdot X_{i,s} + \varepsilon_{i,s}
+$$
+
+whereas for student i in school s, $\Delta score_{i,s}$ is the change in standardized test score between baseline and follow-up surveys, $migr_{i,s}$ is the treatment dummy variable, $FE_{s}$ is the school-level fixed effect, $score_{i,s;base}$ is the baseline exam score, and $X_{i,s}$ is the vector of covariates capturing the characteristics of children and their households. The control variables on children includes age, gender, ethnicity, self-rated health, hukou type, and only child. The control variables on household include the years of education of the best-educated parent, the number of books at home, and the internet assess at home.
 
 # Results
 
