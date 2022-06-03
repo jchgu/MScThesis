@@ -146,7 +146,6 @@ d_cl$mo.edu.year[d_cl$mo.edu == 8] <- 16
 d_cl$mo.edu.year[d_cl$mo.edu == 9] <- 19
 ```
 
-
 ## Treatment groups
 At least one parent migrated (Control group as no parent migrated)
 ```{r}
@@ -189,6 +188,26 @@ Both parents migrated
 d_cl$migr_both[d_cl$migr == 0] <- 0
 d_cl$migr_both[d_cl$w2ba0201==0 & d_cl$w2ba0202==0] <- 1
 ```
+
+
+```{r}
+df <- d_cl %>% select(
+  migr, migr_fa_only, migr_fa, migr_mo_only, migr_mo, migr_both,
+  cog3pl, w1chn_std, w1mat_std, w1eng_std,
+  cog, chn_std, mat_std, eng_std,
+  age, ch.girl, ch.health, ch.rural, ch.sibling, ch.boarding, ch.ethn.minority, 
+  par.edu.year, home.book, home.internet
+)
+```
+
+t-test
+```{r}
+t.test(w2cog3pl ~ migr, data = d_cl)
+t.test(w2chn ~ migr, data = d_cl)
+t.test(w2mat ~ migr, data = d_cl)
+t.test(w2eng ~ migr, data = d_cl)
+```
+
 
 ## Descriptive statistics
 ```{r}
@@ -369,6 +388,103 @@ d_cl %>%
   drop_na()
 ```
 
+## DID unrestricted
+Regressing on cognitive test score (standardized)
+```{r}
+did_unres_cog <- feols(cog ~ migr + cog3pl | schids, data = d_cl) 
+did_unres_cog_m_only <- feols(cog ~ migr_mo_only + cog3pl | schids, data = d_cl) 
+did_unres_cog_m <- feols(cog ~ migr_mo + cog3pl | schids, data = d_cl) 
+did_unres_cog_f_only <- feols(cog ~ migr_fa_only + cog3pl | schids, data = d_cl) 
+did_unres_cog_f <- feols(cog ~ migr_fa + cog3pl | schids, data = d_cl) 
+did_unres_cog_both <- feols(cog ~ migr_both + cog3pl | schids, data = d_cl)
+```
+
+Results
+```{r}
+models_unres_cog <- list(
+'Any Parent Absent' = did_unres_cog,
+'Only Mother Absent' = did_unres_cog_m_only,
+'Mother Absent' = did_unres_cog_m,
+'Only Father Absent' = did_unres_cog_f_only,
+'Father Absent' = did_unres_cog_f,
+'Both Parents Absent' = did_unres_cog_both) 
+models_unres_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
+                              fmt = 2,
+                              coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "Baseline Score"))
+```
+
+Regressing on Chinese exam score
+```{r}
+did_unres_chn <- feols(chn_std ~ migr + w1chn_std | schids, data = d_cl) 
+did_unres_chn_m_only <- feols(chn_std ~ migr_mo_only + w1chn_std | schids, data = d_cl) 
+did_unres_chn_m <- feols(chn_std ~ migr_mo + w1chn_std | schids, data = d_cl) 
+did_unres_chn_f_only <- feols(chn_std ~ migr_fa_only + w1chn_std | schids, data = d_cl) 
+did_unres_chn_f <- feols(chn_std ~ migr_fa + w1chn_std | schids, data = d_cl) 
+did_unres_chn_both <- feols(chn_std ~ migr_both + w1chn_std | schids, data = d_cl)
+```
+
+Results
+```{r}
+models_unres_chn <- list(
+'Any Parent Absent' = did_unres_chn,
+'Only Mother Absent' = did_unres_chn_m_only,
+'Mother Absent' = did_unres_chn_m,
+'Only Father Absent' = did_unres_chn_f_only,
+'Father Absent' = did_unres_chn_f,
+'Both Parents Absent' = did_unres_chn_both) 
+models_unres_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
+                              fmt = 2,
+                              coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1chn_std" = "Baseline Score"))
+```
+
+Regressing on Math score
+```{r}
+did_unres_mat <- feols(mat_std ~ migr + w1mat_std | schids, data = d_cl) 
+did_unres_mat_m_only <- feols(mat_std ~ migr_mo_only + w1mat_std | schids, data = d_cl) 
+did_unres_mat_m <- feols(mat_std ~ migr_mo + w1mat_std | schids, data = d_cl) 
+did_unres_mat_f_only <- feols(mat_std ~ migr_fa_only + w1mat_std | schids, data = d_cl) 
+did_unres_mat_f <- feols(mat_std ~ migr_fa + w1mat_std | schids, data = d_cl) 
+did_unres_mat_both <- feols(mat_std ~ migr_both + w1mat_std | schids, data = d_cl)
+```
+
+Results
+```{r}
+models_unres_mat <- list(
+'Any Parent Absent' = did_unres_mat,
+'Only Mother Absent' = did_unres_mat_m_only,
+'Mother Absent' = did_unres_mat_m,
+'Only Father Absent' = did_unres_mat_f_only,
+'Father Absent' = did_unres_mat_f,
+'Both Parents Absent' = did_unres_mat_both) 
+models_unres_mat %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
+                              fmt = 2,
+                              coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1mat_std" = "Baseline Score"))
+```
+
+Regressing on English score
+```{r}
+did_unres_eng <- feols(eng_std ~ migr + w1eng_std | schids, data = d_cl) 
+did_unres_eng_m <- feols(eng_std ~ migr_mo + w1eng_std | schids, data = d_cl)
+did_unres_eng_m_only <- feols(eng_std ~ migr_mo_only + w1eng_std | schids, data = d_cl) 
+did_unres_eng_f <- feols(eng_std ~ migr_fa + w1eng_std | schids, data = d_cl) 
+did_unres_eng_f_only <- feols(eng_std ~ migr_fa_only + w1eng_std | schids, data = d_cl) 
+did_unres_eng_both <- feols(eng_std ~ migr_both + w1eng_std | schids, data = d_cl)
+```
+
+Results
+```{r}
+models_unres_eng <- list(
+'Any Parent Absent' = did_unres_eng,
+'Only Mother Absent' = did_unres_eng_m_only,
+'Mother Absent' = did_unres_eng_m,
+'Only Father Absent' = did_unres_eng_f_only,
+'Father Absent' = did_unres_eng_f,
+'Both Parents Absent' = did_unres_eng_both) 
+models_unres_eng %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
+                              fmt = 2,
+                              coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1eng_std" = "Baseline Score"))
+```
+
 ## DID adjusted
 $$\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \theta \cdot X_{i,s} + \varepsilon_{i,s}$$
 $$X_{i,s}$$ denotes a vector of covariates about the characteristics of students, parents, and households.
@@ -507,6 +623,7 @@ models_adj_unres_cog <- list(
 'Both Parents Absent' = did_adj_unres_cog_both) 
 table_adj_unres_cog <- models_adj_unres_cog %>% 
   msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
+           fmt = 2,
            coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "Baseline Score"), output = 'markdown')
 ```
 Regressing on total exam score
@@ -550,6 +667,7 @@ models_adj_unres_chn <- list(
 'Both Parents Absent' = did_adj_unres_chn_both) 
 table_adj_unres_chn <- models_adj_unres_chn %>% 
   msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
+           fmt = 2,
            coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1chn_std" = "Baseline Score"), output = 'markdown')
 ```
 
@@ -573,6 +691,7 @@ models_adj_unres_mat <- list(
 'Both Parents Absent' = did_adj_unres_mat_both) 
 table_adj_unres_mat <- models_adj_unres_mat %>% 
   msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
+           fmt = 2,
            coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1mat_std" = "Baseline Score"), output = 'markdown')
 ```
 
@@ -597,6 +716,7 @@ models_adj_unres_eng <- list(
 'Both Parents Absent' = did_adj_unres_eng_both) 
 table_adj_unres_eng <- models_adj_unres_eng %>% 
   msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
+           fmt = 2,
            coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1eng_std" = "Baseline Score"), output = 'markdown')
 ```
 
