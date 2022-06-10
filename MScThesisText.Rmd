@@ -114,9 +114,27 @@ The control variables at the household level include the internet assess at home
 
 ## Data analysis
 
-I adopted `r cite_r("r-references.bib")` for all the analyses, the `fixest` package for building the econometric models [@bergé2018], and the `modelsummary` package for presenting the results [@arel-bundock2022]. I built a two-way fixed effect model in a difference-in-differences design, following Bai and colleagues' [-@bai2018; -@bai2020] approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. The model is: $$\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \theta \cdot X_{i,s} + \varepsilon_{i,s}$$For student $i$ in school $s$, $\Delta score_{i,s}$ is the change in standardized test score between baseline and follow-up surveys, $migr_{i,s}$ is the treatment dummy variable, $FE_{s}$ is the school-level fixed effect, $score_{i,s;base}$ is the standardized test score at baseline, and $X_{i,s}$ is the vector of covariates capturing the characteristics of children and their households. The standard errors were clustered at the school level.
+I adopted `r cite_r("r-references.bib")` for all the analyses, the `fixest` package for building the econometric models [@bergé2018], and the `modelsummary` package for presenting the results [@arel-bundock2022]. I built a two-way fixed effect model in a difference-in-differences (DID) design, following Bai and colleagues' [-@bai2018; -@bai2020] approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. I first specified an unrestricted and unadjusted model: $$\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \varepsilon_{i,s}$$For student $i$ in school $s$, $\Delta score_{i,s}$ is the change in standardized test score between baseline and follow-up surveys, $migr_{i,s}$ is the treatment dummy variable, $FE_{s}$ is the school-level fixed effect, and $score_{i,s;base}$ is the standardized test score at baseline. The model is unrestricted because it does not restrict on the coefficient associated with the baseline scores. The model is unadjusted as it does not adjust for additional covariates. Theoretically, it is unnecessary to include covariates that vary over group but remain consant over time; They would cancel out in the two-way fixed effect model. The standard errors were clustered at the school level.
+
+In addition, I presented an unrestricted and adjusted DID model: $$\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \theta \cdot X_{i,s} + \varepsilon_{i,s}$$where $X_{i,s}$ is the vector of covariates capturing the characteristics of children and their households. The control variables were measured in the baseline survey. This version of model lifts the restriction that covariates from the baseline survey would be associated with a coefficient that equals one.
 
 # Results
+
+```{r}
+table_unres_cog
+```
+
+```{r}
+table_unres_chn
+```
+
+```{r}
+table_unres_mat
+```
+
+```{r}
+table_unres_eng
+```
 
 ```{r}
 table_adj_unres_cog

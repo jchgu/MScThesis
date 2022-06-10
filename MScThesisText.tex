@@ -264,15 +264,197 @@ The key independent variable, the parental migration status, was identified by t
 
 The control variables at the student level include: student's age, gender, ethnicity, self-rated health, hukou type, and the number of siblings. I obtained the age by subtracting the student's birth year from the year 2013, the start of the baseline academic year. I coded students' gender as male = 0 and female = 1, ethnic minority status as Han Chinese = 0 and other ethnicity = 1, hukou status as rural (agricultural) hukou = 1 and other types = 0. I obtained the number of siblings of students through two items. Students who answered yes to the question ``Are you the only child of your family'' had no sibling. Those who answered no to this question were instructed to proceed to the next question, ``How many full or half siblings do you have'' -- elder brother, younger brother, elder sister, and younger sister, respectively. In these four columns, I transformed \texttt{NA} to zero. Then I added the four columns as the number of siblings of a student.
 
-The control variables include the internet assess at home, the self-rated number of books at home, and the years of education of the best-educated parent. These variables can approximate the level of human capital in a household. The internet assess was measured by the item ``Do {[}sic{]} your family own a computer and have an access to the Internet''. Those who answered ``Yes, we have both'' were coded as 1, and others as 0. The number of books was measured by the item ``How many books do your family own? (not including textbooks or magazines)''. Students chose from a range of 1 as ``very few'' to 5 as ``a great number''. The years of education of the best-educated parent were measured by two items. Students indicated their father's and mother's educational level, respectively. I transformed these two variables into years of education and retained the larger value.
+The control variables at the household level include the internet assess at home, the self-rated number of books at home, and the years of education of the best-educated parent. These variables can approximate the level of human capital in a household. The internet assess was measured by the item ``Do {[}sic{]} your family own a computer and have an access to the Internet''. Those who answered ``Yes, we have both'' were coded as 1, and others as 0. The number of books was measured by the item ``How many books do your family own? (not including textbooks or magazines)''. Students chose from a range of 1 as ``very few'' to 5 as ``a great number''. The years of education of the best-educated parent were measured by two items. Students indicated their father's and mother's educational level, respectively. I transformed these two variables into years of education and retained the larger value.
 
 \hypertarget{data-analysis}{%
 \subsection{Data analysis}\label{data-analysis}}
 
-I adopted R (Version 4.2.0; R Core Team, 2022) and the R-packages \emph{papaja} (Version 0.1.0.9999; Aust \& Barth, 2020), and \emph{tinylabels} (Version 0.2.3; Barth, 2022) for all the analyses, the \texttt{fixest} package for building the econometric models (Bergé, 2018), and the \texttt{modelsummary} package for presenting the results (Arel-Bundock, 2022). I built a two-way fixed effect model in a difference-in-differences design, following Bai and colleagues' (2018; 2020) approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. The model is: \[\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \theta \cdot X_{i,s} + \varepsilon_{i,s}\]For student \(i\) in school \(s\), \(\Delta score_{i,s}\) is the change in standardized test score between baseline and follow-up surveys, \(migr_{i,s}\) is the treatment dummy variable, \(FE_{s}\) is the school-level fixed effect, \(score_{i,s;base}\) is the baseline exam score, and \(X_{i,s}\) is the vector of covariates capturing the characteristics of children and their households. The standard errors were clustered at the school level.
+I adopted R (Version 4.2.0; R Core Team, 2022) and the R-packages \emph{papaja} (Version 0.1.0.9999; Aust \& Barth, 2020), and \emph{tinylabels} (Version 0.2.3; Barth, 2022) for all the analyses, the \texttt{fixest} package for building the econometric models (Bergé, 2018), and the \texttt{modelsummary} package for presenting the results (Arel-Bundock, 2022). I built a two-way fixed effect model in a difference-in-differences (DID) design, following Bai and colleagues' (2018; 2020) approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. I first specified an unrestricted and unadjusted model: \[\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \varepsilon_{i,s}\]For student \(i\) in school \(s\), \(\Delta score_{i,s}\) is the change in standardized test score between baseline and follow-up surveys, \(migr_{i,s}\) is the treatment dummy variable, \(FE_{s}\) is the school-level fixed effect, and \(score_{i,s;base}\) is the standardized test score at baseline. The model is unrestricted because it does not restrict on the coefficient associated with the baseline scores. The model is unadjusted as it does not adjust for additional covariates. Theoretically, it is unnecessary to include covariates that vary over group but remain consant over time; They would cancel out in the two-way fixed effect model. The standard errors were clustered at the school level.
+
+In addition, I presented an unrestricted and adjusted DID model: \[\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \theta \cdot X_{i,s} + \varepsilon_{i,s}\]where \(X_{i,s}\) is the vector of covariates capturing the characteristics of children and their households. The control variables were measured in the baseline survey. This version of model lifts the restriction that covariates from the baseline survey would be associated with a coefficient that equals one.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1520}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1680}}@{}}
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Any Parent Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Both Parents Absent
+\end{minipage} \\
+\midrule
+\endhead
+Explanator & -0.12*** & -0.07 & -0.10* & -0.16*** & -0.16*** & -0.16* \\
+& (0.03) & (0.04) & (0.04) & (0.04) & (0.04) & (0.07) \\
+Baseline Score & -0.62*** & -0.63*** & -0.63*** & -0.62*** & -0.62*** & -0.63*** \\
+& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
+Num.Obs. & 4134 & 3770 & 3894 & 3745 & 3869 & 3629 \\
+R2 & 0.440 & 0.449 & 0.442 & 0.453 & 0.445 & 0.448 \\
+R2 Adj. & 0.424 & 0.432 & 0.425 & 0.436 & 0.429 & 0.430 \\
+R2 Within & 0.371 & 0.379 & 0.374 & 0.383 & 0.377 & 0.382 \\
+R2 Pseudo & & & & & & \\
+AIC & 7697.6 & 6999.8 & 7273.5 & 6898.0 & 7171.1 & 6746.1 \\
+BIC & 8418.9 & 7710.6 & 7988.0 & 7608.0 & 7884.8 & 7452.5 \\
+Log.Lik. & -3734.792 & -3385.924 & -3522.761 & -3335.002 & -3471.561 & -3259.049 \\
+Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
+FE: schids & X & X & X & X & X & X \\
+\bottomrule
+\end{longtable}
+
+\textbf{Note:}
+\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1520}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1680}}@{}}
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Any Parent Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Both Parents Absent
+\end{minipage} \\
+\midrule
+\endhead
+Explanator & -0.08* & -0.12* & -0.10* & -0.05 & -0.05 & -0.05 \\
+& (0.03) & (0.05) & (0.04) & (0.05) & (0.04) & (0.07) \\
+Baseline Score & -0.31*** & -0.31*** & -0.31*** & -0.32*** & -0.32*** & -0.32*** \\
+& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
+Num.Obs. & 4134 & 3770 & 3894 & 3745 & 3869 & 3629 \\
+R2 & 0.163 & 0.166 & 0.165 & 0.170 & 0.170 & 0.172 \\
+R2 Adj. & 0.140 & 0.140 & 0.140 & 0.144 & 0.145 & 0.145 \\
+R2 Within & 0.148 & 0.147 & 0.148 & 0.153 & 0.153 & 0.153 \\
+R2 Pseudo & & & & & & \\
+AIC & 8749.8 & 7947.9 & 8227.8 & 7838.8 & 8117.1 & 7596.2 \\
+BIC & 9471.1 & 8658.6 & 8942.3 & 8548.8 & 8830.8 & 8302.6 \\
+Log.Lik. & -4260.905 & -3859.940 & -3999.901 & -3805.376 & -3944.541 & -3684.093 \\
+Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
+FE: schids & X & X & X & X & X & X \\
+\bottomrule
+\end{longtable}
+
+\textbf{Note:}
+\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1520}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1680}}@{}}
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Any Parent Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Both Parents Absent
+\end{minipage} \\
+\midrule
+\endhead
+Explanator & -0.08* & -0.12* & -0.13** & 0.01 & -0.04 & -0.14* \\
+& (0.03) & (0.05) & (0.04) & (0.05) & (0.04) & (0.07) \\
+Baseline Score & -0.29*** & -0.29*** & -0.29*** & -0.29*** & -0.29*** & -0.30*** \\
+& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
+Num.Obs. & 4134 & 3770 & 3894 & 3745 & 3869 & 3629 \\
+R2 & 0.164 & 0.172 & 0.170 & 0.169 & 0.167 & 0.173 \\
+R2 Adj. & 0.141 & 0.146 & 0.145 & 0.143 & 0.142 & 0.147 \\
+R2 Within & 0.149 & 0.153 & 0.154 & 0.151 & 0.153 & 0.158 \\
+R2 Pseudo & & & & & & \\
+AIC & 8312.4 & 7556.5 & 7816.0 & 7503.0 & 7765.6 & 7272.1 \\
+BIC & 9033.7 & 8267.3 & 8530.5 & 8213.0 & 8479.3 & 7978.5 \\
+Log.Lik. & -4042.216 & -3664.273 & -3794.002 & -3637.509 & -3768.779 & -3522.049 \\
+Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
+FE: schids & X & X & X & X & X & X \\
+\bottomrule
+\end{longtable}
+
+\textbf{Note:}
+\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1520}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1680}}@{}}
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Any Parent Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Both Parents Absent
+\end{minipage} \\
+\midrule
+\endhead
+Explanator & -0.06* & -0.05 & -0.04 & -0.09* & -0.07 & -0.01 \\
+& (0.03) & (0.05) & (0.04) & (0.04) & (0.04) & (0.05) \\
+Baseline Score & -0.17*** & -0.17*** & -0.18*** & -0.17*** & -0.18*** & -0.18*** \\
+& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
+Num.Obs. & 4134 & 3770 & 3894 & 3745 & 3869 & 3629 \\
+R2 & 0.091 & 0.097 & 0.098 & 0.092 & 0.094 & 0.100 \\
+R2 Adj. & 0.065 & 0.069 & 0.071 & 0.064 & 0.066 & 0.071 \\
+R2 Within & 0.071 & 0.072 & 0.073 & 0.073 & 0.073 & 0.076 \\
+R2 Pseudo & & & & & & \\
+AIC & 7185.6 & 6502.1 & 6737.9 & 6513.7 & 6748.0 & 6303.0 \\
+BIC & 7906.8 & 7212.8 & 7452.4 & 7223.7 & 7461.7 & 7009.4 \\
+Log.Lik. & -3478.783 & -3137.026 & -3254.945 & -3142.869 & -3259.978 & -3037.495 \\
+Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
+FE: schids & X & X & X & X & X & X \\
+\bottomrule
+\end{longtable}
+
+\textbf{Note:}
+\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1328}}
@@ -533,36 +715,6 @@ FE: schids & X & X & X & X & X & X \\
 
 \textbf{Note:}
 \^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
-
-\begin{verbatim}
-msummary(models_adj_unres_cog,
-  stars = c('*' = .05, '**' = .01, '***' = .001), 
-  coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "Baseline Score"), 
-  output = 'markdown')
-\end{verbatim}
-
-\begin{verbatim}
-msummary(models_adj_unres_chn,
-         stars = c('*' = .05, '**' = .01, '***' = .001), 
-         coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1chn_std" = "Baseline Score"), 
-         output = 'markdown')
-\end{verbatim}
-
-\begin{verbatim}
-msummary(models_adj_unres_mat,
-         stars = c('*' = .05, '**' = .01, '***' = .001), 
-         fmt = 2,
-         coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1mat_std" = "Baseline Score"), 
-         output = 'markdown')
-\end{verbatim}
-
-\begin{verbatim}
-msummary(models_adj_unres_eng,
-         stars = c('*' = .05, '**' = .01, '***' = .001), 
-         fmt = 2,
-         coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1eng_std" = "Baseline Score"), 
-         output = 'markdown')
-\end{verbatim}
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
