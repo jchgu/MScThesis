@@ -21,6 +21,7 @@ d_stu2 <- read_dta('cepsw2studentCN.dta') #wave 2 student
 d_par1 <- read_dta('cepsw1parentCN.dta') #wave 1 parent
 d_par2 <- read_dta('cepsw2parentCN.dta') #wave 2 parent
 d_sch1 <- read_dta('cepsw1principalCN.dta') #wave 1 school principal
+d_sch2 <- read_dta('cepsw2principalCN.dta')
 ```
 
 Remove wave 1's observations of grade 9; they were not followed up in wave 2
@@ -37,7 +38,7 @@ d_par1 <- d_par1 %>%
 
 Assemble a panel dataset in wide format
 ```{r}
-dw1 <- d_stu1 %>% left_join(d_par1, by=c('ids', 'clsids', 'schids', 'ctyids', 'fall')) 
+dw1 <- d_stu1 %>% left_join(d_par1, by=c('ids', 'clsids', 'schids', 'ctyids', 'fall')) %>% left_join(d_sch1, by=c('schids', 'ctyids', 'fall'))
 dw2 <- d_stu2 %>% left_join(d_par2, by=c('ids', 'clsids', 'w2clsids', 'schids', 'ctyids', 'w2fall'))
 d <- dw1 %>% right_join(dw2, by=c('ids', 'clsids', 'schids', 'ctyids'))
 ```
@@ -46,7 +47,7 @@ d <- dw1 %>% right_join(dw2, by=c('ids', 'clsids', 'schids', 'ctyids'))
 d <- d %>% mutate(
   age = 2013 - a02a, #student's age at baseline
   local.resi = age - a07, #years of residence at the current county
-  w1chn_100 = tr_chn/w2upchn*100,
+  w1chn_100 = tr_chn/w2upchn*100, #raw exam scores at 100-point scale
   w1mat_100 = tr_mat/w2upmat*100,
   w1eng_100 = tr_eng/w2upeng*100,
   w2chn_100 = w2chn/w2upchn*100,
@@ -62,12 +63,12 @@ d <- d %>% mutate(
 Detect outliers
 ```{r}
 d_outlier <- d %>% filter(w1chn_100 > 100 | w1mat_100>100|w1eng_100>100|w2chn_100>100|w2mat_100>100|w2eng_100>100)
-d_cl1 <- d_cl %>% anti_join(d_outlier, by=c('ids', 'clsids', 'schids', 'ctyids'))
+d1 <- d %>% anti_join(d_outlier, by=c('ids', 'clsids', 'schids', 'ctyids'))
 ```
 
 Compute standardized exam grades (within-school z-scores)
-```{r}
-d <- d %>% #Within-school standardization for Chinese, math, English exams and their total, respectively
+```{}
+d1 <- d1 %>% #Within-school standardization for Chinese, math, English exams and their total, respectively
   group_by(schids) %>%
   mutate(w1chn_mean = mean(w1chn_100, na.rm=T),
          w1mat_mean = mean(w1mat_100, na.rm=T),
@@ -78,7 +79,10 @@ d <- d %>% #Within-school standardization for Chinese, math, English exams and t
          w2eng_mean = mean(w2eng_100, na.rm=T),
          w2ttl_mean = mean(w2ttl_100, na.rm=T),
          )  %>% ungroup()
-d <- d %>% 
+```
+
+```{}
+d1 <- d1 %>% 
   mutate(w1chn_dif = w1chn_100 - w1chn_mean,
          w1mat_dif = w1mat_100 - w1mat_mean,
          w1eng_dif = w1eng_100 - w1eng_mean,
@@ -87,16 +91,16 @@ d <- d %>%
          w2mat_dif = w2mat_100 - w2mat_mean,
          w2eng_dif = w2eng_100 - w2eng_mean,
          w2ttl_dif = w2ttl_100 - w2ttl_mean,
-         cog_dif = w2cog3pl - cog3pl
+         
          )
 ```
 
 Sample
 ```{r}
-d_cl <- d %>% 
+d_cl <- d1 %>% 
   filter(w2a0801==1) %>% #parents who are married (and alive)
   filter(be1201==1 & be1202==1) %>% #both parents live with children at baseline
-  filter(local.resi>=6) #having stayed in the current county for at least six years (duration of primary school) before baseline
+  filter(stmigrant==1) #having stayed in the current county for at least six years (duration of primary school) before baseline
 ```
 
 ## Variables 
@@ -105,7 +109,8 @@ d_cl <- d_cl %>%
   mutate(chn_dif = w2chn_100 - w1chn_100,
          mat_dif = w2mat_100 - w1mat_100,
          eng_dif = w2eng_100 - w1eng_100,
-         ttl_dif = w2ttl_100 - w1ttl_100) %>%
+         ttl_dif = w2ttl_100 - w1ttl_100,
+         cog_dif = w2cog3pl - cog3pl) %>%
   drop_na(cog_dif, chn_dif, mat_dif, eng_dif, ttl_dif)
 ```
 
@@ -113,26 +118,27 @@ Control variables
 ```{r}
 d_cl <- d_cl %>% mutate(
          ch.girl = if_else(a01 == 2, 1, 0), #student is girl
-         ch.rural = if_else(bd05 == 1, 1, 0), #student holds rural (agricultural) hukou
+         ch.rural = sthktype, #student holds rural (agricultural) hukou
          #ch.only.child = if_else(b01 == 1, 1, 0), #student is only child
-         ch.boarding = if_else(c18 == 1, 1, 0), #student is boarding at school
+         ch.boarding = stbrd, #student is boarding at school
          ch.ethn.minority = if_else(a03 != 1, 1, 0), #student is ethnic minority
          ch.health = a17, #student's self-reported health
-         par.edu = if_else(b06 > b07, b06, b07), #Among two parents, the best-educated one's educational level
-         #fa.edu = b07,
-         #mo.edu = b06,
+         ch.skip.grd = if_else(c03 == 0, 0, 1),
+         ch.repeat.grd = if_else(c04 == 0, 0, 1),
+         ch.illness = if_else(a10 == 1, 1, 0),
+         ch.preschool = if_else(c01 == 1, 1, 0),
+         par.edu = stprhedu, #Among two parents, the best-educated one's educational level
+         par.ccp = if_else(be06 == 1, 1, 0), #At least one parent is communist party member
+         home.finances = steco_3c,
          home.internet = if_else(b13 == 2, 1, 0), #student has internet access at home
          home.book = b12 #Amount of book at home, student self-rated 
 ) %>% drop_na(
-  ch.girl, ch.rural, ch.health, ch.boarding, ch.ethn.minority, ch.health, par.edu, home.internet, home.book)
+ch.girl, ch.rural, ch.health, ch.boarding, ch.ethn.minority, ch.health, ch.skip.grd, ch.repeat.grd, ch.illness, ch.preschool, par.edu, par.ccp, home.internet, home.book, home.finances)
 ```
 
 ```{r}
-d_cl$b0201 <- d_cl$b0201 %>% replace_na(0)
-d_cl$b0202 <- d_cl$b0202 %>% replace_na(0)
-d_cl$b0203 <- d_cl$b0203 %>% replace_na(0)
-d_cl$b0204 <- d_cl$b0204 %>% replace_na(0)
-d_cl <- d_cl %>% mutate(ch.sibling = if_else(b01 == 1, 0, b0201 + b0202 + b0203 + b0204)) %>% #number of siblings
+d_cl$stsib <- d_cl$stsib %>% replace_na(0) %>% as.numeric()
+d_cl <- d_cl %>% mutate(ch.sibling = if_else(stonly == 1, 0, stsib)) %>% #number of siblings
   drop_na(ch.sibling)
 ```
 
@@ -180,7 +186,8 @@ d_cl <- d_cl %>% mutate(
   migr_mo_only = NA,
   migr_mo = NA,
   migr_both = NA
-  ) %>% drop_na(migr)
+  ) 
+d_cl <- d_cl %>% drop_na(migr)
 ```
 
 Only mother migrated
@@ -226,11 +233,11 @@ df <- d_cl %>% select(
 
 t-test
 ```{r}
-t.test(cog_dif ~ migr, data = d_cl1)
-t.test(ttl_dif ~ migr, data = d_cl1)
-t.test(chn_dif ~ migr, data = d_cl1)
-t.test(mat_dif ~ migr, data = d_cl1)
-t.test(eng_dif ~ migr, data = d_cl1)
+t.test(cog_dif ~ migr, data = d_cl)
+t.test(ttl_dif ~ migr, data = d_cl)
+t.test(chn_dif ~ migr, data = d_cl)
+t.test(mat_dif ~ migr, data = d_cl)
+t.test(eng_dif ~ migr, data = d_cl)
 ```
 
 
@@ -416,12 +423,12 @@ d_cl %>%
 ## DID unrestricted
 Regressing on cognitive test score (standardized)
 ```{r}
-did_unres_cog <- feols(cog_dif ~ migr + cog3pl | schids, data = d_cl1) 
-did_unres_cog_m_only <- feols(cog_dif ~ migr_mo_only + cog3pl | schids, data = d_cl1) 
-did_unres_cog_m <- feols(cog_dif ~ migr_mo + cog3pl | schids, data = d_cl1) 
-did_unres_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl | schids, data = d_cl1) 
-did_unres_cog_f <- feols(cog_dif ~ migr_fa + cog3pl | schids, data = d_cl1) 
-did_unres_cog_both <- feols(cog_dif ~ migr_both + cog3pl | schids, data = d_cl1)
+did_unres_cog <- feols(cog_dif ~ migr + cog3pl | schids, data = d_cl) 
+did_unres_cog_m_only <- feols(cog_dif ~ migr_mo_only + cog3pl | schids, data = d_cl) 
+did_unres_cog_m <- feols(cog_dif ~ migr_mo + cog3pl | schids, data = d_cl) 
+did_unres_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl | schids, data = d_cl) 
+did_unres_cog_f <- feols(cog_dif ~ migr_fa + cog3pl | schids, data = d_cl) 
+did_unres_cog_both <- feols(cog_dif ~ migr_both + cog3pl | schids, data = d_cl)
 ```
 
 Results
@@ -440,12 +447,12 @@ table_unres_cog
 ```
 
 ```{r}
-did_unres_ttl <- feols(ttl_dif ~ migr + w1ttl_100 | schids, data = d_cl1) 
-did_unres_ttl_m_only <- feols(ttl_dif ~ migr_mo_only + w1ttl_100 | schids, data = d_cl1) 
-did_unres_ttl_m <- feols(ttl_dif ~ migr_mo + w1ttl_100 | schids, data = d_cl1) 
-did_unres_ttl_f_only <- feols(ttl_dif ~ migr_fa_only + w1ttl_100 | schids, data = d_cl1) 
-did_unres_ttl_f <- feols(ttl_dif ~ migr_fa + w1ttl_100 | schids, data = d_cl1) 
-did_unres_ttl_both <- feols(ttl_dif ~ migr_both + w1ttl_100 | schids, data = d_cl1)
+did_unres_ttl <- feols(ttl_dif ~ migr + w1ttl_100 | schids, data = d_cl) 
+did_unres_ttl_m_only <- feols(ttl_dif ~ migr_mo_only + w1ttl_100 | schids, data = d_cl) 
+did_unres_ttl_m <- feols(ttl_dif ~ migr_mo + w1ttl_100 | schids, data = d_cl) 
+did_unres_ttl_f_only <- feols(ttl_dif ~ migr_fa_only + w1ttl_100 | schids, data = d_cl) 
+did_unres_ttl_f <- feols(ttl_dif ~ migr_fa + w1ttl_100 | schids, data = d_cl) 
+did_unres_ttl_both <- feols(ttl_dif ~ migr_both + w1ttl_100 | schids, data = d_cl)
 ```
 
 ```{r}
@@ -465,12 +472,12 @@ table_unres_ttl
 
 Regressing on Chinese exam score
 ```{r}
-did_unres_chn <- feols(chn_dif ~ migr + w1chn_100 | schids, data = d_cl1) 
-did_unres_chn_m_only <- feols(chn_dif ~ migr_mo_only + w1chn_100 | schids, data = d_cl1) 
-did_unres_chn_m <- feols(chn_dif ~ migr_mo + w1chn_100 | schids, data = d_cl1) 
-did_unres_chn_f_only <- feols(chn_dif ~ migr_fa_only + w1chn_100 | schids, data = d_cl1) 
-did_unres_chn_f <- feols(chn_dif ~ migr_fa + w1chn_100 | schids, data = d_cl1) 
-did_unres_chn_both <- feols(chn_dif ~ migr_both + w1chn_100 | schids, data = d_cl1)
+did_unres_chn <- feols(chn_dif ~ migr + w1chn_100 | schids, data = d_cl) 
+did_unres_chn_m_only <- feols(chn_dif ~ migr_mo_only + w1chn_100 | schids, data = d_cl) 
+did_unres_chn_m <- feols(chn_dif ~ migr_mo + w1chn_100 | schids, data = d_cl) 
+did_unres_chn_f_only <- feols(chn_dif ~ migr_fa_only + w1chn_100 | schids, data = d_cl) 
+did_unres_chn_f <- feols(chn_dif ~ migr_fa + w1chn_100 | schids, data = d_cl) 
+did_unres_chn_both <- feols(chn_dif ~ migr_both + w1chn_100 | schids, data = d_cl)
 ```
 
 Results
@@ -490,12 +497,12 @@ table_unres_chn
 
 Regressing on Math score
 ```{r}
-did_unres_mat <- feols(mat_dif ~ migr + w1mat_100| schids, data = d_cl1) 
-did_unres_mat_m_only <- feols(mat_dif ~ migr_mo_only + w1mat_100| schids, data = d_cl1) 
-did_unres_mat_m <- feols(mat_dif ~ migr_mo + w1mat_100| schids, data = d_cl1) 
-did_unres_mat_f_only <- feols(mat_dif ~ migr_fa_only + w1mat_100| schids, data = d_cl1) 
-did_unres_mat_f <- feols(mat_dif ~ migr_fa + w1mat_100| schids, data = d_cl1) 
-did_unres_mat_both <- feols(mat_dif ~ migr_both + w1mat_100| schids, data = d_cl1)
+did_unres_mat <- feols(mat_dif ~ migr + w1mat_100| schids, data = d_cl) 
+did_unres_mat_m_only <- feols(mat_dif ~ migr_mo_only + w1mat_100| schids, data = d_cl) 
+did_unres_mat_m <- feols(mat_dif ~ migr_mo + w1mat_100| schids, data = d_cl) 
+did_unres_mat_f_only <- feols(mat_dif ~ migr_fa_only + w1mat_100| schids, data = d_cl) 
+did_unres_mat_f <- feols(mat_dif ~ migr_fa + w1mat_100| schids, data = d_cl) 
+did_unres_mat_both <- feols(mat_dif ~ migr_both + w1mat_100| schids, data = d_cl)
 ```
 
 Results
@@ -515,12 +522,12 @@ table_unres_mat
 
 Regressing on English score
 ```{r}
-did_unres_eng <- feols(eng_dif ~ migr + w1eng_100| schids, data = d_cl1) 
-did_unres_eng_m <- feols(eng_dif ~ migr_mo + w1eng_100| schids, data = d_cl1)
-did_unres_eng_m_only <- feols(eng_dif ~ migr_mo_only + w1eng_100| schids, data = d_cl1) 
-did_unres_eng_f <- feols(eng_dif ~ migr_fa + w1eng_100| schids, data = d_cl1) 
-did_unres_eng_f_only <- feols(eng_dif ~ migr_fa_only + w1eng_100| schids, data = d_cl1) 
-did_unres_eng_both <- feols(eng_dif ~ migr_both + w1eng_100| schids, data = d_cl1)
+did_unres_eng <- feols(eng_dif ~ migr + w1eng_100| schids, data = d_cl) 
+did_unres_eng_m <- feols(eng_dif ~ migr_mo + w1eng_100| schids, data = d_cl)
+did_unres_eng_m_only <- feols(eng_dif ~ migr_mo_only + w1eng_100| schids, data = d_cl) 
+did_unres_eng_f <- feols(eng_dif ~ migr_fa + w1eng_100| schids, data = d_cl) 
+did_unres_eng_f_only <- feols(eng_dif ~ migr_fa_only + w1eng_100| schids, data = d_cl) 
+did_unres_eng_both <- feols(eng_dif ~ migr_both + w1eng_100| schids, data = d_cl)
 ```
 
 Results
@@ -543,12 +550,12 @@ $$\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \
 
 Regressing on cognitive test score (standardized)
 ```{r}
-did_adj_unres_cog <- feols(cog_dif ~ migr + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_cog_m_only <- feols(cog_dif ~ migr_mo_only + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_cog_m <- feols(cog_dif ~ migr_mo + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_cog_f <- feols(cog_dif ~ migr_fa + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_cog_both <- feols(cog_dif ~ migr_both + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1)
+did_adj_unres_cog <- feols(cog_dif ~ migr + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_m_only <- feols(cog_dif ~ migr_mo_only + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_m <- feols(cog_dif ~ migr_mo + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_f <- feols(cog_dif ~ migr_fa + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
+did_adj_unres_cog_both <- feols(cog_dif ~ migr_both + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -569,12 +576,12 @@ table_adj_unres_cog
 
 Regressing on total exam score
 ```{r}
-did_adj_unres_ttl <- feols(ttl_dif ~ migr + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_ttl_m_only <- feols(ttl_dif ~ migr_mo_only + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_ttl_m <- feols(ttl_dif ~ migr_mo + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_ttl_f <- feols(ttl_dif ~ migr_fa + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_ttl_f_only <- feols(ttl_dif ~ migr_fa_only + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_ttl_both <- feols(ttl_dif ~ migr_both + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1)
+did_adj_unres_ttl <- feols(ttl_dif ~ migr + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_m_only <- feols(ttl_dif ~ migr_mo_only + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_m <- feols(ttl_dif ~ migr_mo + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_f <- feols(ttl_dif ~ migr_fa + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_f_only <- feols(ttl_dif ~ migr_fa_only + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_ttl_both <- feols(ttl_dif ~ migr_both + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -592,12 +599,12 @@ table_adj_unres_ttl
 
 Regressing on Chinese exam score
 ```{r}
-did_adj_unres_chn <- feols(chn_dif ~ migr + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_chn_m_only <- feols(chn_dif ~ migr_mo_only + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_chn_m <- feols(chn_dif ~ migr_mo + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_chn_f_only <- feols(chn_dif ~ migr_fa_only + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_chn_f <- feols(chn_dif ~ migr_fa + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_chn_both <- feols(chn_dif ~ migr_both + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1)
+did_adj_unres_chn <- feols(chn_dif ~ migr + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_m_only <- feols(chn_dif ~ migr_mo_only + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_m <- feols(chn_dif ~ migr_mo + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_f_only <- feols(chn_dif ~ migr_fa_only + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_f <- feols(chn_dif ~ migr_fa + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_chn_both <- feols(chn_dif ~ migr_both + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -618,12 +625,12 @@ table_adj_unres_chn
 
 Regressing on Math score
 ```{r}
-did_adj_unres_mat <- feols(mat_dif ~ migr + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_mat_m_only <- feols(mat_dif ~ migr_mo_only + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_mat_m <- feols(mat_dif ~ migr_mo + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_mat_f_only <- feols(mat_dif ~ migr_fa_only + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_mat_f <- feols(mat_dif ~ migr_fa + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_mat_both <- feols(mat_dif ~ migr_both + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1)
+did_adj_unres_mat <- feols(mat_dif ~ migr + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_m_only <- feols(mat_dif ~ migr_mo_only + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_m <- feols(mat_dif ~ migr_mo + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_f_only <- feols(mat_dif ~ migr_fa_only + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_f <- feols(mat_dif ~ migr_fa + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_mat_both <- feols(mat_dif ~ migr_both + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -644,12 +651,12 @@ table_adj_unres_mat
 
 Regressing on English score
 ```{r}
-did_adj_unres_eng <- feols(eng_dif ~ migr + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_eng_m <- feols(eng_dif ~ migr_mo + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1)
-did_adj_unres_eng_m_only <- feols(eng_dif ~ migr_mo_only + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_eng_f <- feols(eng_dif ~ migr_fa + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_eng_f_only <- feols(eng_dif ~ migr_fa_only + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1) 
-did_adj_unres_eng_both <- feols(eng_dif ~ migr_both + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet | schids, data = d_cl1)
+did_adj_unres_eng <- feols(eng_dif ~ migr + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_eng_m <- feols(eng_dif ~ migr_mo + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
+did_adj_unres_eng_m_only <- feols(eng_dif ~ migr_mo_only + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_eng_f <- feols(eng_dif ~ migr_fa + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_eng_f_only <- feols(eng_dif ~ migr_fa_only + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
+did_adj_unres_eng_both <- feols(eng_dif ~ migr_both + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
 ```
 
 Results
@@ -670,7 +677,7 @@ table_adj_unres_eng
 
 ## Matching
 ```{r}
-m.out <- matchit(migr ~ age + cog3pl + w1ttl_100 + ch.girl + ch.health + ch.rural + ch.sibling + ch.boarding + ch.ethn.minority + par.edu.year	+ home.book	+ home.internet, data = d_cl1, method = "nearest")
+m.out <- matchit(migr ~ age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet, data = d_cl, method = "cem")
 summary(m.out, un = FALSE)
 ```
 
@@ -679,10 +686,10 @@ d_match <- match.data(m.out)
 ```
 
 ```{r}
-feols(cog_dif ~ migr + cog3pl + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet  | schids, data = d_match, weights = d_match$weights) %>% 
+feols(cog_dif ~ migr + cog3pl + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_match, weights = d_match$weights) %>% 
   msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
            fmt = 2)
-feols(ttl_dif ~ migr + w1ttl_dif + age + ch.girl + ch.health + ch.rural + ch.sibling +  ch.boarding + ch.ethn.minority + par.edu.year + home.book + home.internet  | schids, data = d_match, weights = d_match$weights) %>% 
+feols(ttl_dif ~ migr + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet  | schids, data = d_match, weights = d_match$weights) %>% 
   msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
            fmt = 2)
 ```
