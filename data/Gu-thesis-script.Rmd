@@ -20,6 +20,7 @@ d_stu1 <- read_dta('cepsw1studentCN.dta') #wave 1 student
 d_stu2 <- read_dta('cepsw2studentCN.dta') #wave 2 student
 d_par1 <- read_dta('cepsw1parentCN.dta') #wave 1 parent
 d_par2 <- read_dta('cepsw2parentCN.dta') #wave 2 parent
+d_sch1 <- read_dta('cepsw1principalCN.dta') #wave 1 school principal
 ```
 
 Remove wave 1's observations of grade 9; they were not followed up in wave 2
@@ -58,8 +59,9 @@ d <- d %>% mutate(
   )
 ```
 
-
+Detect outliers
 ```{r}
+d_outlier <- d %>% filter(w1chn_100 > 100 | w1mat_100>100|w1eng_100>100|w2chn_100>100|w2mat_100>100|w2eng_100>100)
 d_cl1 <- d_cl %>% anti_join(d_outlier, by=c('ids', 'clsids', 'schids', 'ctyids'))
 ```
 
