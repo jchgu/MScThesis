@@ -75,14 +75,17 @@ d1 <- d1 %>% group_by(clsids) %>%
   ) %>% ungroup()
 ```
 
+```{r}
+d1 <- d1 %>% group_by(clsids) %>%
+  mutate(
+    w1ttl_std1 = rescale(w1ttl),
+    w2ttl_std1 = rescale(w2ttl)
+    ) %>% ungroup()
+```
 
 ```{r}
 d1 <- d1 %>% group_by(clsids) %>%
   mutate(
-    w1ttl_max = max(w1ttl, na.rm = T),
-    w1ttl_min = min(w1ttl, na.rm = T),
-    w2ttl_max = max(w2ttl, na.rm = T),
-    w2ttl_min = min(w2ttl, na.rm = T),
     w1ttl_100_mean = mean(w1ttl_100, na.rm = T),
     w2ttl_100_mean = mean(w2ttl_100, na.rm = T)
   ) %>% ungroup()
@@ -275,9 +278,7 @@ t-test
 ```{r}
 t.test(cog_dif ~ migr, data = d_cl)
 t.test(ttl_dif ~ migr, data = d_cl)
-t.test(chn_dif ~ migr, data = d_cl)
-t.test(mat_dif ~ migr, data = d_cl)
-t.test(eng_dif ~ migr, data = d_cl)
+t.test(ttl_dm_dif ~ migr, data = d_cl)
 ```
 
 
@@ -299,165 +300,6 @@ des_par.edu.year
 des_book
 des_internet
 des_ethn.minority
-```
-
-
-### Wave 2 outcomes of treatment group vs control group
-```{r}
-d_cl %>%
-  group_by(migr) %>% 
-  summarise(n_cases = n(),
-            mean_cog = mean(w2cog3pl, na.rm=T),
-            mean_ttl = mean(w2ttl_dif, na.rm=T),
-            mean_chn = mean(w2chn_dif, na.rm=T),
-            mean_mat = mean(w2mat_dif, na.rm=T),
-            mean_eng = mean(w2eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_mo_only) %>% 
-  summarise(n_cases = n(),
-            mean_cog = mean(w2cog3pl, na.rm=T),
-            mean_ttl = mean(w2ttl_dif, na.rm=T),
-            mean_chn = mean(w2chn_dif, na.rm=T),
-            mean_mat = mean(w2mat_dif, na.rm=T),
-            mean_eng = mean(w2eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_mo) %>% 
-  summarise(n_cases = n(),
-            mean_cog = mean(w2cog3pl, na.rm=T),
-            mean_ttl = mean(w2ttl_dif, na.rm=T),
-            mean_chn = mean(w2chn_dif, na.rm=T),
-            mean_mat = mean(w2mat_dif, na.rm=T),
-            mean_eng = mean(w2eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_fa_only) %>% 
-  summarise(n_cases = n(),
-            mean_cog = mean(w2cog3pl, na.rm=T),
-            mean_ttl = mean(w2ttl_dif, na.rm=T),
-            mean_chn = mean(w2chn_dif, na.rm=T),
-            mean_mat = mean(w2mat_dif, na.rm=T),
-            mean_eng = mean(w2eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_fa) %>% 
-  summarise(n_cases = n(),
-            mean_cog = mean(w2cog3pl, na.rm=T),
-            mean_ttl = mean(w2ttl_dif, na.rm=T),
-            mean_chn = mean(w2chn_dif, na.rm=T),
-            mean_mat = mean(w2mat_dif, na.rm=T),
-            mean_eng = mean(w2eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_both) %>% 
-  summarise(n_cases = n(),
-            mean_cog = mean(w2cog3pl, na.rm=T),
-            mean_ttl = mean(w2ttl_dif, na.rm=T),
-            mean_chn = mean(w2chn_dif, na.rm=T),
-            mean_mat = mean(w2mat_dif, na.rm=T),
-            mean_eng = mean(w2eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-### Change in outcomes of treatment group vs control group
-```{r}
-d_cl %>%
-  group_by(migr) %>% 
-  summarise(n_cases = n(),
-            mean_change_cog = mean(cog_dif, na.rm=T),
-            mean_change_ttl = mean(ttl_dif, na.rm=T),
-            mean_change_chn = mean(chn_dif, na.rm=T),
-            mean_change_mat = mean(mat_dif, na.rm=T),
-            mean_change_eng = mean(eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_mo_only) %>% 
-  summarise(n_cases = n(),
-            mean_change_cog = mean(cog_dif, na.rm=T),
-            mean_change_ttl = mean(ttl_dif, na.rm=T),
-            mean_change_chn = mean(chn_dif, na.rm=T),
-            mean_change_mat = mean(mat_dif, na.rm=T),
-            mean_change_eng = mean(eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_mo) %>% 
-  summarise(n_cases = n(),
-            mean_change_cog = mean(cog_dif, na.rm=T),
-            mean_change_ttl = mean(ttl_dif, na.rm=T),
-            mean_change_chn = mean(chn_dif, na.rm=T),
-            mean_change_mat = mean(mat_dif, na.rm=T),
-            mean_change_eng = mean(eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_fa_only) %>% 
-  summarise(n_cases = n(),
-            mean_change_cog = mean(cog_dif, na.rm=T),
-            mean_change_ttl = mean(ttl_dif, na.rm=T),
-            mean_change_chn = mean(chn_dif, na.rm=T),
-            mean_change_mat = mean(mat_dif, na.rm=T),
-            mean_change_eng = mean(eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_fa) %>% 
-  summarise(n_cases = n(),
-            mean_change_cog = mean(cog_dif, na.rm=T),
-            mean_change_ttl = mean(ttl_dif, na.rm=T),
-            mean_change_chn = mean(chn_dif, na.rm=T),
-            mean_change_mat = mean(mat_dif, na.rm=T),
-            mean_change_eng = mean(eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
-```
-
-```{r}
-d_cl %>%
-  group_by(migr_both) %>% 
-  summarise(n_cases = n(),
-            mean_change_cog = mean(cog_dif, na.rm=T),
-            mean_change_ttl = mean(ttl_dif, na.rm=T),
-            mean_change_chn = mean(chn_dif, na.rm=T),
-            mean_change_mat = mean(mat_dif, na.rm=T),
-            mean_change_eng = mean(eng_dif, na.rm=T)
-            ) %>%
-  drop_na()
 ```
 
 ## DID unrestricted
