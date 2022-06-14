@@ -9,8 +9,6 @@ library(tidyverse)
 library(haven)
 library(fixest)
 library(modelsummary)
-library(MatchIt)
-library(datawizard)
 ```
 
 ## Data cleaning
@@ -20,8 +18,8 @@ d_stu1 <- read_dta('cepsw1studentCN.dta') #wave 1 student
 d_stu2 <- read_dta('cepsw2studentCN.dta') #wave 2 student
 d_par1 <- read_dta('cepsw1parentCN.dta') #wave 1 parent
 d_par2 <- read_dta('cepsw2parentCN.dta') #wave 2 parent
-d_sch1 <- read_dta('cepsw1principalCN.dta') #wave 1 school principal
-d_sch2 <- read_dta('cepsw2principalCN.dta')
+#d_sch1 <- read_dta('cepsw1principalCN.dta') #wave 1 school principal
+#d_sch2 <- read_dta('cepsw2principalCN.dta')
 ```
 
 Remove wave 1's observations of grade 9; they were not followed up in wave 2
@@ -38,7 +36,8 @@ d_par1 <- d_par1 %>%
 
 Assemble a panel dataset in wide format
 ```{r}
-dw1 <- d_stu1 %>% left_join(d_par1, by=c('ids', 'clsids', 'schids', 'ctyids', 'fall')) %>% left_join(d_sch1, by=c('schids', 'ctyids', 'fall'))
+dw1 <- d_stu1 %>% left_join(d_par1, by=c('ids', 'clsids', 'schids', 'ctyids', 'fall')) 
+#%>% left_join(d_sch1, by=c('schids', 'ctyids', 'fall'))
 dw2 <- d_stu2 %>% left_join(d_par2, by=c('ids', 'clsids', 'w2clsids', 'schids', 'ctyids', 'w2fall'))
 d <- dw1 %>% right_join(dw2, by=c('ids', 'clsids', 'schids', 'ctyids'))
 ```
@@ -46,7 +45,6 @@ d <- dw1 %>% right_join(dw2, by=c('ids', 'clsids', 'schids', 'ctyids'))
 ```{r}
 d <- d %>% mutate(
   age = 2013 - a02a, #student's age at baseline
-  local.resi = age - a07, #years of residence at the current county
   w1chn_100 = tr_chn/w2upchn*100, #raw exam scores at 100-point scale
   w1mat_100 = tr_mat/w2upmat*100,
   w1eng_100 = tr_eng/w2upeng*100,
@@ -59,43 +57,31 @@ d <- d %>% mutate(
   w2ttl = w2chn + w2mat + w2eng,
   w1ttl_100 = w1chn_100 + w1mat_100 + w1eng_100,
   w2ttl_100 = w2chn_100 + w2mat_100 + w2eng_100,
+  ttl_dif = w2ttl_100 - w1ttl_100,
+  cog_dif = w2cog3pl - cog3pl
   )
 ```
 
 ```{r}
-d1 <- d %>% filter(w2ttl_100<=300 & w1ttl_100<=300) #remove outliers with total scores greater than 300
+d1 <- d %>% filter(w2ttl_100<=300 & w1ttl_100<=300) %>% #remove outliers with total scores greater than 300
+  drop_na(cog_dif, ttl_dif, age)
 ```
 
 within-class z score
-```{r}
-d1 <- d1 %>% group_by(clsids) %>%
+```{}
+d1 <- d1 %>% group_by(schids) %>%
   mutate(
-    w1ttl_z = as.numeric(scale(tr_chn + tr_mat + tr_eng)),
-    w2ttl_z = as.numeric(scale(w2chn + w2mat + w2eng))
+    w1ttl_z = as.numeric(scale(w1ttl)),
+    w2ttl_z = as.numeric(scale(w2ttl))
   ) %>% ungroup()
 ```
 
-```{r}
-d1 <- d1 %>% group_by(clsids) %>%
+```{}
+d1 <- d1 %>% group_by(schids) %>%
   mutate(
-    w1ttl_std1 = rescale(w1ttl),
-    w2ttl_std1 = rescale(w2ttl)
+    w1ttl_std = rescale(w1ttl),
+    w2ttl_std = rescale(w2ttl)
     ) %>% ungroup()
-```
-
-```{r}
-d1 <- d1 %>% group_by(clsids) %>%
-  mutate(
-    w1ttl_100_mean = mean(w1ttl_100, na.rm = T),
-    w2ttl_100_mean = mean(w2ttl_100, na.rm = T)
-  ) %>% ungroup()
-d1 <- d1 %>%
-  mutate(
-    w1ttl_std = (w1ttl - w1ttl_min)/(w1ttl_max - w1ttl_min),
-    w2ttl_std = (w2ttl - w2ttl_min)/(w2ttl_max - w2ttl_min),
-    w1ttl_100_dm = (w1ttl_100 - w1ttl_100_mean),
-    w2ttl_100_dm = (w2ttl_100 - w2ttl_100_mean)
-  )
 ```
 
 Detect outliers
@@ -105,51 +91,9 @@ d_outlier1 <- d_outlier %>% select(clsids, schids, tr_chn, tr_mat, tr_eng, w2chn
 d1 <- d %>% anti_join(d_outlier, by=c('ids', 'clsids', 'schids', 'ctyids'))
 ```
 
-Compute standardized exam grades (within-school z-scores)
-```{}
-d1 <- d1 %>% #Within-school standardization for Chinese, math, English exams and their total, respectively
-  group_by(schids) %>%
-  mutate(w1chn_mean = mean(w1chn_100, na.rm=T),
-         w1mat_mean = mean(w1mat_100, na.rm=T),
-         w1eng_mean = mean(w1eng_100, na.rm=T),
-         w1ttl_mean = mean(w1ttl_100, na.rm=T),
-         w2chn_mean = mean(w2chn_100, na.rm=T),
-         w2mat_mean = mean(w2mat_100, na.rm=T),
-         w2eng_mean = mean(w2eng_100, na.rm=T),
-         w2ttl_mean = mean(w2ttl_100, na.rm=T),
-         )  %>% ungroup()
-```
-
-```{}
-d1 <- d1 %>% 
-  mutate(w1chn_dif = w1chn_100 - w1chn_mean,
-         w1mat_dif = w1mat_100 - w1mat_mean,
-         w1eng_dif = w1eng_100 - w1eng_mean,
-         w1ttl_dif = w1ttl_100 - w1ttl_mean,
-         w2chn_dif = w2chn_100 - w2chn_mean,
-         w2mat_dif = w2mat_100 - w2mat_mean,
-         w2eng_dif = w2eng_100 - w2eng_mean,
-         w2ttl_dif = w2ttl_100 - w2ttl_mean,
-         
-         )
-```
-
-```{r}
-d2 <- d1 %>% 
-  mutate(chn_dif = w2chn_100 - w1chn_100,
-         mat_dif = w2mat_100 - w1mat_100,
-         eng_dif = w2eng_100 - w1eng_100,
-         ttl_dif = w2ttl_100 - w1ttl_100,
-         ttl_z_dif = w2ttl_z - w1ttl_z,
-         ttl_std_dif = w2ttl_std - w1ttl_std,
-         ttl_dm_dif = w2ttl_100_dm - w1ttl_100_dm,
-         cog_dif = w2cog3pl - cog3pl) %>%
-  drop_na(cog_dif)
-```
-
 Sample
 ```{r}
-d_cl <- d2 %>% 
+d_cl <- d1 %>% 
   filter(w2a0801==1) %>% #keep parents who are married (and alive)
   filter(be1201==1 & be1202==1) %>% #keep both parents live with children at baseline
   filter(stmigrant==1) #keep local children 
@@ -162,21 +106,24 @@ Control variables
 d_cl <- d_cl %>% mutate(
          ch.girl = if_else(a01 == 2, 1, 0), #student is girl
          ch.rural = sthktype, #student holds rural (agricultural) hukou
-         #ch.only.child = if_else(b01 == 1, 1, 0), #student is only child
          ch.boarding = stbrd, #student is boarding at school
-         ch.ethn.minority = if_else(a03 != 1, 1, 0), #student is ethnic minority
+         ch.ethn.mnrt = if_else(a03 != 1, 1, 0), #student is ethnic minority
          ch.health = a17, #student's self-rated health
-         ch.skip.grd = if_else(c03 == 0, 0, 1), #student has skipped grade
-         ch.repeat.grd = if_else(c04 == 0, 0, 1), #student has repeated grade
-         ch.illness = if_else(a10 == 1, 1, 0), #student had serious illness before primary school
+         ch.skip.grd = if_else(c03 == 0, 0, 1), #student had skipped grade
+         ch.repeat.grd = if_else(c04 == 0, 0, 1), #student had repeated grade
+         ch.aspr.univ = if_else(c22 <= 6 | c22 == 10, 0, 1), #student aspires to finish university bachelor's degree or above
+         #ch.illness = if_else(a10 == 1, 1, 0), #student had serious illness before primary school
          ch.preschool = if_else(c01 == 1, 1, 0), #student had attended preschool
+         #ch.par.rltn = if_else(stprrel == 2, 1, 0),
+         #ch.tutoring = if_else(b1901 == 1|b1902 == 1|b1903 == 1|b1904 == 1, 1, 0),
+         par.expt.univ = if_else(ba18 <= 6, 0, 1), #parent expects child to finish university bachelor's degree or above
          par.edu = stprhedu, #Among two parents, the best-educated one's educational level
          par.ccp = if_else(be06 == 1, 1, 0), #At least one parent is communist party member
          home.finances = steco_5c, #self-rated household financial situation
          home.internet = if_else(b13 == 2, 1, 0), #student has internet access at home
          home.book = b12 #Amount of book at home, student self-rated 
 ) %>% drop_na(
-ch.girl, ch.rural, ch.health, ch.boarding, ch.ethn.minority, ch.health, ch.skip.grd, ch.repeat.grd, ch.illness, ch.preschool, par.edu, par.ccp, home.internet, home.book, home.finances)
+ch.girl, ch.rural, ch.health, ch.boarding, ch.ethn.mnrt, ch.health, ch.skip.grd, ch.repeat.grd, ch.preschool, ch.aspr.univ, par.edu, par.ccp, par.expt.univ, home.internet, home.book, home.finances)
 ```
 
 ```{r}
@@ -229,8 +176,7 @@ d_cl <- d_cl %>% mutate(
   migr_mo_only = NA,
   migr_mo = NA,
   migr_both = NA
-  ) 
-d_cl <- d_cl %>% drop_na(migr)
+  ) %>% drop_na(migr)
 ```
 
 Only mother migrated
@@ -263,54 +209,60 @@ d_cl$migr_both[d_cl$migr == 0] <- 0
 d_cl$migr_both[d_cl$w2ba0201==0 & d_cl$w2ba0202==0] <- 1
 ```
 
-
-```
+```{r}
 df <- d_cl %>% select(
   migr, migr_fa_only, migr_fa, migr_mo_only, migr_mo, migr_both,
-  cog3pl, w1chn_dif, w1mat_std, w1eng_std,
-  cog, chn_std, mat_dif, eng_dif,
-  age, ch.girl, ch.health, ch.rural, ch.sibling, ch.boarding, ch.ethn.minority, 
-  par.edu.year, home.book, home.internet
+  cog3pl, w1ttl_100, cog_dif, ttl_dif,
+  ch.girl, ch.rural, ch.health, ch.boarding, ch.ethn.mnrt, ch.health, ch.skip.grd, ch.repeat.grd, ch.preschool, ch.aspr.univ, 
+  par.edu, par.ccp, par.expt.univ, 
+  home.internet, home.book, home.finances
 )
-```
-
-t-test
-```{r}
-t.test(cog_dif ~ migr, data = d_cl)
-t.test(ttl_dif ~ migr, data = d_cl)
-t.test(ttl_dm_dif ~ migr, data = d_cl)
 ```
 
 
 ## Descriptive statistics
 ```{r}
-des_gender <- d_cl %>% count(ch.girl)
-des_rural <- d_cl %>% count(ch.rural)
-des_sibling <- d_cl %>% group_by(ch.sibling) %>% count
-des_boarding <- d_cl %>% count(ch.boarding)
-des_book <- d_cl %>% group_by(home.book) %>% count
-des_internet <- d_cl %>% group_by(home.internet) %>% count
-des_par.edu.year <- d_cl %>% group_by(par.edu.year) %>% count
-des_ethn.minority <- d_cl %>% group_by(ch.ethn.minority) %>% count
-des_gender
-des_rural
-des_sibling
-des_boarding
-des_par.edu.year
-des_book
-des_internet
-des_ethn.minority
+d_migr <- d_cl %>% select(
+  migr, migr_fa_only, migr_fa, migr_mo_only, migr_mo, migr_both) %>%
+  mutate_if(is.numeric, as.factor)
+datasummary_skim(
+  d_migr,
+  type='categorical')
 ```
+
+```{r}
+d_covar <- d_cl %>% select(
+  ch.girl, ch.rural, ch.health, ch.boarding, ch.ethn.mnrt, ch.health, ch.skip.grd, ch.repeat.grd, ch.preschool, ch.aspr.univ, 
+  par.edu.year, par.ccp, par.expt.univ, 
+  home.internet, home.book, home.finances) %>%
+  mutate_if(is.numeric, as.factor)
+datasummary_skim(
+  d_covar,
+  type ='categorical',
+  output = "table.md")
+
+```
+
+
+t-test
+```{r}
+t.test(cog_dif ~ migr, data = d_cl)
+t.test(ttl_dif ~ migr, data = d_cl)
+```
+
+
+## Descriptive statistics
+
 
 ## DID unrestricted
 Regressing on cognitive test score (standardized)
 ```{r}
-did_unres_cog <- feols(cog_dif ~ migr + cog3pl | schids, data = d_cl) 
-did_unres_cog_m_only <- feols(cog_dif ~ migr_mo_only + cog3pl | schids, data = d_cl) 
-did_unres_cog_m <- feols(cog_dif ~ migr_mo + cog3pl | schids, data = d_cl) 
-did_unres_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl | schids, data = d_cl) 
-did_unres_cog_f <- feols(cog_dif ~ migr_fa + cog3pl | schids, data = d_cl) 
-did_unres_cog_both <- feols(cog_dif ~ migr_both + cog3pl | schids, data = d_cl)
+did_unres_cog <- feols(cog_dif ~ migr + cog3pl | clsids, data = d_cl) 
+did_unres_cog_m_only <- feols(cog_dif ~ migr_mo_only + cog3pl | clsids, data = d_cl) 
+did_unres_cog_m <- feols(cog_dif ~ migr_mo + cog3pl | clsids, data = d_cl) 
+did_unres_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl | clsids, data = d_cl) 
+did_unres_cog_f <- feols(cog_dif ~ migr_fa + cog3pl | clsids, data = d_cl) 
+did_unres_cog_both <- feols(cog_dif ~ migr_both + cog3pl | clsids, data = d_cl)
 ```
 
 Results
@@ -322,20 +274,22 @@ models_unres_cog <- list(
 'Only Father Absent' = did_unres_cog_f_only,
 'Father Absent' = did_unres_cog_f,
 'Both Parents Absent' = did_unres_cog_both) 
-table_unres_cog <- models_unres_cog %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
-                              fmt = 2,
-                              coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "Baseline Score"), output = 'markdown')
+table_unres_cog <- models_unres_cog %>% msummary(
+  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001),
+  fmt = 2,
+  title = 'Parental migration’s effect on children’s cognitive abilities',
+  coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "W1 score"), output = 'markdown')
 table_unres_cog
 ```
 
 raw score
 ```{r}
-did_unres_ttl <- feols(ttl_dif ~ migr + w1ttl_100 | schids, data = d_cl) 
-did_unres_ttl_m_only <- feols(ttl_dif ~ migr_mo_only + w1ttl_100 | schids, data = d_cl) 
-did_unres_ttl_m <- feols(ttl_dif ~ migr_mo + w1ttl_100 | schids, data = d_cl) 
-did_unres_ttl_f_only <- feols(ttl_dif ~ migr_fa_only + w1ttl_100 | schids, data = d_cl) 
-did_unres_ttl_f <- feols(ttl_dif ~ migr_fa + w1ttl_100 | schids, data = d_cl) 
-did_unres_ttl_both <- feols(ttl_dif ~ migr_both + w1ttl_100 | schids, data = d_cl)
+did_unres_ttl <- feols(ttl_dif ~ migr + w1ttl_100 | clsids, data = d_cl) 
+did_unres_ttl_m_only <- feols(ttl_dif ~ migr_mo_only + w1ttl_100 | clsids, data = d_cl) 
+did_unres_ttl_m <- feols(ttl_dif ~ migr_mo + w1ttl_100 | clsids, data = d_cl) 
+did_unres_ttl_f_only <- feols(ttl_dif ~ migr_fa_only + w1ttl_100 | clsids, data = d_cl) 
+did_unres_ttl_f <- feols(ttl_dif ~ migr_fa + w1ttl_100 | clsids, data = d_cl) 
+did_unres_ttl_both <- feols(ttl_dif ~ migr_both + w1ttl_100 | clsids, data = d_cl)
 ```
 
 ```{r}
@@ -346,23 +300,25 @@ models_unres_ttl <- list(
 'Only Father Absent' = did_unres_ttl_f_only,
 'Father Absent' = did_unres_ttl_f,
 'Both Parents Absent' = did_unres_ttl_both) 
-table_unres_ttl <- models_unres_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
-                              fmt = 2,
-                              coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1ttl_dif" = "Baseline difference"), output = 'markdown')
+table_unres_ttl <- models_unres_ttl %>% msummary(
+  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001), 
+  title = 'Parental migration’s effect on children’s academic abilities',
+  fmt = 2,
+  coef_rename = c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1ttl_100" = "W1 score"), output = 'markdown')
 table_unres_ttl
 ```
 
 z score
-```{r}
-did_unres_ttl_z <- feols(ttl_z_dif ~ migr + w1ttl_z | schids, data = d_cl) 
-did_unres_ttl_z_m_only <- feols(ttl_z_dif ~ migr_mo_only + w1ttl_z | schids, data = d_cl) 
-did_unres_ttl_z_m <- feols(ttl_z_dif ~ migr_mo + w1ttl_z | schids, data = d_cl) 
-did_unres_ttl_z_f_only <- feols(ttl_z_dif ~ migr_fa_only + w1ttl_z | schids, data = d_cl) 
-did_unres_ttl_z_f <- feols(ttl_z_dif ~ migr_fa + w1ttl_z | schids, data = d_cl) 
-did_unres_ttl_z_both <- feols(ttl_z_dif ~ migr_both + w1ttl_z | schids, data = d_cl)
+```{}
+did_unres_ttl_z <- feols(ttl_z_dif ~ migr + w1ttl_z | clsids, data = d_cl) 
+did_unres_ttl_z_m_only <- feols(ttl_z_dif ~ migr_mo_only + w1ttl_z | clsids, data = d_cl) 
+did_unres_ttl_z_m <- feols(ttl_z_dif ~ migr_mo + w1ttl_z | clsids, data = d_cl) 
+did_unres_ttl_z_f_only <- feols(ttl_z_dif ~ migr_fa_only + w1ttl_z | clsids, data = d_cl) 
+did_unres_ttl_z_f <- feols(ttl_z_dif ~ migr_fa + w1ttl_z | clsids, data = d_cl) 
+did_unres_ttl_z_both <- feols(ttl_z_dif ~ migr_both + w1ttl_z | clsids, data = d_cl)
 ```
 
-```{r}
+```{}
 models_unres_ttl_z <- list(
 'Any Parent Absent' = did_unres_ttl_z,
 'Only Mother Absent' = did_unres_ttl_z_m_only,
@@ -377,16 +333,16 @@ table_unres_ttl_z
 ```
 
 std
-```{r}
-did_unres_ttl_std <- feols(ttl_std_dif ~ migr + w1ttl_std | schids, data = d_cl) 
-did_unres_ttl_std_m_only <- feols(ttl_std_dif ~ migr_mo_only + w1ttl_std | schids, data = d_cl) 
-did_unres_ttl_std_m <- feols(ttl_std_dif ~ migr_mo + w1ttl_std | schids, data = d_cl) 
-did_unres_ttl_std_f_only <- feols(ttl_std_dif ~ migr_fa_only + w1ttl_std | schids, data = d_cl) 
-did_unres_ttl_std_f <- feols(ttl_std_dif ~ migr_fa + w1ttl_std | schids, data = d_cl) 
-did_unres_ttl_std_both <- feols(ttl_std_dif ~ migr_both + w1ttl_std | schids, data = d_cl)
+```{}
+did_unres_ttl_std <- feols(ttl_std_dif ~ migr + w1ttl_std | clsids, data = d_cl) 
+did_unres_ttl_std_m_only <- feols(ttl_std_dif ~ migr_mo_only + w1ttl_std | clsids, data = d_cl) 
+did_unres_ttl_std_m <- feols(ttl_std_dif ~ migr_mo + w1ttl_std | clsids, data = d_cl) 
+did_unres_ttl_std_f_only <- feols(ttl_std_dif ~ migr_fa_only + w1ttl_std | clsids, data = d_cl) 
+did_unres_ttl_std_f <- feols(ttl_std_dif ~ migr_fa + w1ttl_std | clsids, data = d_cl) 
+did_unres_ttl_std_both <- feols(ttl_std_dif ~ migr_both + w1ttl_std | clsids, data = d_cl)
 ```
 
-```{r}
+```{}
 models_unres_ttl_std <- list(
 'Any Parent Absent' = did_unres_ttl_std,
 'Only Mother Absent' = did_unres_ttl_std_m_only,
@@ -401,17 +357,17 @@ table_unres_ttl_std
 ```
 
 dif to mean
-```{r}
-did_unres_ttl_dm <- feols(ttl_dm_dif ~ migr + w1ttl_100_dm | schids, data = d_cl) 
-did_unres_ttl_dm_m_only <- feols(ttl_dm_dif ~ migr_mo_only + w1ttl_100_dm | schids, data = d_cl) 
-did_unres_ttl_dm_m <- feols(ttl_dm_dif ~ migr_mo + w1ttl_100_dm | schids, data = d_cl) 
-did_unres_ttl_dm_f_only <- feols(ttl_dm_dif ~ migr_fa_only + w1ttl_100_dm | schids, data = d_cl) 
-did_unres_ttl_dm_f <- feols(ttl_dm_dif ~ migr_fa + w1ttl_100_dm | schids, data = d_cl) 
-did_unres_ttl_dm_both <- feols(ttl_dm_dif ~ migr_both + w1ttl_100_dm | schids, data = d_cl)
+```{}
+did_unres_ttl_dm <- feols(ttl_dm_dif ~ migr + w1ttl_100_dm | clsids, data = d_cl) 
+did_unres_ttl_dm_m_only <- feols(ttl_dm_dif ~ migr_mo_only + w1ttl_100_dm | clsids, data = d_cl) 
+did_unres_ttl_dm_m <- feols(ttl_dm_dif ~ migr_mo + w1ttl_100_dm | clsids, data = d_cl) 
+did_unres_ttl_dm_f_only <- feols(ttl_dm_dif ~ migr_fa_only + w1ttl_100_dm | clsids, data = d_cl) 
+did_unres_ttl_dm_f <- feols(ttl_dm_dif ~ migr_fa + w1ttl_100_dm | clsids, data = d_cl) 
+did_unres_ttl_dm_both <- feols(ttl_dm_dif ~ migr_both + w1ttl_100_dm | clsids, data = d_cl)
 ```
 
 
-```{r}
+```{}
 models_unres_ttl_dm <- list(
 'Any Parent Absent' = did_unres_ttl_dm,
 'Only Mother Absent' = did_unres_ttl_dm_m_only,
@@ -425,93 +381,17 @@ table_unres_ttl_dm <- models_unres_ttl_dm %>% msummary(stars = c('*' = .05, '**'
 table_unres_ttl_dm
 ```
 
-### DID by subject
-Regressing on Chinese exam score
-```{r}
-did_unres_chn <- feols(chn_dif ~ migr + w1chn_100 | schids, data = d_cl) 
-did_unres_chn_m_only <- feols(chn_dif ~ migr_mo_only + w1chn_100 | schids, data = d_cl) 
-did_unres_chn_m <- feols(chn_dif ~ migr_mo + w1chn_100 | schids, data = d_cl) 
-did_unres_chn_f_only <- feols(chn_dif ~ migr_fa_only + w1chn_100 | schids, data = d_cl) 
-did_unres_chn_f <- feols(chn_dif ~ migr_fa + w1chn_100 | schids, data = d_cl) 
-did_unres_chn_both <- feols(chn_dif ~ migr_both + w1chn_100 | schids, data = d_cl)
-```
-
-Results
-```{r}
-models_unres_chn <- list(
-'Any Parent Absent' = did_unres_chn,
-'Only Mother Absent' = did_unres_chn_m_only,
-'Mother Absent' = did_unres_chn_m,
-'Only Father Absent' = did_unres_chn_f_only,
-'Father Absent' = did_unres_chn_f,
-'Both Parents Absent' = did_unres_chn_both) 
-table_unres_chn <- models_unres_chn %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
-                              fmt = 2,
-                              coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1chn_dif" = "Baseline difference"), output = 'markdown')
-table_unres_chn
-```
-
-Regressing on Math score
-```{r}
-did_unres_mat <- feols(mat_dif ~ migr + w1mat_100| schids, data = d_cl) 
-did_unres_mat_m_only <- feols(mat_dif ~ migr_mo_only + w1mat_100| schids, data = d_cl) 
-did_unres_mat_m <- feols(mat_dif ~ migr_mo + w1mat_100| schids, data = d_cl) 
-did_unres_mat_f_only <- feols(mat_dif ~ migr_fa_only + w1mat_100| schids, data = d_cl) 
-did_unres_mat_f <- feols(mat_dif ~ migr_fa + w1mat_100| schids, data = d_cl) 
-did_unres_mat_both <- feols(mat_dif ~ migr_both + w1mat_100| schids, data = d_cl)
-```
-
-Results
-```{r}
-models_unres_mat <- list(
-'Any Parent Absent' = did_unres_mat,
-'Only Mother Absent' = did_unres_mat_m_only,
-'Mother Absent' = did_unres_mat_m,
-'Only Father Absent' = did_unres_mat_f_only,
-'Father Absent' = did_unres_mat_f,
-'Both Parents Absent' = did_unres_mat_both) 
-table_unres_mat <- models_unres_mat %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
-                              fmt = 2,
-                              coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1mat_dif" = "Baseline Score"), output = 'markdown')
-table_unres_mat
-```
-
-Regressing on English score
-```{r}
-did_unres_eng <- feols(eng_dif ~ migr + w1eng_100| schids, data = d_cl) 
-did_unres_eng_m <- feols(eng_dif ~ migr_mo + w1eng_100| schids, data = d_cl)
-did_unres_eng_m_only <- feols(eng_dif ~ migr_mo_only + w1eng_100| schids, data = d_cl) 
-did_unres_eng_f <- feols(eng_dif ~ migr_fa + w1eng_100| schids, data = d_cl) 
-did_unres_eng_f_only <- feols(eng_dif ~ migr_fa_only + w1eng_100| schids, data = d_cl) 
-did_unres_eng_both <- feols(eng_dif ~ migr_both + w1eng_100| schids, data = d_cl)
-```
-
-Results
-```{r}
-models_unres_eng <- list(
-'Any Parent Absent' = did_unres_eng,
-'Only Mother Absent' = did_unres_eng_m_only,
-'Mother Absent' = did_unres_eng_m,
-'Only Father Absent' = did_unres_eng_f_only,
-'Father Absent' = did_unres_eng_f,
-'Both Parents Absent' = did_unres_eng_both) 
-table_unres_eng <- models_unres_eng %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
-                              fmt = 2,
-                              coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1eng_dif" = "Baseline difference"), output = 'markdown')
-table_unres_eng
-```
-
 ## DID adjusted unrestricted
 $$\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \theta \cdot X_{i,s} + \varepsilon_{i,s}$$
 
 Regressing on cognitive test score (standardized)
 ```{r}
-did_adj_unres_cog <- feols(cog_dif ~ migr + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_m_only <- feols(cog_dif ~ migr_mo_only + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_m <- feols(cog_dif ~ migr_mo + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_f <- feols(cog_dif ~ migr_fa + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl) 
-did_adj_unres_cog_both <- feols(cog_dif ~ migr_both + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book  + home.internet | schids, data = d_cl)
+did_adj_unres_cog <- feols(cog_dif ~ migr + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book  + home.internet | clsids, data = d_cl) 
+did_adj_unres_cog_m_only <- feols(cog_dif ~ migr_mo_only + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book  + home.internet | clsids, data = d_cl) 
+did_adj_unres_cog_m <- feols(cog_dif ~ migr_mo + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book  + home.internet | clsids, data = d_cl) 
+did_adj_unres_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book  + home.internet | clsids, data = d_cl) 
+did_adj_unres_cog_f <- feols(cog_dif ~ migr_fa + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book  + home.internet | clsids, data = d_cl) 
+did_adj_unres_cog_both <- feols(cog_dif ~ migr_both + cog3pl  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book  + home.internet | clsids, data = d_cl)
 ```
 
 Results
@@ -524,20 +404,21 @@ models_adj_unres_cog <- list(
 'Father Absent' = did_adj_unres_cog_f,
 'Both Parents Absent' = did_adj_unres_cog_both) 
 table_adj_unres_cog <- models_adj_unres_cog %>% 
-  msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
+  msummary(stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001),
+           title = 'Parental migration’s effect on children’s cognitive abilities',
            fmt = 2,
-           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "Baseline Score"), output = 'markdown')
+           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "W1 score"), output = 'markdown')
 table_adj_unres_cog
 ```
 
 Regressing on total exam score
 ```{r}
-did_adj_unres_ttl <- feols(ttl_dif ~ migr + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_m_only <- feols(ttl_dif ~ migr_mo_only + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_m <- feols(ttl_dif ~ migr_mo + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_f <- feols(ttl_dif ~ migr_fa + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_f_only <- feols(ttl_dif ~ migr_fa_only + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_both <- feols(ttl_dif ~ migr_both + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
+did_adj_unres_ttl <- feols(ttl_dif ~ migr + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_m_only <- feols(ttl_dif ~ migr_mo_only + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_m <- feols(ttl_dif ~ migr_mo + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_f <- feols(ttl_dif ~ migr_fa + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_f_only <- feols(ttl_dif ~ migr_fa_only + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_both <- feols(ttl_dif ~ migr_both + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl)
 ```
 
 Results
@@ -549,22 +430,26 @@ models_adj_unres_ttl <- list(
 'Only Father Absent' = did_adj_unres_ttl_f_only,
 'Father Absent' = did_adj_unres_ttl_f,
 'Both Parents Absent' = did_adj_unres_ttl_both) 
-table_adj_unres_ttl <- models_adj_unres_ttl %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), fmt = 2, coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1ttl_dif" = "Baseline difference"), output = 'markdown')
+table_adj_unres_ttl <- models_adj_unres_ttl %>% msummary(
+  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001), 
+  title = 'Parental migration’s effect on children’s academic abilities',
+  fmt = 2, 
+  coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1ttl_100" = "W1 score"), output = 'markdown')
 table_adj_unres_ttl
 ```
 
 Regressing on total exam score
-```{r}
-did_adj_unres_ttl_z <- feols(ttl_z_dif ~ migr + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_z_m_only <- feols(ttl_z_dif ~ migr_mo_only + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_z_m <- feols(ttl_z_dif ~ migr_mo + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_z_f <- feols(ttl_z_dif ~ migr_fa + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_z_f_only <- feols(ttl_z_dif ~ migr_fa_only + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_ttl_z_both <- feols(ttl_z_dif ~ migr_both + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
+```{}
+did_adj_unres_ttl_z <- feols(ttl_z_dif ~ migr + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_z_m_only <- feols(ttl_z_dif ~ migr_mo_only + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_z_m <- feols(ttl_z_dif ~ migr_mo + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_z_f <- feols(ttl_z_dif ~ migr_fa + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_z_f_only <- feols(ttl_z_dif ~ migr_fa_only + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_z_both <- feols(ttl_z_dif ~ migr_both + w1ttl_z + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl)
 ```
 
 Results
-```{r}
+```{}
 models_adj_unres_ttl_z <- list(
 'Any Parent Absent' = did_adj_unres_ttl_z,
 'Only Mother Absent' = did_adj_unres_ttl_z_m_only,
@@ -576,88 +461,32 @@ table_adj_unres_ttl_z <- models_adj_unres_ttl_z %>% msummary(stars = c('*' = .05
 table_adj_unres_ttl_z
 ```
 
-### DID by subject
-Regressing on Chinese exam score
-```{r}
-did_adj_unres_chn <- feols(chn_dif ~ migr + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_m_only <- feols(chn_dif ~ migr_mo_only + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_m <- feols(chn_dif ~ migr_mo + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_f_only <- feols(chn_dif ~ migr_fa_only + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_f <- feols(chn_dif ~ migr_fa + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_chn_both <- feols(chn_dif ~ migr_both + w1chn_100  + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
+Regressing on total exam score
+```{}
+did_adj_unres_ttl_dm <- feols(ttl_dm_dif ~ migr + w1ttl_100_dm + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_dm_m_only <- feols(ttl_dm_dif ~ migr_mo_only + w1ttl_100_dm + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_dm_m <- feols(ttl_dm_dif ~ migr_mo + w1ttl_100_dm + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_dm_f <- feols(ttl_dm_dif ~ migr_fa + w1ttl_100_dm + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_dm_f_only <- feols(ttl_dm_dif ~ migr_fa_only + w1ttl_100_dm + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl) 
+did_adj_unres_ttl_dm_both <- feols(ttl_dm_dif ~ migr_both + w1ttl_100_dm + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_cl)
 ```
 
 Results
-```{r}
-models_adj_unres_chn <- list(
-'Any Parent Absent' = did_adj_unres_chn,
-'Only Mother Absent' = did_adj_unres_chn_m_only,
-'Mother Absent' = did_adj_unres_chn_m,
-'Only Father Absent' = did_adj_unres_chn_f_only,
-'Father Absent' = did_adj_unres_chn_f,
-'Both Parents Absent' = did_adj_unres_chn_both) 
-table_adj_unres_chn <- models_adj_unres_chn %>% 
-  msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
-           fmt = 2,
-           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1chn_dif" = "Baseline difference"), output = 'markdown')
-table_adj_unres_chn
-```
-
-Regressing on Math score
-```{r}
-did_adj_unres_mat <- feols(mat_dif ~ migr + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_m_only <- feols(mat_dif ~ migr_mo_only + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_m <- feols(mat_dif ~ migr_mo + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_f_only <- feols(mat_dif ~ migr_fa_only + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_f <- feols(mat_dif ~ migr_fa + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_mat_both <- feols(mat_dif ~ migr_both + w1mat_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
-```
-
-Results
-```{r}
-models_adj_unres_mat <- list(
-'Any Parent Absent' = did_adj_unres_mat,
-'Only Mother Absent' = did_adj_unres_mat_m_only,
-'Mother Absent' = did_adj_unres_mat_m,
-'Only Father Absent' = did_adj_unres_mat_f_only,
-'Father Absent' = did_adj_unres_mat_f,
-'Both Parents Absent' = did_adj_unres_mat_both) 
-table_adj_unres_mat <- models_adj_unres_mat %>% 
-  msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
-           fmt = 2,
-           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1mat_dif" = "Baseline difference"), output = 'markdown')
-table_adj_unres_mat
-```
-
-Regressing on English score
-```{r}
-did_adj_unres_eng <- feols(eng_dif ~ migr + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_eng_m <- feols(eng_dif ~ migr_mo + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
-did_adj_unres_eng_m_only <- feols(eng_dif ~ migr_mo_only + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_eng_f <- feols(eng_dif ~ migr_fa + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_eng_f_only <- feols(eng_dif ~ migr_fa_only + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl) 
-did_adj_unres_eng_both <- feols(eng_dif ~ migr_both + w1eng_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_cl)
-```
-
-Results
-```{r}
-models_adj_unres_eng <- list(
-'Any Parent Absent' = did_adj_unres_eng,
-'Only Mother Absent' = did_adj_unres_eng_m_only,
-'Mother Absent' = did_adj_unres_eng_m,
-'Only Father Absent' = did_adj_unres_eng_f_only,
-'Father Absent' = did_adj_unres_eng_f,
-'Both Parents Absent' = did_adj_unres_eng_both) 
-table_adj_unres_eng <- models_adj_unres_eng %>% 
-  msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
-           fmt = 2,
-           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1eng_dif" = "Baseline difference"), output = 'markdown')
-table_adj_unres_eng
+```{}
+models_adj_unres_ttl_dm <- list(
+'Any Parent Absent' = did_adj_unres_ttl_dm,
+'Only Mother Absent' = did_adj_unres_ttl_dm_m_only,
+'Mother Absent' = did_adj_unres_ttl_dm_m,
+'Only Father Absent' = did_adj_unres_ttl_dm_f_only,
+'Father Absent' = did_adj_unres_ttl_dm_f,
+'Both Parents Absent' = did_adj_unres_ttl_dm_both) 
+table_adj_unres_ttl_dm <- models_adj_unres_ttl_dm %>% msummary(stars = c('*' = .05, '**' = .01, '***' = .001), fmt = 2, coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1ttl_dif" = "Baseline difference"), output = 'markdown')
+table_adj_unres_ttl_dm
 ```
 
 ## Matching
 ```{r}
-m.out <- matchit(migr ~ age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet, data = d_cl, method = "cem")
+m.out <- matchit(migr ~ age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet, data = d_cl, method = "cem")
 summary(m.out, un = FALSE)
 ```
 
@@ -666,11 +495,15 @@ d_match <- match.data(m.out)
 ```
 
 ```{r}
-feols(cog_dif ~ migr + cog3pl + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet | schids, data = d_match, weights = d_match$weights) %>% 
+feols(cog_dif ~ migr + cog3pl + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet | clsids, data = d_match, weights = d_match$weights) %>% 
   msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
            fmt = 2)
-feols(ttl_dif ~ migr + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.illness + ch.preschool + ch.skip.grd + ch.repeat.grd +ch.boarding + ch.ethn.minority + par.edu.year + par.ccp + home.finances + home.book + home.internet  | schids, data = d_match, weights = d_match$weights) %>% 
+feols(ttl_dif ~ migr + w1ttl_100 + age + ch.girl + ch.health + ch.rural + ch.sibling + ch.preschool + ch.skip.grd + ch.repeat.grd + ch.boarding + ch.aspr.univ + ch.ethn.mnrt + par.edu.year + par.expt.univ + par.ccp + home.finances + home.book + home.internet  | clsids, data = d_match, weights = d_match$weights) %>% 
   msummary(stars = c('*' = .05, '**' = .01, '***' = .001), 
            fmt = 2)
+```
+
+```{r}
+datasummary_skim(d_asp)
 ```
 

@@ -3,7 +3,7 @@
 \PassOptionsToPackage{hyphens}{url}
 %
 \documentclass[
-  man]{apa7}
+  man,floatsintext]{apa7}
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
 \usepackage{iftex}
@@ -176,12 +176,6 @@
   }
 {}{\PatchFailed}
 \keywords{keywords\newline\indent Word count: X}
-\DeclareDelayedFloatFlavor{ThreePartTable}{table}
-\DeclareDelayedFloatFlavor{lltable}{table}
-\DeclareDelayedFloatFlavor*{longtable}{table}
-\makeatletter
-\renewcommand{\efloat@iwrite}[1]{\immediate\expandafter\protected@write\csname efloat@post#1\endcsname{}}
-\makeatother
 \usepackage{csquotes}
 \makeatletter
 \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
@@ -206,12 +200,6 @@
 
 \shorttitle{Left-Behind Children}
 
-\authornote{
-
-Correspondence concerning this article should be addressed to Jiancheng Gu, De Boelelaan 1105, 1081 HV - Amsterdam, The Netherlands. E-mail: \href{mailto:j4.gu@student.vu.nl}{\nolinkurl{j4.gu@student.vu.nl}}
-
-}
-
 \affiliation{\vspace{0.5cm}\textsuperscript{1} Faculty of Social Sciences, Vrije Universiteit Amsterdam}
 
 \begin{document}
@@ -220,32 +208,42 @@ Correspondence concerning this article should be addressed to Jiancheng Gu, De B
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work (Antia et al., 2020). These are the so-called ``left behind children'' who are common in migrant-sending regions in the Global South. The global size of left behind children population is unavailable, but in-country surveys provide some estimation. (DeWaard et al., 2018) analyzed the Mexican and Latin American Migration Projects and estimated that around 15 percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s. (Popova, 2018) cited a 2016 study by UN Children's Fund Bulgaria indicating that one-fifth of Bulgarian children had one or both parents working abroad. In China, the 2015 one-percent National Population Sample Survey showed that one out of four children lived under parental absence induced by migration (NBS et al., 2017).
+Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work (Antia et al., 2020). These are the so-called ``left behind children'' who are common in migrant-sending regions -- Latin America, Sub-Sahara Africa, East Europe, and large parts of Asia. We do not know the global size of left behind children population, but we can find estimate from in-country surveys. (DeWaard et al., 2018) analyzed the Mexican and Latin American Migration Projects and estimated that around fifteen percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s. (Popova, 2018) cited a 2016 study by UN Children's Fund Bulgaria indicating that one-fifth of Bulgarian children had one or both parents working abroad. In China, the 2015 one-percent National Population Sample Survey showed that one out of four children lived under parental absence induced by migration (NBS et al., 2017).
 
-Parental migration impacts child-and-adolescence development by exerting different effects that work oppositely (Van Hook \& Glick, 2020). Consider children's education. Labor migrants send remittances back home, boosting the family income. Higher income can fund children's schooling as well as improve their nutritional and living conditions. All these may enhance children's educational outcome. The inflow of remittances, however, cannot substitute for the loss of parental care. Parental migration halts the day-to-day, face-to-face contact between parents and children. It decreases the amount and quality of parental guidance, protection, and support. All these may hinder children's school performance. It is uncertain how these two opposing effects shape children's educational performance, which merits empirical investigation.
+The issue of left behind children has attracted public attention. In March 2021, the Parliamentary Assembly of Council of Europe (2021) passed a resolution that
 
-A challenge arises in when we want to assess the causality between parental migration and children's education. Experiments can unveil causal relations, but it is unfeasible and unethical to design an experiment that randomly assigns parents to migrate without their children. Statistical advances in causal inference provides an alternative approach. We can infer causality from a quasi-experimental design -- that is, only if the cause is as good as randomly assigned to individuals in the analysis, conditional on identification assumptions.
+\begin{quote}
+deplores the complacency of both countries of origin and countries of destination of labour migration, which tend to tolerate excessive labour migration as it has significant short-term benefits in the form of remittances for the former, and of a cheap, flexible labour force for the latter. This situation is not acceptable, and it is not sustainable. Leaving millions of children without parental care is a mass violation of human rights and an unnecessary threat to the stability and prosperity of our countries. (p.~1)
+\end{quote}
 
-For studying left behind children, a suitable case is China. The country has seen a huge scale of internal migration and salient challenges facing migrant parents and left behind children. The National Bureau of Statistics reported that the number of in-country migrant workers exceeded 292.5 million by 2021(NBS, 2022). According to (Gu, 2021), current policy still limits internal migrants' access to public services and social benefits outside their hometowns, including public school for their children. Facing financial and policy constraints, many migrant laborers have to leave children in their original domiciles. The number of left behind Chinese children reached 68.7 million in 2015 (NBS et al., 2017).
+The resolution suggests that parental migration impacts child development by exerting different effects that work oppositely. Consider children's education. According to Van Hook and Glick (2020), labor migrants send remittances back home, boosting the family income. Higher income can fund children's schooling as well as improve their nutritional and living conditions. All these may enhance children's educational outcome. The inflow of remittances, however, cannot substitute for the loss of parental care. Parental migration halts the day-to-day, face-to-face contact between parents and children. It decreases the amount and quality of parental guidance, protection, and support. All these may hinder children's school performance. It is uncertain how these two opposing effects shape children's educational performance, which merits empirical investigation.
+
+A challenge arises in when we want to assess the causality between parental migration and children's education. Experiments can unveil causal relations, but it is unfeasible and unethical to design an experiment that randomly assigns parents to migrate without their children. Alternatively, we can infer causality from a quasi-experimental design -- that is, when the cause is on par with random assignment to participants in the analysis, conditional on identification assumptions (Cunningham, 2021).
+
+Three features make China a suitable case for studying left behind children. The first feature is the huge scale of internal labor migration. According to the National Bureau of Statistics, the year 2021 recorded 292.5 million in-country migrant workers (NBS, 2022). The second feature is the neoliberal welfare regime. Neoliberalism extends the logic of the market to most spheres of human life. Driven by the neoliberal doctrine, the government shifts its responsibilities of social services and welfare to individuals and communities. Since China initiated pro-market reforms in the 1980s, the state has reduced its welfare provisions and passed them to individuals and families (Zhan, 2020). The third feature is the authoritarian control against citizens. According to Gu (2021), the hukou (household registration) system controls people's mobility by binding a household's public welfare access with its place of registry. For a rural household member moving to the city, it takes much time and effort to apply for urban hukou status. Without an urban hukou they cannot send children to public school in the host city. Facing financial and policy constraints, many migrant laborers have to leave children in their original domiciles. The number of left behind Chinese children reached 68.7 million in 2015 (NBS et al., 2017).
 
 To what extent do parental migration affect the cognitive development and academic performance of left-behind children in the short term? I analyze the data from a nationally representative two-wave panel survey. The sample includes children in both urban and rural areas. I develop a difference-in-differences design for causal inference. The dependent variables include children's cognitive test score and Chinese, mathematics, and English exam scores.
+
+\newpage
 
 \hypertarget{literature-review}{%
 \section{Literature Review}\label{literature-review}}
 
-Researchers obtained mixed results regarding how migration-induced parental absence affects children's education. Using data collected from junior high school students, (Li et al., 2017) found that parental migration negatively impacts left-behind children's achievement in standardized mathematical test. (Wang et al., 2019) also collected data from students of junior high school, but discovered no overall effect of parental migration on the mathematical test grades of children left behind. (Bai et al., 2018) gathered data from primary school pupils. They reported that parental migration ``does not appear to have a negative effect'' on the standardized English test scores of left-behind children, and ``in some cases even appears to have a positive effect'' (p.~1165). The inconsistency can result from factors such as the left-behind children's age and gender, the migrant parent's original domicile and eventual destination, and the arrangement of which parent migrate for how long.
+Researchers obtained mixed results regarding how migration-induced parental absence affects children's education. Using data collected from junior high school students, Li and colleagues (2017) found that parental migration negatively impacts left-behind children's achievement in mathematical test. Wang and others (2019) also collected data from students of junior high school, but discovered no overall effect of parental migration on the mathematical test grades of children left behind. Bai and coauthors (2018) gathered data from primary school pupils. They reported that parental migration ``does not appear to have a negative effect'' on the English test results of left-behind children, and ``in some cases even appears to have a positive effect'' (p.~1165). The inconsistency can result from factors such as the left-behind children's age and gender, the migrant parent's original domicile and eventual destination, and the arrangement of which parent migrate for how long.
 
-Between parental migration and children's education, the mechanisms trace to two theoretical frameworks. One model, the generation model, holds that parental migration brings forth greater resources in the form of economic capital. Economic capital is, in Bourdieu's words, ``immediately and directly convertible into money and may be institutionalized in the form of property rights'' (2002, p. 16). Economic capital is transferable to human capital, which is the stock of ``skills, talents, health, and expertise'' in people that enhance their productivity (Botev et al., 2019; Goldin, 2016). (Chang et al., 2019) provided evidence through interviews with migrant workers and their family members. They said that the city offered more jobs and higher pay than did the countryside. Oftentimes, they found that labor migration presented the only way to sustain their children's education and livelihood.
+Between parental migration and children's education, the mechanisms trace to two theoretical frameworks. One model, the resource generation model, holds that parental migration brings forth greater resources in the form of economic capital. Economic capital is, in Bourdieu's words, ``immediately and directly convertible into money and may be institutionalized in the form of property rights'' (2002, p. 16). Economic capital is transferable to human capital, which is the stock of ``skills, talents, health, and expertise'' in people that enhance their productivity (Botev et al., 2019; Goldin, 2016). (Chang et al., 2019) provided evidence through interviews with migrant workers and their family members. The informants agreed that the city offered more jobs and higher pay than did the countryside. Oftentimes, they found that labor migration presented the only way to sustain their children's education and livelihood.
 
-The other theoretical model is the family disruption model. Children flourish under parental nurturing care. This term refers to the ``stable environments that promote health and adequate nutrition, protect from threats, and provide opportunities for learning and responsive, emotionally supportive and developmentally enriching relationships'' (\textbf{black?}). Parental migration decreases nurturing care, thereby hindering children's developmental outcomes. The loss of nurturing care hinders children's accumulation of human capital. (Hong \& Fuller, 2019) talked to a group of left behind children in grade nine. These students expressed the utter sense of loneliness ``with no advocate, no support and with no one looking out for them'' (p.~13). Many of them felt indifferent to school grades, and some even longed to ditch school to pursue a free, independent life (p.~14).
+The other theoretical model is the family disruption model. Children flourish under parental nurturing care. This term refers to the ``stable environments that promote health and adequate nutrition, protect from threats, and provide opportunities for learning and responsive, emotionally supportive and developmentally enriching relationships'' (Black et al., 2021, p. 1). Parental migration decreases nurturing care, thereby hindering children's developmental outcomes. The loss of nurturing care slows children's accumulation of human capital. Hong talked to a group of left behind children in grade nine when she conducted ethnography at a rural school (Hong \& Fuller, 2019). These students expressed the utter sense of loneliness ``with no advocate, no support and with no one looking out for them'' (p.~13). Many of them felt indifferent to school grades, and some even longed to ditch school to pursue a free, independent life (p.~14).
 
-I hypothesized that in the short term, parental migration negatively affect the cognitive development and academic performance of children left behind. This is because parental migration immediately disrupts family structure, resulting in lower academic performance of children. It takes longer time for parental migration to generate resources that improve children's performance at school.
+I hypothesized that (H1) in the short term, parental migration negatively affect the cognitive development and academic performance of children left behind. This is because parental migration immediately disrupts family structure, resulting in lower academic performance of children. It takes longer time for parental migration to generate resources that improve children's performance at school.
 
-Researchers have studied whether the impact differ between mother absence and father absence in the context of labor migration. (Xu et al., 2019) adopted a fixed-effects propensity score weighting model on cross-sectional data collected from seventh and ninth graders in rural areas across China. They found that the absence of father only or both parents had ``little or no association with negative outcomes'' on children's academic and cognitive performances. Only-mother absence, however, showed a ``strong association with negative outcomes'' (p.~1646). (Chen et al., 2019) conducted structural equation modeling on the cross-sectional data collected from fourth to seventh graders in the countryside of one province. They found that mother migration was ``negatively associated with children's social competence and academic performance,'' while father migration had no direct effects on the two outcomes (pp.~860-861).
+Researchers have studied whether the impact differ between mother absence and father absence in the context of labor migration. Xu and others (2019) adopted a fixed-effects propensity score weighting model on cross-sectional data collected from seventh and ninth graders in rural areas across China. They found that the absence of father only or both parents had ``little or no association with negative outcomes'' on children's academic and cognitive performances. Only-mother absence, however, showed a ``strong association with negative outcomes'' (p.~1646). Chen and others (2019) conducted structural equation modeling on the cross-sectional data collected from fourth to seventh graders in the countryside of one province. They found that mother migration was ``negatively associated with children's social competence and academic performance,'' while father migration had no direct effects on the two outcomes (pp.~860-861).
 
-I hypothesized that in the short term, mother migration negatively affect the cognitive development and academic performance of children left behind, while father migration does not show a effect. This relates to the social norms that designate men as breadwinners and women as caregivers. Studies noted that in some Asian and Latin American societies, children are more likely to accept fathers' migration than mothers' (Murphy, 2022). Left behind children may even resent their migrant mothers, viewing them as transgressing on the expected care-giving roles.
+I hypothesized that (H2) in the short term, mother migration negatively affect the cognitive development and academic performance of children left behind, while father migration does not show a effect. This relates to the social norms that designate men as breadwinners and women as caregivers. Studies noted that in some Asian and Latin American societies, children are more likely to accept fathers' migration than mothers' (Murphy, 2022). Left behind children may even resent their migrant mothers, viewing them as transgressing on the expected care-giving roles.
 
-The research on China's left behind children has three major shortcomings. First, most literature focuses on children left behind in rural areas while neglecting the urban counterparts. As (NBS et al., 2017) stated, the number of urban left behind children had been growing, and the trend would continue. The second shortcoming lies in data and sampling. Some studies draw from cross-sectional data, making it hard to infer causal relations (Jin et al., 2020; Zhou et al., 2014). Others suffer from a limited sample size of less than one thousand participants (Liu et al., 2021; Yang et al., 2022) or a limited geographic coverage of one or a few towns (Jin et al., 2020; Shu, 2021; Yang et al., 2022). The third shortcoming lies in the selection and measurement of outcome. (Chang et al., 2019; Wang et al., 2019) measure students' educational performance with the test score of only one academic subject, namely mathematics. The test results of multiple subjects should be included, as parental migration's impact may vary across subject areas.
+The research on China's left behind children has three major shortcomings. First, most literature focuses on children left behind in rural areas while neglecting the urban counterparts. (NBS et al., 2017) stated that the number of urban left behind children had been growing and expected that the trend would continue. The second shortcoming lies in data and sampling. Some studies draw from cross-sectional data, making it hard to infer causal relations (Jin et al., 2020; Zhou et al., 2014). Others suffer from a limited sample size of less than one thousand participants or a limited geographic coverage of one or a few towns (Jin et al., 2020; Liu et al., 2021; Shu, 2021; Yang et al., 2022). The third shortcoming lies in the selection and measurement of outcome. (Chang et al., 2019; Wang et al., 2019) measured students' educational performance with the test score of only one academic subject, namely mathematics. The test results of multiple subjects should be included to measure comprehensive academic achievement.
+
+\newpage
 
 \hypertarget{methods}{%
 \section{Methods}\label{methods}}
@@ -253,37 +251,238 @@ The research on China's left behind children has three major shortcomings. First
 \hypertarget{participants}{%
 \subsection{Participants}\label{participants}}
 
-I obtained the data from the China Education Panel Survey (CEPS). It is a nationally representative, school-based survey featuring junior high school students. The survey administrator is the National Survey Research Center at Renmin University of China. The research team adopted the approach of multi-stage stratified probability proportional to size sampling. The selected participants filled a paper-and-pencil questionnaire. The baseline survey took place in the 2013-2014 academic year with a sample size of about twenty thousand students in seventh and ninth grades. These students were nested in 438 classrooms of 112 schools in 28 urban districts or rural counties. I only kept the 9,449 observations of seventh grade students and their parents, who completed the follow-up survey in the 2014-2015 academic year.
+I obtained the data from the China Education Panel Survey (CEPS) (NSRC, n.d.). It is a nationally representative, school-based survey featuring junior high school students. The survey administrator is the National Survey Research Center at Renmin University of China. The research team adopted multi-stage stratified probability proportional to size sampling and administered a paper-and-pencil questionnaire to each participant. The baseline survey took place in the 2013-2014 academic year with a sample size of about twenty thousand students in the seventh and ninth grades. These students were nested in 438 classrooms of 112 schools in 28 urban districts or rural counties. The follow-up survey in the 2014-2015 academic year lost track of the ninth grade cohort and only surveyed 9449 of the seventh grade cohort. I further restricted the sample to students staying with both parents at the original domicile at the baseline survey. To deal with missing values, I adopted list-wise deletion for dependent, independent, and control variables. The final sample size amounted to 4040 .
 
 \hypertarget{measurement}{%
 \subsection{Measurement}\label{measurement}}
 
-I explored two categories of adolescence development: academic and cognitive abilities. One key dependent variable, the student's cognitive skill, is measured by a fifteen-minute standardized test. The test covered three types of reasoning: verbal, visuospatial, and numerical. The raw scores of cognitive skill were then standardized. The other set of dependent variables concerned students' academic performance. This was measured by the mid-term exam scores in three subjects: Chinese, mathematics, and English. I calculated the standardized exam grades at the school-by-grade level to facilitate comparison across schools and counties. I removed the observations with missing values in any of the test score mentioned above. My choice of standardized exam grades over raw grades follows previous research (Xu et al., 2019; Young \& Hannum, 2018).
+I explored two categories of adolescence development: cognitive and academic abilities. One key dependent variable, the student's cognitive skill, was measured by a fifteen-minute standardized test. The test covered three types of reasoning: verbal, visuospatial, and numerical. The CEPS research team calculated the raw score based on Item Response Theory and then standardized the score with a mean of zero and standard deviation of one.
 
-The key independent variable, the parental migration status, was identified by two items in the parent survey. In both the baseline and the follow-up surveys, parents specified the family members living in the same household at the time. I constructed six treatment dummy variables measuring migration arrangements: both parents absent, only father absent, only mother absent, father absent (unconditional), mother absent (unconditional). These arrangements can overlap with each other. The control group consisted of parents staying with their children throughout at both the baseline and the follow-up surveys. I then removed the observations that reported other types of parental absence induced by divorce or death.
+The other set of dependent variables concerned students' academic performance. This was measured by the total scores of mid-term exams in Chinese, mathematics, and English as provided by each school. I aligned different grading scales (full mark of 100, 120, and 150 for one subject) to the hundred-point scale. Accordingly, the total score of three subjects has a 300-point scale.
 
-The control variables at the student level include: student's age, gender, ethnicity, self-rated health, hukou type, and the number of siblings. I obtained the age by subtracting the student's birth year from the year 2013, the start of the baseline academic year. I coded students' gender as male = 0 and female = 1, ethnic minority status as Han Chinese = 0 and other ethnicity = 1, hukou status as rural (agricultural) hukou = 1 and other types = 0. I obtained the number of siblings of students through two items. Students who answered yes to the question ``Are you the only child of your family'' had no sibling. Those who answered no to this question were instructed to proceed to the next question, ``How many full or half siblings do you have'' -- elder brother, younger brother, elder sister, and younger sister, respectively. In these four columns, I transformed \texttt{NA} to zero. Then I added the four columns as the number of siblings of a student.
-
-The control variables at the household level include the internet assess at home, the self-rated number of books at home, and the years of education of the best-educated parent. These variables can approximate the level of human capital in a household. The internet assess was measured by the item ``Do {[}sic{]} your family own a computer and have an access to the Internet''. Those who answered ``Yes, we have both'' were coded as 1, and others as 0. The number of books was measured by the item ``How many books do your family own? (not including textbooks or magazines)''. Students chose from a range of 1 as ``very few'' to 5 as ``a great number''. The years of education of the best-educated parent were measured by two items. Students indicated their father's and mother's educational level, respectively. I transformed these two variables into years of education and retained the larger value.
+The key independent variable, the parental migration status, was identified by two items in the parent survey. In both the baseline and the follow-up surveys, parents specified the family members living in the same household at the time. I constructed six treatment dummy variables measuring migration arrangements: both parents absent, only father absent, only mother absent, father absent (unconditional on mother's migration status), mother absent (unconditional on father's migration status). These arrangements can overlap with each other. The control group consisted of parents staying with their children throughout at both the baseline and the follow-up surveys. I then removed the observations that reported parental divorce or death. These type of parental absence are irrelevant to migration.
 
 \hypertarget{data-analysis}{%
 \subsection{Data analysis}\label{data-analysis}}
 
-I adopted R (Version 4.2.0; R Core Team, 2022) and the R-packages \emph{papaja} (Version 0.1.0.9999; Aust \& Barth, 2020), and \emph{tinylabels} (Version 0.2.3; Barth, 2022) for all the analyses, the \texttt{fixest} package for building the econometric models (Bergé, 2018), and the \texttt{modelsummary} package for presenting the results (Arel-Bundock, 2022). I built a two-way fixed effect model in a difference-in-differences (DID) design, following Bai and colleagues' (2018; 2020) approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. I first specified an unrestricted and unadjusted model: \[\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \varepsilon_{i,s}\]For student \(i\) in school \(s\), \(\Delta score_{i,s}\) is the change in standardized test score between baseline and follow-up surveys, \(migr_{i,s}\) is the treatment dummy variable, \(FE_{s}\) is the school-level fixed effect, and \(score_{i,s;base}\) is the standardized test score at baseline. The model is unrestricted because it does not restrict on the coefficient associated with the baseline scores. The model is unadjusted as it does not adjust for additional covariates. Theoretically, it is unnecessary to include covariates that vary over group but remain consant over time; They would cancel out in the two-way fixed effect model. The standard errors were clustered at the school level.
+I adopted R (Version 4.2.0; R Core Team, 2022) and the R-packages \emph{papaja} (Version 0.1.0.9999; Aust \& Barth, 2020), and \emph{tinylabels} (Version 0.2.3; Barth, 2022) for all the analyses, the \texttt{fixest} package for building the econometric models (Bergé, 2018), and the \texttt{modelsummary} package for presenting the results (Arel-Bundock, 2022). I built a two-way fixed effect model in a difference-in-differences (DID) design, following Bai and colleagues' (2018; 2020) approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. I first specified an unrestricted and unadjusted model: \[\Delta score_{i,c} = \alpha + \beta \cdot migr_{i,c} + \gamma \cdot FE_{c} + \lambda \cdot score_{i,c;base} + \varepsilon_{i,c}\] For student \(i\) in classroom \(c\), \(\Delta score_{i,c}\) is the change in test score between baseline and follow-up surveys, \(migr_{i,c}\) is the treatment dummy variable, \(FE_{c}\) is the classroom-level fixed effect, and \(score_{i,c;base}\) is the test score at baseline. The model is unrestricted because it does not restrict on the coefficient associated with the baseline scores. The model is unadjusted as it does not adjust for additional covariates. Theoretically, it is unnecessary to include covariates that vary over group but remain constant over time; They would cancel out in the two-way fixed effect model (Huntington-Klein, n.d.). The standard errors were clustered at the classroom level.
 
-In addition, I presented an unrestricted and adjusted DID model: \[\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \theta \cdot X_{i,s} + \varepsilon_{i,s}\]where \(X_{i,s}\) is the vector of covariates capturing the characteristics of children and their households. The control variables were measured in the baseline survey. This version of model lifts the restriction that covariates from the baseline survey would be associated with a coefficient that equals one.
+In addition, I presented an unrestricted and adjusted DID model: \[\Delta score_{i,c} = \alpha + \beta \cdot migr_{i,c} + \gamma \cdot FE_{c} + \lambda \cdot score_{i,c;base} + \theta \cdot X_{i,c} + \varepsilon_{i,c}\] where \(X_{i,c}\) is the vector of covariates capturing the characteristics of children, their parents, and their households. The control variables were measured in the baseline survey. This version of model lifts the restriction that covariates from the baseline survey would be associated with a coefficient that equals one.
+
+\newpage
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
+\hypertarget{descriptive-statistics}{%
+\subsection{Descriptive Statistics}\label{descriptive-statistics}}
+
+The table below summarizes the changes in migration status in the sample. All 4040 children were living together with parents in one household in baseline, but about fifteen percent saw at least one parent migrated during the two waves of survey. In these new migrant households, only-mother migration and only-father migration each accounted for two out of five cases. The remaining one-fifth was both-parents migration.
+
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1520}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1680}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}@{}}
+\caption{Parental migration status at follow-up survey. Among the columns: (2) = (3) + (5) + (7), (4) = (3) + (7), (6) = (5) + (7).}\tabularnewline
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+(1) No migration
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(2) Any Parent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(3) Only Mother
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(4) Mother (Uncond.)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(5) Only Father
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(6) Father (Uncond.)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(7) Both Parents
+\end{minipage} \\
+\midrule
+\endfirsthead
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+(1) No migration
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(2) Any Parent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(3) Only Mother
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(4) Mother (Uncond.)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(5) Only Father
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(6) Father (Uncond.)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(7) Both Parents
+\end{minipage} \\
+\midrule
+\endhead
+3415 & 625 & 253 & 381 & 244 & 372 & 128 \\
+\bottomrule
+\end{longtable}
+
+The following two tables summarizes the control variables. The distributions between girls and boys, urban and rural hukou holders, as well as Han Chinese and ethnic minorities largely align with the figures reported in the 2015 one-percent National Population Sample Survey (NBS et al., 2017).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{The control variables at children's level}\tabularnewline
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Explanation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+N
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\%
+\end{minipage} \\
+\midrule
+\endfirsthead
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Explanation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+N
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\%
+\end{minipage} \\
+\midrule
+\endhead
+ch.girl & gender & 0 = Male & 1980 & 49.0 \\
+& & 1 = Female & 2060 & 51.0 \\
+ch.rural & hukou type & 0 = Rural & 2212 & 54.8 \\
+& & 1 = Urban & 1828 & 45.2 \\
+ch.health & self-rated health & 1 = Very poor & 21 & 0.5 \\
+& & 2 = Not very good & 112 & 2.8 \\
+& & 3 = Moderate & 800 & 19.8 \\
+& & 4 = Good & 1369 & 33.9 \\
+& & 5 = Very good & 1738 & 43.0 \\
+ch.boarding & boarding at school & 0 = No & 2885 & 71.4 \\
+& & 1 = Yes & 1155 & 28.6 \\
+ch.ethn.mnrt & ethnic minority other than Han Chinese & 0 = No & 3758 & 93.0 \\
+& & 1 = Yes & 282 & 7.0 \\
+ch.skip.grd & has skipped grade & 0 = No & 3996 & 98.9 \\
+& & 1 = Yes & 44 & 1.1 \\
+ch.repeat.grd & has repeated grade & 0 = No & 3662 & 90.6 \\
+& & 1 = Yes & 378 & 9.4 \\
+ch.preschool & attended preschool & 0 = No & 628 & 15.5 \\
+& & 1 = Yes & 3412 & 84.5 \\
+ch.aspr.univ & aspires to finish university bachelor's or above & 0 = No & 1158 & 28.7 \\
+& & 1 = Yes & 2882 & 71.3 \\
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{The control variables at parent's and household level}\tabularnewline
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Explanation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+N
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\%
+\end{minipage} \\
+\midrule
+\endfirsthead
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Explanation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+N
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\%
+\end{minipage} \\
+\midrule
+\endhead
+par.edu.year & years of education of the best-educated parent & 0 = no formal education & 8 & 0.2 \\
+& & 6 = primary school & 235 & 5.8 \\
+& & 9 = junior high school & 1554 & 38.5 \\
+& & 12 = senior high school & 1239 & 30.7 \\
+& & 15 = associate college & 383 & 9.5 \\
+& & 16 = university undergraduate & 542 & 13.4 \\
+& & 19 = university postgraduate & 79 & 2.0 \\
+par.ccp & at least one parent is Communist Party member & 0 = No & 3498 & 86.6 \\
+& & 1 = Yes & 542 & 13.4 \\
+par.expt.univ & parent expects child to finish university bachelor's or above & 0 & 704 & 17.4 \\
+& & 1 & 3336 & 82.6 \\
+home.internet & internet access at home & 0 & 1285 & 31.8 \\
+& & 1 & 2755 & 68.2 \\
+home.book & number of extracurricular books at home, self-rated by child & 1 = Very few & 383 & 9.5 \\
+& & 2 = Not many & 406 & 10.0 \\
+& & 3 = Some & 1298 & 32.1 \\
+& & 4 = Quite a few & 1103 & 27.3 \\
+& & 5 = A great number & 850 & 21.0 \\
+home.finances & household financial situation self-rated by parent & 1 = Very poor & 113 & 2.8 \\
+& & 2 = Somewhat poor & 583 & 14.4 \\
+& & 3 = Moderate & 3102 & 76.8 \\
+& & 4 = Somewhat rich & 230 & 5.7 \\
+& & 5 = Very rich & 12 & 0.3 \\
+\bottomrule
+\end{longtable}
+
+\hypertarget{multiple-regression}{%
+\subsection{Multiple Regression}\label{multiple-regression}}
+
+The unrestricted and unadjusted DID models present the following results. For both cognitive test score and total exam grade, the any-parent-absent variable has a negative coefficient that differs significantly from zero. If a household sees any parent migrated, their child's cognitive test score and total exam grade would decrease relative to that of children whose parents stay with them, holding everything else constant.
+
+How about the coefficients of different types of migration arrangement? For total exam grade, the coefficients of mother absent and only mother absent are negative and significantly different from zero. The statistical significance does not hold for coefficients of father absent and only father absent. Regarding cognitive test score, all coefficients are negative and significantly different from zero, except for only mother absent. The effect size of father absent is greater than that of mother absent.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0909}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1570}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1653}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1240}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1653}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1240}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1736}}@{}}
+\caption{Parental migration's effect on children's cognitive abilities}\tabularnewline
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Any Parent Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Both Parents Absent
+\end{minipage} \\
+\midrule
+\endfirsthead
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -301,34 +500,52 @@ Both Parents Absent
 \end{minipage} \\
 \midrule
 \endhead
-Explanator & -0.12*** & -0.07 & -0.10* & -0.16*** & -0.16*** & -0.16* \\
-& (0.03) & (0.04) & (0.04) & (0.04) & (0.04) & (0.07) \\
-Baseline Score & -0.62*** & -0.63*** & -0.63*** & -0.62*** & -0.62*** & -0.63*** \\
+Explanator & -0.10*** & -0.05 & -0.08* & -0.14*** & -0.14*** & -0.13* \\
+& (0.03) & (0.05) & (0.04) & (0.04) & (0.03) & (0.06) \\
+W1 score & -0.61*** & -0.62*** & -0.62*** & -0.61*** & -0.61*** & -0.62*** \\
 & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-Num.Obs. & 4134 & 3770 & 3894 & 3745 & 3869 & 3629 \\
-R2 & 0.440 & 0.449 & 0.442 & 0.453 & 0.445 & 0.448 \\
-R2 Adj. & 0.424 & 0.432 & 0.425 & 0.436 & 0.429 & 0.430 \\
-R2 Within & 0.371 & 0.379 & 0.374 & 0.383 & 0.377 & 0.382 \\
+Num.Obs. & 4040 & 3668 & 3796 & 3659 & 3787 & 3543 \\
+R2 & 0.476 & 0.483 & 0.475 & 0.488 & 0.480 & 0.479 \\
+R2 Adj. & 0.446 & 0.451 & 0.443 & 0.456 & 0.448 & 0.445 \\
+R2 Within & 0.364 & 0.370 & 0.364 & 0.372 & 0.367 & 0.367 \\
 R2 Pseudo & & & & & & \\
-AIC & 7697.6 & 6999.8 & 7273.5 & 6898.0 & 7171.1 & 6746.1 \\
-BIC & 8418.9 & 7710.6 & 7988.0 & 7608.0 & 7884.8 & 7452.5 \\
-Log.Lik. & -3734.792 & -3385.924 & -3522.761 & -3335.002 & -3471.561 & -3259.049 \\
-Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
-FE: schids & X & X & X & X & X & X \\
+AIC & 7443.2 & 6769.4 & 7041.9 & 6674.9 & 6947.4 & 6547.5 \\
+BIC & 8830.1 & 8128.8 & 8415.1 & 8033.8 & 8320.1 & 7905.5 \\
+Log.Lik. & -3501.606 & -3165.681 & -3300.971 & -3118.446 & -3253.719 & -3053.770 \\
+Std.Errors & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids \\
+FE: clsids & X & X & X & X & X & X \\
 \bottomrule
 \end{longtable}
 
 \textbf{Note:}
-\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+\^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1520}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1680}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0909}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1570}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1653}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1240}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1653}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1240}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1736}}@{}}
+\caption{Parental migration's effect on children's academic abilities}\tabularnewline
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Any Parent Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Both Parents Absent
+\end{minipage} \\
+\midrule
+\endfirsthead
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -346,34 +563,56 @@ Both Parents Absent
 \end{minipage} \\
 \midrule
 \endhead
-Explanator & -0.08* & -0.12* & -0.10* & -0.05 & -0.05 & -0.05 \\
-& (0.03) & (0.05) & (0.04) & (0.05) & (0.04) & (0.07) \\
-Baseline Score & -0.31*** & -0.31*** & -0.31*** & -0.32*** & -0.32*** & -0.32*** \\
+Explanator & -2.88* & -6.31** & -4.12* & -0.71 & -0.71 & -0.18 \\
+& (1.21) & (2.22) & (1.71) & (1.64) & (1.31) & (2.19) \\
+W1 score & 0.04 & 0.04 & 0.03 & 0.04 & 0.04 & 0.03 \\
 & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-Num.Obs. & 4134 & 3770 & 3894 & 3745 & 3869 & 3629 \\
-R2 & 0.163 & 0.166 & 0.165 & 0.170 & 0.170 & 0.172 \\
-R2 Adj. & 0.140 & 0.140 & 0.140 & 0.144 & 0.145 & 0.145 \\
-R2 Within & 0.148 & 0.147 & 0.148 & 0.153 & 0.153 & 0.153 \\
+Num.Obs. & 4040 & 3668 & 3796 & 3659 & 3787 & 3543 \\
+R2 & 0.547 & 0.562 & 0.558 & 0.552 & 0.550 & 0.562 \\
+R2 Adj. & 0.521 & 0.534 & 0.531 & 0.524 & 0.522 & 0.533 \\
+R2 Within & 0.006 & 0.008 & 0.006 & 0.004 & 0.003 & 0.002 \\
 R2 Pseudo & & & & & & \\
-AIC & 8749.8 & 7947.9 & 8227.8 & 7838.8 & 8117.1 & 7596.2 \\
-BIC & 9471.1 & 8658.6 & 8942.3 & 8548.8 & 8830.8 & 8302.6 \\
-Log.Lik. & -4260.905 & -3859.940 & -3999.901 & -3805.376 & -3944.541 & -3684.093 \\
-Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
-FE: schids & X & X & X & X & X & X \\
+AIC & 37012.2 & 33524.8 & 34717.7 & 33408.4 & 34591.1 & 32296.6 \\
+BIC & 38399.1 & 34884.3 & 36090.9 & 34767.3 & 35963.7 & 33654.6 \\
+Log.Lik. & -18286.101 & -16543.420 & -17138.864 & -16485.186 & -17075.527 & -15928.290 \\
+Std.Errors & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids \\
+FE: clsids & X & X & X & X & X & X \\
 \bottomrule
 \end{longtable}
 
 \textbf{Note:}
-\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+\^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+
+To ensure robustness, I controlled for covariates in the unrestricted and adjusted DID models. The results from unadjusted models still hold, with only one exception. That is, for the cognitive test score, the both-parent-absent coefficient saw a change of statistical significance level from five percent level to ten percent level.
+
+In the cognitive test score regression, children's age is associated with a negative coefficient that significantly differ from zero. Children's aspiration for university education and parents' expectation on children finishing university are both associated with positive coefficients that significantly differ from zero. In the total exam grade regression, the aforementioned findings also hold. In addition, the female gender of children is linked to a positive, statistically significant coefficient. The children's self reported health and the best-educated parent's year of education also have positive, statistically significant coefficients.
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1520}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1680}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1129}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1532}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1613}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1210}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1613}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1210}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1694}}@{}}
+\caption{Parental migration's effect on children's cognitive abilities}\tabularnewline
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Any Parent Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mother Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Only Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Father Absent
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Both Parents Absent
+\end{minipage} \\
+\midrule
+\endfirsthead
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -391,209 +630,69 @@ Both Parents Absent
 \end{minipage} \\
 \midrule
 \endhead
-Explanator & -0.08* & -0.12* & -0.13** & 0.01 & -0.04 & -0.14* \\
-& (0.03) & (0.05) & (0.04) & (0.05) & (0.04) & (0.07) \\
-Baseline Score & -0.29*** & -0.29*** & -0.29*** & -0.29*** & -0.29*** & -0.30*** \\
+Explanator & -0.10*** & -0.06 & -0.08* & -0.14*** & -0.13*** & -0.12† \\
+& (0.03) & (0.04) & (0.04) & (0.04) & (0.03) & (0.06) \\
+W1 score & -0.65*** & -0.66*** & -0.66*** & -0.65*** & -0.65*** & -0.65*** \\
 & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-Num.Obs. & 4134 & 3770 & 3894 & 3745 & 3869 & 3629 \\
-R2 & 0.164 & 0.172 & 0.170 & 0.169 & 0.167 & 0.173 \\
-R2 Adj. & 0.141 & 0.146 & 0.145 & 0.143 & 0.142 & 0.147 \\
-R2 Within & 0.149 & 0.153 & 0.154 & 0.151 & 0.153 & 0.158 \\
-R2 Pseudo & & & & & & \\
-AIC & 8312.4 & 7556.5 & 7816.0 & 7503.0 & 7765.6 & 7272.1 \\
-BIC & 9033.7 & 8267.3 & 8530.5 & 8213.0 & 8479.3 & 7978.5 \\
-Log.Lik. & -4042.216 & -3664.273 & -3794.002 & -3637.509 & -3768.779 & -3522.049 \\
-Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
-FE: schids & X & X & X & X & X & X \\
-\bottomrule
-\end{longtable}
-
-\textbf{Note:}
-\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1520}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1600}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1200}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1680}}@{}}
-\toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
-\end{minipage} \\
-\midrule
-\endhead
-Explanator & -0.06* & -0.05 & -0.04 & -0.09* & -0.07 & -0.01 \\
-& (0.03) & (0.05) & (0.04) & (0.04) & (0.04) & (0.05) \\
-Baseline Score & -0.17*** & -0.17*** & -0.18*** & -0.17*** & -0.18*** & -0.18*** \\
+age & -0.08*** & -0.08*** & -0.09*** & -0.08*** & -0.09*** & -0.09*** \\
 & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-Num.Obs. & 4134 & 3770 & 3894 & 3745 & 3869 & 3629 \\
-R2 & 0.091 & 0.097 & 0.098 & 0.092 & 0.094 & 0.100 \\
-R2 Adj. & 0.065 & 0.069 & 0.071 & 0.064 & 0.066 & 0.071 \\
-R2 Within & 0.071 & 0.072 & 0.073 & 0.073 & 0.073 & 0.076 \\
-R2 Pseudo & & & & & & \\
-AIC & 7185.6 & 6502.1 & 6737.9 & 6513.7 & 6748.0 & 6303.0 \\
-BIC & 7906.8 & 7212.8 & 7452.4 & 7223.7 & 7461.7 & 7009.4 \\
-Log.Lik. & -3478.783 & -3137.026 & -3254.945 & -3142.869 & -3259.978 & -3037.495 \\
-Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
-FE: schids & X & X & X & X & X & X \\
-\bottomrule
-\end{longtable}
-
-\textbf{Note:}
-\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1328}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1484}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1562}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1172}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1562}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1641}}@{}}
-\toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
-\end{minipage} \\
-\midrule
-\endhead
-Explanator & -0.12*** & -0.08 & -0.10** & -0.16*** & -0.16*** & -0.14* \\
-& (0.03) & (0.04) & (0.04) & (0.04) & (0.04) & (0.06) \\
-Baseline Score & -0.64*** & -0.64*** & -0.64*** & -0.64*** & -0.64*** & -0.64*** \\
+ch.girl & -0.01 & -0.01 & -0.01 & -0.01 & -0.01 & -0.01 \\
 & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-age & -0.11*** & -0.10*** & -0.11*** & -0.11*** & -0.10*** & -0.11*** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.girl & 0.02 & 0.03 & 0.03 & 0.02 & 0.03 & 0.03 \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.health & 0.00 & -0.01 & 0.00 & -0.01 & -0.01 & -0.01 \\
+ch.health & -0.02 & -0.02 & -0.02 & -0.02 & -0.01 & -0.01 \\
 & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-ch.rural & 0.02 & 0.02 & 0.02 & 0.03 & 0.02 & 0.03 \\
+ch.rural & 0.01 & 0.01 & 0.01 & 0.00 & 0.00 & 0.01 \\
 & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.03) \\
-ch.sibling & -0.03 & -0.03 & -0.03 & -0.03 & -0.03 & -0.03 \\
+ch.sibling & -0.02 & -0.02 & -0.02 & -0.02 & -0.02 & -0.02 \\
 & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.boarding & 0.01 & 0.01 & 0.01 & 0.00 & -0.01 & 0.00 \\
+ch.preschool & 0.07* & 0.05† & 0.07* & 0.05† & 0.07* & 0.07* \\
+& (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
+ch.skip.grd & -0.18 & -0.14 & -0.11 & -0.20† & -0.18 & -0.11 \\
+& (0.12) & (0.12) & (0.12) & (0.12) & (0.12) & (0.13) \\
+ch.repeat.grd & -0.07† & -0.09* & -0.07† & -0.06 & -0.05 & -0.04 \\
 & (0.04) & (0.04) & (0.04) & (0.04) & (0.04) & (0.04) \\
-ch.ethn.minority & 0.07 & 0.08 & 0.08 & 0.07 & 0.07 & 0.07 \\
-& (0.06) & (0.07) & (0.07) & (0.07) & (0.07) & (0.08) \\
-par.edu.year & 0.01* & 0.01* & 0.01** & 0.01 & 0.01 & 0.01* \\
-& (0.00) & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\
-home.book & 0.03** & 0.03* & 0.03** & 0.03** & 0.03** & 0.03** \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-home.internet & -0.01 & -0.02 & -0.01 & -0.02 & -0.02 & -0.02 \\
-& (0.02) & (0.03) & (0.03) & (0.02) & (0.03) & (0.03) \\
-Num.Obs. & 4134 & 3770 & 3894 & 3869 & 3745 & 3629 \\
-R2 & 0.451 & 0.459 & 0.453 & 0.456 & 0.462 & 0.458 \\
-R2 Adj. & 0.434 & 0.441 & 0.435 & 0.438 & 0.444 & 0.439 \\
-R2 Within & 0.383 & 0.390 & 0.387 & 0.389 & 0.393 & 0.394 \\
-R2 Pseudo & & & & & & \\
-AIC & 7633.6 & 6948.9 & 7211.4 & 7117.0 & 6853.3 & 6694.5 \\
-BIC & 8418.1 & 7722.0 & 7988.5 & 7893.3 & 7625.6 & 7462.9 \\
-Log.Lik. & -3692.791 & -3350.450 & -3481.690 & -3434.478 & -3302.665 & -3223.231 \\
-Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
-FE: schids & X & X & X & X & X & X \\
-\bottomrule
-\end{longtable}
-
-\textbf{Note:}
-\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1328}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1484}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1562}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1172}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1562}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1641}}@{}}
-\toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
-\end{minipage} \\
-\midrule
-\endhead
-Explanator & -0.07* & -0.13* & -0.09* & -0.03 & -0.03 & -0.03 \\
-& (0.03) & (0.05) & (0.04) & (0.04) & (0.05) & (0.07) \\
-Baseline Score & -0.36*** & -0.36*** & -0.36*** & -0.37*** & -0.36*** & -0.37*** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-age & -0.05** & -0.06** & -0.05** & -0.06*** & -0.07*** & -0.06** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.girl & 0.19*** & 0.19*** & 0.19*** & 0.20*** & 0.20*** & 0.20*** \\
-& (0.02) & (0.03) & (0.02) & (0.03) & (0.03) & (0.03) \\
-ch.health & 0.04** & 0.05** & 0.04** & 0.04** & 0.04** & 0.04** \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-ch.rural & -0.02 & -0.01 & -0.03 & -0.04 & -0.02 & -0.04 \\
+ch.boarding & 0.01 & 0.00 & 0.00 & 0.00 & 0.00 & -0.01 \\
+& (0.04) & (0.04) & (0.04) & (0.04) & (0.04) & (0.04) \\
+ch.aspr.univ & 0.16*** & 0.15*** & 0.16*** & 0.15*** & 0.16*** & 0.15*** \\
 & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
-ch.sibling & -0.02 & -0.02 & -0.02 & -0.02 & -0.02 & -0.03 \\
-& (0.02) & (0.02) & (0.01) & (0.02) & (0.02) & (0.02) \\
-ch.boarding & 0.00 & 0.00 & 0.00 & -0.01 & 0.00 & -0.01 \\
-& (0.05) & (0.05) & (0.05) & (0.05) & (0.05) & (0.05) \\
-ch.ethn.minority & -0.04 & -0.05 & -0.03 & -0.06 & -0.08 & -0.05 \\
+ch.ethn.mnrt & 0.05 & 0.06 & 0.05 & 0.04 & 0.03 & 0.03 \\
 & (0.06) & (0.06) & (0.06) & (0.06) & (0.06) & (0.06) \\
-par.edu.year & 0.00 & 0.01 & 0.00 & 0.00 & 0.01 & 0.00 \\
+par.edu.year & 0.01† & 0.01* & 0.01* & 0.01 & 0.01 & 0.01 \\
 & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\
-home.book & 0.03** & 0.03* & 0.03* & 0.04** & 0.04** & 0.04** \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-home.internet & -0.05 & -0.05 & -0.06 & -0.04 & -0.04 & -0.06 \\
+par.expt.univ & 0.19*** & 0.22*** & 0.20*** & 0.21*** & 0.20*** & 0.21*** \\
+& (0.03) & (0.04) & (0.03) & (0.03) & (0.03) & (0.03) \\
+par.ccp & -0.02 & -0.03 & -0.03 & 0.00 & -0.01 & -0.02 \\
 & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
-Num.Obs. & 4134 & 3770 & 3894 & 3869 & 3745 & 3629 \\
-R2 & 0.185 & 0.188 & 0.186 & 0.195 & 0.196 & 0.196 \\
-R2 Adj. & 0.160 & 0.161 & 0.160 & 0.168 & 0.169 & 0.168 \\
-R2 Within & 0.170 & 0.170 & 0.170 & 0.179 & 0.179 & 0.179 \\
+home.finances & -0.01 & -0.01 & -0.01 & 0.00 & 0.00 & 0.01 \\
+& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
+home.book & 0.01 & 0.01 & 0.01 & 0.01 & 0.01 & 0.01 \\
+& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
+home.internet & -0.01 & -0.01 & 0.00 & -0.01 & -0.01 & -0.01 \\
+& (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
+Num.Obs. & 4040 & 3668 & 3796 & 3659 & 3787 & 3543 \\
+R2 & 0.505 & 0.512 & 0.504 & 0.516 & 0.508 & 0.507 \\
+R2 Adj. & 0.474 & 0.478 & 0.471 & 0.483 & 0.476 & 0.472 \\
+R2 Within & 0.399 & 0.404 & 0.399 & 0.406 & 0.401 & 0.401 \\
 R2 Pseudo & & & & & & \\
-AIC & 8661.6 & 7865.5 & 8146.6 & 8018.7 & 7738.7 & 7505.3 \\
-BIC & 9446.1 & 8638.6 & 8923.7 & 8795.0 & 8511.0 & 8273.6 \\
-Log.Lik. & -4206.775 & -3808.734 & -3949.295 & -3885.352 & -3745.366 & -3628.626 \\
-Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
-FE: schids & X & X & X & X & X & X \\
+AIC & 7248.7 & 6594.9 & 6862.4 & 6503.7 & 6770.3 & 6386.0 \\
+BIC & 8742.7 & 8059.8 & 8341.7 & 7968.1 & 8249.0 & 7848.9 \\
+Log.Lik. & -3387.339 & -3061.440 & -3194.183 & -3015.858 & -3148.127 & -2956.003 \\
+Std.Errors & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids \\
+FE: clsids & X & X & X & X & X & X \\
 \bottomrule
 \end{longtable}
 
 \textbf{Note:}
-\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+\^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1328}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1484}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1562}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1172}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1562}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1641}}@{}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1129}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1532}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1613}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1210}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1613}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1210}}
+  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1694}}@{}}
+\caption{Parental migration's effect on children's academic abilities}\tabularnewline
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -605,60 +704,12 @@ Mother Absent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 Only Father Absent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
+Father Absent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 Both Parents Absent
 \end{minipage} \\
 \midrule
-\endhead
-Explanator & -0.07* & -0.13* & -0.12** & -0.03 & 0.01 & -0.13 \\
-& (0.03) & (0.05) & (0.04) & (0.04) & (0.05) & (0.07) \\
-Baseline Score & -0.30*** & -0.30*** & -0.30*** & -0.30*** & -0.30*** & -0.31*** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-age & -0.07*** & -0.05** & -0.06** & -0.06*** & -0.06** & -0.05** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.girl & 0.08*** & 0.10*** & 0.09*** & 0.08** & 0.08** & 0.08** \\
-& (0.02) & (0.02) & (0.02) & (0.03) & (0.03) & (0.03) \\
-ch.health & 0.01 & 0.02 & 0.02 & 0.01 & 0.01 & 0.01 \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-ch.rural & 0.03 & 0.05 & 0.04 & 0.03 & 0.04 & 0.03 \\
-& (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
-ch.sibling & 0.00 & -0.01 & -0.01 & -0.01 & 0.00 & -0.02 \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.02) \\
-ch.boarding & 0.04 & 0.03 & 0.05 & 0.04 & 0.03 & 0.05 \\
-& (0.05) & (0.05) & (0.05) & (0.05) & (0.05) & (0.05) \\
-ch.ethn.minority & -0.03 & -0.04 & -0.04 & -0.04 & -0.04 & -0.05 \\
-& (0.06) & (0.07) & (0.07) & (0.07) & (0.07) & (0.07) \\
-par.edu.year & 0.01* & 0.01** & 0.01* & 0.01* & 0.01* & 0.01* \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-home.book & 0.00 & -0.01 & -0.01 & 0.00 & 0.00 & -0.01 \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-home.internet & -0.01 & -0.01 & -0.01 & -0.01 & -0.01 & -0.02 \\
-& (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
-Num.Obs. & 4134 & 3770 & 3894 & 3869 & 3745 & 3629 \\
-R2 & 0.173 & 0.182 & 0.180 & 0.175 & 0.178 & 0.182 \\
-R2 Adj. & 0.148 & 0.154 & 0.153 & 0.148 & 0.150 & 0.153 \\
-R2 Within & 0.158 & 0.163 & 0.164 & 0.161 & 0.160 & 0.167 \\
-R2 Pseudo & & & & & & \\
-AIC & 8287.6 & 7529.5 & 7791.3 & 7748.0 & 7483.5 & 7255.4 \\
-BIC & 9072.1 & 8302.6 & 8568.4 & 8524.3 & 8255.8 & 8023.8 \\
-Log.Lik. & -4019.779 & -3640.738 & -3771.655 & -3749.997 & -3617.766 & -3503.687 \\
-Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
-FE: schids & X & X & X & X & X & X \\
-\bottomrule
-\end{longtable}
-
-\textbf{Note:}
-\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1328}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1484}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1562}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1172}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1562}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1250}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1641}}@{}}
+\endfirsthead
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -670,51 +721,67 @@ Mother Absent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 Only Father Absent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
+Father Absent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
 Both Parents Absent
 \end{minipage} \\
 \midrule
 \endhead
-Explanator & -0.06* & -0.06 & -0.04 & -0.06 & -0.09* & 0.00 \\
-& (0.03) & (0.05) & (0.04) & (0.04) & (0.04) & (0.05) \\
-Baseline Score & -0.20*** & -0.20*** & -0.20*** & -0.20*** & -0.20*** & -0.20*** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-age & -0.03* & -0.03 & -0.03 & -0.04* & -0.03 & -0.03 \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.girl & 0.10*** & 0.10*** & 0.10*** & 0.10*** & 0.10*** & 0.10*** \\
-& (0.02) & (0.02) & (0.02) & (0.03) & (0.03) & (0.03) \\
-ch.health & 0.02* & 0.02* & 0.03** & 0.02 & 0.01 & 0.02* \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-ch.rural & 0.03 & 0.03 & 0.03 & 0.02 & 0.02 & 0.02 \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.sibling & 0.00 & 0.00 & 0.00 & 0.01 & 0.01 & 0.01 \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-ch.boarding & -0.02 & 0.00 & -0.01 & -0.03 & -0.03 & -0.03 \\
-& (0.03) & (0.03) & (0.03) & (0.04) & (0.04) & (0.04) \\
-ch.ethn.minority & 0.02 & 0.01 & 0.00 & 0.02 & 0.02 & 0.00 \\
-& (0.04) & (0.04) & (0.05) & (0.05) & (0.05) & (0.05) \\
-par.edu.year & 0.01** & 0.01** & 0.01** & 0.01** & 0.01** & 0.01** \\
-& (0.00) & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\
-home.book & 0.01 & 0.01 & 0.01 & 0.02 & 0.01 & 0.02 \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-home.internet & -0.07** & -0.08** & -0.07** & -0.08** & -0.09*** & -0.09*** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.03) & (0.03) \\
-Num.Obs. & 4134 & 3770 & 3894 & 3869 & 3745 & 3629 \\
-R2 & 0.104 & 0.110 & 0.110 & 0.107 & 0.106 & 0.114 \\
-R2 Adj. & 0.077 & 0.079 & 0.081 & 0.078 & 0.076 & 0.083 \\
-R2 Within & 0.085 & 0.085 & 0.086 & 0.088 & 0.087 & 0.090 \\
+Explanator & -2.85* & -6.35** & -4.13* & -0.65 & -0.59 & 0.01 \\
+& (1.20) & (2.13) & (1.69) & (1.62) & (1.31) & (2.27) \\
+W1 score & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 \\
+& (0.02) & (0.03) & (0.03) & (0.03) & (0.02) & (0.02) \\
+age & -1.58* & -1.49* & -1.39* & -1.52* & -1.47* & -1.24† \\
+& (0.61) & (0.63) & (0.63) & (0.64) & (0.63) & (0.66) \\
+ch.girl & 4.34*** & 4.60*** & 4.46*** & 4.39*** & 4.18*** & 4.28*** \\
+& (0.89) & (0.92) & (0.92) & (0.91) & (0.91) & (0.93) \\
+ch.health & 1.08* & 1.09* & 1.06* & 0.96* & 0.91* & 0.89† \\
+& (0.43) & (0.45) & (0.44) & (0.46) & (0.45) & (0.47) \\
+ch.rural & 1.34 & 1.82 & 1.61 & 1.19 & 0.89 & 1.26 \\
+& (1.06) & (1.12) & (1.11) & (1.08) & (1.07) & (1.10) \\
+ch.sibling & 0.63 & 0.48 & 0.33 & 0.72 & 0.59 & 0.25 \\
+& (0.55) & (0.57) & (0.57) & (0.57) & (0.57) & (0.60) \\
+ch.preschool & 1.85 & 2.45* & 2.81* & 1.06 & 1.34 & 2.24† \\
+& (1.19) & (1.21) & (1.20) & (1.27) & (1.23) & (1.25) \\
+ch.skip.grd & 0.69 & 1.23 & 1.81 & 0.47 & 0.96 & 2.30 \\
+& (4.53) & (4.44) & (4.28) & (5.08) & (4.91) & (4.70) \\
+ch.repeat.grd & -1.41 & -0.40 & -0.34 & -0.98 & -0.76 & 0.40 \\
+& (1.80) & (1.94) & (1.84) & (1.86) & (1.72) & (1.78) \\
+ch.boarding & -1.23 & -0.31 & -0.92 & -0.88 & -1.47 & -1.19 \\
+& (1.62) & (1.62) & (1.67) & (1.67) & (1.76) & (1.82) \\
+ch.aspr.univ & 2.69* & 3.13** & 2.85* & 2.71* & 2.39* & 2.53* \\
+& (1.15) & (1.18) & (1.17) & (1.14) & (1.13) & (1.14) \\
+ch.ethn.mnrt & 0.21 & -0.44 & -0.52 & -0.51 & -0.41 & -1.24 \\
+& (2.08) & (2.22) & (2.21) & (2.28) & (2.27) & (2.44) \\
+par.edu.year & 0.44* & 0.49* & 0.46* & 0.54** & 0.50* & 0.53** \\
+& (0.20) & (0.20) & (0.20) & (0.20) & (0.20) & (0.20) \\
+par.expt.univ & 3.06* & 2.88* & 2.92* & 3.16* & 3.23* & 3.06* \\
+& (1.37) & (1.42) & (1.39) & (1.36) & (1.32) & (1.34) \\
+par.ccp & 0.24 & 0.50 & 0.30 & 0.20 & 0.02 & 0.08 \\
+& (1.06) & (1.20) & (1.17) & (1.17) & (1.14) & (1.22) \\
+home.finances & -0.89 & -0.44 & -0.55 & -0.74 & -0.81 & -0.47 \\
+& (0.81) & (0.85) & (0.83) & (0.86) & (0.84) & (0.85) \\
+home.book & -0.72† & -1.09* & -0.92* & -0.76† & -0.60 & -0.79† \\
+& (0.43) & (0.43) & (0.43) & (0.43) & (0.42) & (0.42) \\
+home.internet & -1.54 & -1.65 & -1.46 & -1.50 & -1.37 & -1.37 \\
+& (1.12) & (1.16) & (1.15) & (1.16) & (1.15) & (1.18) \\
+Num.Obs. & 4040 & 3668 & 3796 & 3659 & 3787 & 3543 \\
+R2 & 0.557 & 0.573 & 0.569 & 0.563 & 0.560 & 0.572 \\
+R2 Adj. & 0.530 & 0.544 & 0.540 & 0.533 & 0.530 & 0.541 \\
+R2 Within & 0.028 & 0.034 & 0.029 & 0.027 & 0.025 & 0.025 \\
 R2 Pseudo & & & & & & \\
-AIC & 7145.5 & 6470.0 & 6702.6 & 6708.4 & 6477.6 & 6268.0 \\
-BIC & 7930.1 & 7243.1 & 7479.7 & 7484.7 & 7249.9 & 7036.4 \\
-Log.Lik. & -3448.758 & -3110.976 & -3227.279 & -3230.208 & -3114.781 & -3009.986 \\
-Std.Errors & by: schids & by: schids & by: schids & by: schids & by: schids & by: schids \\
-FE: schids & X & X & X & X & X & X \\
+AIC & 36952.4 & 33462.4 & 34660.9 & 33354.2 & 34542.9 & 32251.3 \\
+BIC & 38446.5 & 34927.3 & 36140.1 & 34818.6 & 36021.6 & 33714.3 \\
+Log.Lik. & -18239.211 & -16495.201 & -17093.431 & -16441.114 & -17034.432 & -15888.663 \\
+Std.Errors & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids \\
+FE: clsids & X & X & X & X & X & X \\
 \bottomrule
 \end{longtable}
 
 \textbf{Note:}
-\^{}\^{} * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+\^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+
+\newpage
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
@@ -747,6 +814,9 @@ Barth, M. (2022). \emph{{tinylabels}: Lightweight variable labels}. \url{https:/
 \leavevmode\vadjust pre{\hypertarget{ref-berguxe92018}{}}%
 Bergé, L. (2018). \emph{Efficient estimation of maximum likelihood models with multiple fixed-effects: the R package FENmlm}. \url{https://ideas.repec.org/p/luc/wpaper/18-13.html}
 
+\leavevmode\vadjust pre{\hypertarget{ref-black2021}{}}%
+Black, M. M., Behrman, J. R., Daelmans, B., Prado, E. L., Richter, L., Tomlinson, M., Trude, A. C. B., Wertlieb, D., Wuermli, A. J., \& Yoshikawa, H. (2021). The principles of Nurturing Care promote human capital and mitigate adversities from preconception through adolescence. \emph{BMJ Global Health}, \emph{6}(4), e004436. \url{https://doi.org/10.1136/bmjgh-2020-004436}
+
 \leavevmode\vadjust pre{\hypertarget{ref-botev2019}{}}%
 Botev, J., Égert, B., Smidova, Z., \& Turner, D. (2019). \emph{A new macroeconomic measure of human capital with strong empirical links to productivity}. \url{https://doi.org/10.1787/d12d7305-en}
 
@@ -759,6 +829,9 @@ Chang, F., Jiang, Y., Loyalka, P., Chu, J., Shi, Y., Osborn, A., \& Rozelle, S. 
 \leavevmode\vadjust pre{\hypertarget{ref-chen2019}{}}%
 Chen, X., Li, D., Liu, J., Fu, R., \& Liu, S. (2019). Father migration and mother migration: Different implications for social, school, and psychological adjustment of left-behind children in rural china. \emph{Journal of Contemporary China}, \emph{28}(120), 849--863. \url{https://doi.org/10.1080/10670564.2019.1594100}
 
+\leavevmode\vadjust pre{\hypertarget{ref-cunningham2021}{}}%
+Cunningham, S. (2021). \emph{Causal inference: The mixtape}. Yale University Press. \url{https://mixtape.scunning.com/}
+
 \leavevmode\vadjust pre{\hypertarget{ref-dewaard2018}{}}%
 DeWaard, J., Nobles, J., \& Donato, K. M. (2018). Migration and parental absence: A comparative assessment of transnational families in Latin America. \emph{Population, Space and Place}, \emph{24}(7), e2166. \url{https://doi.org/10.1002/psp.2166}
 
@@ -770,6 +843,9 @@ Gu, X. (2021). {`}Save the children!{'}: Governing left-behind children through 
 
 \leavevmode\vadjust pre{\hypertarget{ref-hong2019}{}}%
 Hong, Y., \& Fuller, C. (2019). Alone and {``}left behind{''}: A case study of {``}left-behind children{''} in rural china. \emph{Cogent Education}, \emph{6}(1), 1654236. \url{https://doi.org/10.1080/2331186X.2019.1654236}
+
+\leavevmode\vadjust pre{\hypertarget{ref-huntington-klein}{}}%
+Huntington-Klein, N. (n.d.). \emph{The effect: An introduction to research design and causality \textbar{} the effect}. \url{https://theeffectbook.net/index.html}
 
 \leavevmode\vadjust pre{\hypertarget{ref-jin2020}{}}%
 Jin, X., Chen, W., Sun, I. Y., \& Liu, L. (2020). Physical health, school performance and delinquency: A comparative study of left-behind and non-left-behind children in rural China. \emph{Child Abuse \& Neglect}, \emph{109}, 104707. \url{https://doi.org/10.1016/j.chiabu.2020.104707}
@@ -788,6 +864,12 @@ NBS. (2022). \emph{2021 migrant workers monitor survey report {[}in Chinese{]}}.
 
 \leavevmode\vadjust pre{\hypertarget{ref-nbs2017}{}}%
 NBS, UNICEF, \& UNFPA. (2017). \emph{Population Status of Children in China in 2015: Facts and Figures}. \url{https://www.unicef.cn/media/9901/file/Population\%20Status\%20of\%20Children\%20in\%20China\%20in\%202015\%20Facts\%20and\%20Figures.pdf}
+
+\leavevmode\vadjust pre{\hypertarget{ref-nsrc}{}}%
+NSRC. (n.d.). \emph{Overview-china education panel survey}. \url{http://ceps.ruc.edu.cn/English/Overview/Overview.htm}
+
+\leavevmode\vadjust pre{\hypertarget{ref-parliamentaryassembly2021}{}}%
+Parliamentary Assembly. (2021). \emph{Resolution 2366: Impact of labour migration on {``}left-behind{''} children}. \url{https://pace.coe.int/pdf/750b8aea81ea5b757d3b0db7f9865a27e4982ffbc23c9f49d28122e772e123ef/resolution\%202366.pdf}
 
 \leavevmode\vadjust pre{\hypertarget{ref-popova2018}{}}%
 Popova, A. (2018). Risk factors for the safety of the children from transnational families children left behind. \emph{Anthropological Researches and Studies}, \emph{1}(8), 25--35. \url{https://doi.org/10.26758/8.1.3}
@@ -810,8 +892,8 @@ Xu, Y., Xu, D., Simpkins, S., \& Warschauer, M. (2019). Does It Matter Which Par
 \leavevmode\vadjust pre{\hypertarget{ref-yang2022}{}}%
 Yang, F., Wang, Z., Liu, J., \& Tang, S. (2022). The Effect of Social Interaction on Rural Children{'}s Self-identity: an Empirical Study Based on Survey Data from Jintang County, China. \emph{Child Indicators Research}, \emph{15}(3), 839--861. \url{https://doi.org/10.1007/s12187-021-09887-0}
 
-\leavevmode\vadjust pre{\hypertarget{ref-young2018}{}}%
-Young, N. A. E., \& Hannum, E. C. (2018). Childhood Inequality in China: Evidence from Recent Survey Data (2012{\textendash}2014). \emph{The China Quarterly}, \emph{236}, 1063--1087. \url{https://doi.org/10.1017/S0305741018001303}
+\leavevmode\vadjust pre{\hypertarget{ref-zhan2020}{}}%
+Zhan, Y. (2020). The moralization of philanthropy in China: NGOs, voluntarism, and the reconfiguration of social responsibility. \emph{China Information}, \emph{34}(1), 68--87. \url{https://doi.org/10.1177/0920203X19879593}
 
 \leavevmode\vadjust pre{\hypertarget{ref-zhou2014}{}}%
 Zhou, M., Murphy, R., \& Tao, R. (2014). Effects of Parents' Migration on the Education of Children Left Behind in Rural China. \emph{Population and Development Review}, \emph{40}(2), 273--292. \url{https://doi.org/10.1111/j.1728-4457.2014.00673.x}
