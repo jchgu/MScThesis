@@ -12,9 +12,11 @@ library(modelsummary)
 library(MatchIt)
 #library(vtable)
 library(ggplot2)
-library(gtsummary)
+#library(gtsummary)
 #library(DescTools)
+#knitr::opts_chunk$set(modelsummary_get="broom")
 ```
+
 
 ## Data cleaning
 Read CEPS data
@@ -293,7 +295,7 @@ datasummary_balance(
 
 ```{r}
 d_dpvar <- d_migr %>%
-  select(migr, 
+  select(#migr, 
          cog_dif, cog3pl, w2cog3pl, ttl_dif, w1ttl_100, w2ttl_100) %>%
   rename(
     `Cognitive score at wave 1` = cog3pl,
@@ -333,6 +335,7 @@ table_dependent_variable <- datasummary(
   data = d_dpvar,
   output = 'markdown'
   )
+table_dependent_variable
 ```
 
 ```{r}
@@ -340,7 +343,7 @@ table_independent_variable <- datasummary_skim(
     data=d_idpvar,
     type = 'categorical',
     output = 'markdown')
-
+table_independent_variable
 ```
 
 ```{r}
@@ -499,34 +502,45 @@ ttest_ttl
 ```{r}
 set.seed(1)
 fig_cog <- 
-  ggplot(d_migr, aes(x='Parental Migration Type', y=cog_dif, fill = `Parental Migration`)) + 
-    geom_jitter(color="black", size=0.4, alpha=0.9) +
-    geom_boxplot(alpha=0.2)
+  ggplot(d_migr, aes(x=`Parental Migration`, y=cog_dif, fill = `Parental Migration`)) + 
+    geom_violin()+
+    xlab('Parental Migration') +
+    theme(legend.position="none") +
+    ylab("")
+fig_cog
 ```
 
 ```{r}
 set.seed(1)
 fig_ttl <- 
-ggplot(d_migr, aes(x='Parental Migration Type', y=ttl_dif, fill = `Parental Migration`)) + 
-    geom_jitter(color="black", size=0.4, alpha=0.9) +
-    geom_boxplot(alpha=0.2)
+  ggplot(d_migr, aes(x=`Parental Migration`, y=ttl_dif, fill = `Parental Migration`)) + 
+    geom_violin()+
+    xlab('Parental Migration') +
+    theme(legend.position="none") +
+    ylab("")
+fig_ttl
 ```
 
 ```{r}
 set.seed(1)
 fig_cog_by_migration_type <-
-  ggplot(d_migr, aes(x='Parental Migration Type', y=cog_dif, fill = `Parental Migration Type`)) + 
-    geom_jitter(color="black", size=0.4, alpha=0.9) +
-    geom_boxplot(alpha=0.2) 
-
+  ggplot(d_migr, aes(x=`Parental Migration Type`, y=cog_dif, fill = `Parental Migration Type`)) + 
+    geom_violin()+
+    xlab('Parental Migration Type') +
+    theme(legend.position="none") +
+    ylab("")
+fig_cog_by_migration_type
 ```
 
 ```{r}
 set.seed(1)
 fig_ttl_by_migration_type <-
-  ggplot(d_migr, aes(x='Parental Migration Type', y=ttl_dif, fill = `Parental Migration Type`)) + 
-    geom_jitter(color="black", size=0.4, alpha=0.9) +
-    geom_boxplot(alpha=0.2)
+  ggplot(d_migr, aes(x=`Parental Migration Type`, y=ttl_dif, fill = `Parental Migration Type`)) + 
+    geom_violin()+
+    xlab('Parental Migration Type') +
+    theme(legend.position="none") +
+    ylab("")
+fig_ttl_by_migration_type
 ```
 
 ## DID unrestricted
@@ -552,12 +566,20 @@ models_cog <- list(
 ```
 
 ```{r}
+stars <- c('†' = .1, '*' = .05, '**' = .01, '***' = .001)
+coef_rename <- c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "W1 score", "w1ttl_100" = "W1 score")
+title_cog <- 'Parental migration’s effect on children’s cognitive abilities'
+title_ttl <- 'Parental migration’s effect on children’s academic abilities'
+gof_omit <- 'R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors'
+```
+
+```{r}
 table_cog <- models_cog %>% msummary(
-  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001),
+  stars =  stars,
   fmt = 2,
-  title = 'Parental migration’s effect on children’s cognitive abilities',
-  gof_omit = 'R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors',
-  coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "W1 score"), 
+  title = title_cog,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
   output = 'markdown')
 table_cog
 ```
@@ -584,11 +606,11 @@ models_ttl <- list(
 
 ```{r}
 table_ttl <- models_ttl %>% msummary(
-  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001), 
-  title = 'Parental migration’s effect on children’s academic abilities',
+  stars =  stars,
   fmt = 2,
-  coef_rename = c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1ttl_100" = "W1 score"), 
-  gof_omit = 'R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors',
+  title = title_ttl,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
   output = 'markdown')
 table_ttl
 ```
@@ -650,7 +672,7 @@ Regressing on cognitive test score (standardized)
 did_adj_cog <- feols(cog_dif ~ migr + cog3pl  + child.age + child.is.girl + child.health.self.rated + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.educational.aspiration + child.is.ethnic.minority + parent.expectation.on.child + parent.has.white.collar.job + parent.educational.level +home.economic.resource + home.extracurricular.book  + home.has.internet | clsids + w2clsids, data = d_cl) 
 did_adj_cog_m_only <- feols(cog_dif ~ migr_mo_only + cog3pl  + child.age + child.is.girl + child.health.self.rated + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.educational.aspiration + child.is.ethnic.minority + parent.expectation.on.child + parent.has.white.collar.job + parent.educational.level +home.economic.resource + home.extracurricular.book  + home.has.internet | clsids + w2clsids, data = d_cl) 
 #did_adj_cog_m <- feols(cog_dif ~ migr_mo + cog3pl  + child.age + child.is.girl + child.health.self.rated + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.educational.aspiration + child.is.ethnic.minority + parent.expectation.on.child + parent.has.white.collar.job + parent.educational.level +home.economic.resource + home.extracurricular.book  + home.has.internet | clsids + w2clsids, data = d_cl) 
-did_adj_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl  + child.age + child.is.girl + child.health.self.rated + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.educational.aspiration + child.is.ethnic.minority + parent.expectation.on.child + parent.has.white.collar.job + parent.educational.level +home.economic.resource + home.extracurricular.book  + home.has.internet | clsids + w2clsids, data = d_cl) 
+did_adj_cog_f_only <- feols(cog_dif ~ migr_fa_only + cog3pl + child.age + child.is.girl + child.health.self.rated + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.educational.aspiration + child.is.ethnic.minority + parent.expectation.on.child + parent.has.white.collar.job + parent.educational.level +home.economic.resource + home.extracurricular.book  + home.has.internet | clsids + w2clsids, data = d_cl) 
 #did_adj_cog_f <- feols(cog_dif ~ migr_fa + cog3pl  + child.age + child.is.girl + child.health.self.rated + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.educational.aspiration + child.is.ethnic.minority + parent.expectation.on.child + parent.has.white.collar.job + parent.educational.level +home.economic.resource + home.extracurricular.book  + home.has.internet | clsids + w2clsids, data = d_cl) 
 did_adj_cog_both <- feols(cog_dif ~ migr_both + cog3pl  + child.age + child.is.girl + child.health.self.rated + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.educational.aspiration + child.is.ethnic.minority + parent.expectation.on.child + parent.has.white.collar.job + parent.educational.level +home.economic.resource + home.extracurricular.book  + home.has.internet | clsids + w2clsids, data = d_cl)
 ```
@@ -668,12 +690,12 @@ models_adj_cog <- list(
 
 ```{r}
 table_adj_cog <- models_adj_cog %>% msummary(
-  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001),
-           title = 'Parental migration’s effect on children’s cognitive abilities',
-           fmt = 2, 
-           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "W1 score"),
-  gof_omit = 'R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors',
-           output = 'markdown'
+  stars =  stars,
+  fmt = 2,
+  title = title_ttl,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  output = 'markdown'
   )
 table_adj_cog
 ```
@@ -701,11 +723,13 @@ models_adj_ttl <- list(
 
 ```{r}
 table_adj_ttl <- models_adj_ttl %>% msummary(
-  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001), 
-  title = 'Parental migration’s effect on children’s academic abilities',
-  fmt = 2, 
-  gof_omit = 'R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors',
-  coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1ttl_100" = "W1 score"), output = 'markdown')
+  stars =  stars,
+  fmt = 2,
+  title = title_ttl,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  output = 'markdown'
+  )
 table_adj_ttl
 ```
 
@@ -766,7 +790,7 @@ m.out <- matchit(
   distance = "glm",
   exact = migr ~ ctyids
   )
-summary(m.out) %>% plot()
+fig_msmd_any <- summary(m.out) %>% plot(xlim = c(0, 0.55), position = 'right')
 ```
 
 ```{r}
@@ -796,7 +820,7 @@ m.out_mo_only <-
   ratio = 3,
   exact = migr_mo_only ~ ctyids
   )
-summary(m.out_mo_only) %>% plot()
+fig_msmd_mo_only <- summary(m.out_mo_only) %>% plot(xlim = c(0, 0.55), position = 'right')
 ```
 
 ```{r}
@@ -825,7 +849,7 @@ m.out_fa_only <- matchit(
   ratio = 3,
   exact = migr_fa_only ~ ctyids
   )
-summary(m.out_fa_only) %>% plot()
+fig_msmd_fa_only <- summary(m.out_fa_only) %>% plot(xlim = c(0, 0.55), position = 'right')
 ```
 
 ```{r}
@@ -854,7 +878,7 @@ m.out_both <- matchit(
   ratio = 3,
   exact = migr_both ~ ctyids
   )
-summary(m.out_both) %>% plot()
+fig_msmd_both <- plot(summary(m.out_both), xlim = c(0, 0.55), position = 'right')
 ```
 
 ```{r}
@@ -936,6 +960,12 @@ feols(ttl_dif ~ migr_fa + w1ttl_100 + child.age + child.is.girl + child.health.s
 ```
 
 ```{r}
+title_cog_matching <- 'Parental migration’s effect on children’s cognitive abilities, estimated with matching'
+title_ttl_matching <- 'Parental migration’s effect on children’s academic abilities, estimated with matching'
+note_matching <- "3:1 nearest neighbor propensity score matching with replacement; exact matching by county"
+```
+
+```{r}
 models_m_cog <- list(
 'Any Parent Absent' = didm_cog,
 'Only Mother Absent' = didm_cog_mo_only,
@@ -943,13 +973,17 @@ models_m_cog <- list(
 'Only Father Absent' = didm_cog_fa_only,
 ##'Father Absent' = #did_adj_cog_f,
 'Both Parents Absent' = didm_cog_both) 
+```
+
+```{r}
 table_m_cog <- models_m_cog %>% msummary(
-  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001),
-           title = 'Parental migration’s effect on children’s cognitive abilities',
-           fmt = 2,
-           gof_omit = 'R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors',
-           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "W1 score"), 
-           output = 'markdown'
+  stars =  stars,
+  fmt = 2,
+  title = title_cog_matching,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  notes = note_matching,
+  output = 'markdown'
   )
 table_m_cog
 ```
@@ -964,12 +998,13 @@ models_m_ttl <- list(
 ##'Father Absent' = #did_adj_ttl_f,
 'Both Parents Absent' = didm_ttl_both) 
 table_m_ttl <- models_m_ttl %>% msummary(
-  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001),
-           title = 'Parental migration’s effect on children’s academic abilities',
-           fmt = 2,
-           gof_omit = 'R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors',
-           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1ttl_100" = "W1 score"), 
-           output = 'markdown'
+  stars =  stars,
+  fmt = 2,
+  title = title_ttl_matching,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  notes = note_matching,
+  output = 'markdown'
   )
 table_m_ttl
 ```
@@ -983,12 +1018,13 @@ models_m_adj_cog <- list(
 ##'Father Absent' = #did_adj_cog_f,
 'Both Parents Absent' = didm_adj_cog_both) 
 table_m_adj_cog <- models_m_adj_cog %>% msummary(
-  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001),
-           title = 'Parental migration’s effect on children’s cognitive abilities',
-           fmt = 2,
-           gof_omit = 'R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors',
-           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "cog3pl" = "W1 score"), 
-           output = 'markdown'
+  stars =  stars,
+  fmt = 2,
+  title = title_ttl_matching,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  notes = note_matching,
+  output = 'markdown'
   )
 table_m_adj_cog
 ```
@@ -1002,12 +1038,13 @@ models_m_adj_ttl <- list(
 ##'Father Absent' = #did_adj_ttl_f,
 'Both Parents Absent' = didm_adj_ttl_both) 
 table_m_adj_ttl <- models_m_adj_ttl %>% msummary(
-  stars =  c('†' = .1, '*' = .05, '**' = .01, '***' = .001),
-           title = 'Parental migration’s effect on children’s academic abilities',
-           fmt = 2,
-           gof_omit = 'R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors',
-           coef_rename =  c("migr" = "Explanator", "migr_mo_only" = "Explanator", "migr_mo" = "Explanator", "migr_fa" = "Explanator", "migr_fa_only" = "Explanator", "migr_both" = "Explanator", "w1ttl_100" = "W1 score"), 
-           output = 'markdown'
+  stars =  stars,
+  fmt = 2,
+  title = title_ttl_matching,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  notes = note_matching,
+  output = 'markdown'
   )
 table_m_adj_ttl
 ```
@@ -1049,7 +1086,7 @@ feols(cog_dif ~ migr*fin.better + cog3pl + child.age + child.is.girl + child.hea
 
 ```{r}
 d_cl1=d_cl1 %>% mutate(
-  supervision.less = if_else(b2201 > w2a18 & b2202 > w2a19, 1, 0)
+  supervision.less = if_else((b2201 + b2202) > (w2a18 + w2a19), 1, 0)
 )
 ```
 

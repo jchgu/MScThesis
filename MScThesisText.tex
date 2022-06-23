@@ -36,7 +36,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={Parental Migration and Left-Behind Children's Cognitive and Academic Performances},
+  pdftitle={Newly Left-Behind Children's Educational Performance Drops Slightly After Parents Migrated},
   pdfauthor={Jiancheng Gu1},
   pdflang={en-EN},
   pdfkeywords={keywords},
@@ -193,7 +193,7 @@
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 
-\title{Parental Migration and Left-Behind Children's Cognitive and Academic Performances}
+\title{Newly Left-Behind Children's Educational Performance Drops Slightly After Parents Migrated}
 \author{Jiancheng Gu\textsuperscript{1}}
 \date{}
 
@@ -208,13 +208,13 @@
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work (Antia et al., 2020). These are the so-called ``left behind children.'' They are common in migrant-sending regions, such as Latin America, Sub-Sahara Africa, East Europe, and large parts of Asia. Researchers estimated that one-sixth of Mexican children (DeWaard et al., 2018), one-fifth of Bulgarian children, (Popova, 2018), and one-fourth of Chinese children were living apart from their migrating parents (NBS et al., 2017).
+Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work (Antia et al., 2020). These are the so-called ``left-behind children'' or ``stay-behind children.'' They are common in migrant-sending regions, such as Latin America, Sub-Sahara Africa, East Europe, and large parts of Asia. Researchers estimated that one-sixth of Mexican children (DeWaard et al., 2018), one-fifth of Bulgarian children, (Popova, 2018), and one-fourth of Chinese children were living apart from their migrating parents (NBS et al., 2017).
 
-How are children faring when parents have migrated? Scholars have obtained mixed results due to the differential effects of parental migration. Consider children's education. (Van Hook \& Glick, 2020) labor migrants send remittances back home, which can fund children's schooling as well as improve their nutritional and living conditions. The inflow of remittances, however, cannot substitute for the loss of parental care. Parental migration decreases the amount and quality of parental guidance, protection, and support. It is uncertain how these two opposing effects together shape children's educational performance, which merits empirical investigation.
+How are stay-behind children faring when parents have migrated? Scholars have obtained mixed results due to the differential effects of parental migration. Consider children's education. According to the review articles by De Brauw (2019) and by Van Hook and Glick (2020), labor migrants send remittances back home, which can fund children's schooling as well as improve their nutritional and living conditions. The inflow of remittances, however, cannot substitute for the loss of parental care. Parental migration decreases the amount and quality of parental guidance, protection, and support. It is uncertain how these two opposing effects together shape children's educational performance, which merits empirical investigation.
 
 A challenge arises in when we want to assess the causality between parental migration and children's education. Experiments can unveil causal relations, but it is unfeasible and unethical to design an experiment that randomly assigns parents to migrate without their children. Alternatively, we can infer causality from a quasi-experimental design -- that is, when the cause is on par with random assignment to participants in the analysis, conditional on identification assumptions (Cunningham, 2021).
 
-To what extent do parental migration affect the cognitive development and academic performance of left-behind children in the short term? I analyze the data from a nationally representative two-wave panel survey. The sample includes children in both urban and rural areas. I develop a difference-in-differences design for causal inference. The dependent variables include children's cognitive test score and Chinese, mathematics, and English exam scores.
+In this thesis, my research question is: To what extent do parental migration affect the educational performance of left-behind children in the short term? I choose China as the case and analyze data from a two-wave panel survey. The nationally representative sample includes children in both urban and rural areas. I develop a difference-in-differences model for causal inference and apply propensity score matching for robustness check. The outcome was measured with children's cognitive test score and academic exam scores. I demonstrate that parental migration reduces the educational performance of children staying behind, but only to a small extent.
 
 \newpage
 
@@ -224,11 +224,11 @@ To what extent do parental migration affect the cognitive development and academ
 \hypertarget{theoretical-framework}{%
 \subsection{Theoretical Framework}\label{theoretical-framework}}
 
-Between parental migration and children's education, the mechanisms trace to two theoretical frameworks. One model, the resource generation model, holds that parental migration brings forth greater resources in the form of economic capital. Economic capital is, in Bourdieu's words, ``immediately and directly convertible into money and may be institutionalized in the form of property rights'' (2002, p. 16). Economic capital is transferable to human capital, which is the stock of ``skills, talents, health, and expertise'' in people that enhance their productivity (Botev et al., 2019; Goldin, 2016). (D. Yang, 2008) noted that a depreciation of Filipino peso increased the amount of foreign remittances, which subsequently boosted children's school enrollment and educational expenditure. In China, (Chang et al., 2019) interviewed migrant workers and their family members. Oftentimes, they found that labor migration presented the only way to sustain their children's education and livelihood.
+Between parental migration and children's education, the mechanisms trace to two theoretical frameworks. One is the resource generation model. It holds that parental migration brings forth greater resources in the form of economic capital. Economic capital is, in Bourdieu's words, ``immediately and directly convertible into money and may be institutionalized in the form of property rights'' (2002, p. 16). Economic capital is transferable to human capital, which is the stock of ``skills, talents, health, and expertise'' in people that enhance their productivity (Botev et al., 2019; Goldin, 2016). (D. Yang, 2008) noted that in the Philippes, a sharp depreciation of peso increased the amount of remittances from migrant laborers working abroad. This subsequently boosted children's school enrollment and educational expenditure. In China, (Chang et al., 2019) interviewed migrant workers and their family members. Oftentimes, they found that labor migration presented the only way to sustain their children's education and livelihood.
 
 The other theoretical model is the family disruption model. Children flourish under parental nurturing care. This term refers to the ``stable environments that promote health and adequate nutrition, protect from threats, and provide opportunities for learning and responsive, emotionally supportive and developmentally enriching relationships'' (Black et al., 2021, p. 1). Parental migration decreases nurturing care, thereby hindering children's developmental outcomes. The loss of nurturing care slows children's accumulation of human capital. Hong talked to a group of left behind children at a rural school (Hong \& Fuller, 2019). These students expressed the utter sense of loneliness ``with no advocate, no support and with no one looking out for them'' (p.~13). Many of them felt indifferent to school grades, and some even longed to ditch school to pursue a free, independent life (p.~14).
 
-Researchers obtained mixed results regarding how parental migration affects children's education. (Botezat \& Pfeiffer, 2020) studied the case of Romania and found a positive effect of parents' migration on academic grades of adolesents aged eleven to fifteen. (Wang et al., 2019) collected data from junior high school students in central China and found no effect of parental on left-behind children's achievement in mathematical test. Studying four Chinese provinces, (Brauw \& Giles, 2017) showed that as ample migration opportunities appeared in villages, enrollment to senior high school decreased. (Nguyen, 2016) demonstrated that parental migration was associated with lower cognitive capabilities among Indian and Vietnamese children aged five to eight. The inconsistency can result from factors such as the left-behind children's age and gender, the migrant parent's original domicile and eventual destination, and the arrangement of which parent migrate for how long.
+Researchers obtained mixed results regarding how parental migration affects children's education. Botezat and Pfeiffer (2020) studied the case of Romania and found a positive effect of parents' migration on academic grades of adolescents aged eleven to fifteen. Wang and others (2019) collected data from junior high school students in central China and found no effect of parental on left-behind children's achievement in mathematical test. Studying four Chinese provinces, De Brauw and Giles (2017) showed that as ample migration opportunities appeared in villages, enrollment to senior high school decreased. Nguyen (2016) demonstrated that parental migration was associated with lower cognitive capabilities among Indian and Vietnamese children aged five to eight. The inconsistency can result from factors such as the left-behind children's age and gender, the migrant parent's original domicile and eventual destination, and the arrangement of which parent migrate for how long.
 
 Parental migration immediately disrupts family structure, which in turn lowers academic performance of children. It takes longer time for parental migration to generate resources that improve children's performance at school. I propose the first hypothesis:
 
@@ -236,16 +236,16 @@ Parental migration immediately disrupts family structure, which in turn lowers a
 
 Researchers have studied whether the impact differ between mother absence and father absence in the context of labor migration. Xu and others (2019) adopted a fixed-effects propensity score weighting model on cross-sectional data collected from seventh and ninth graders in rural areas across China. They found that the absence of father only or both parents had ``little or no association with negative outcomes'' on children's academic and cognitive performances. Only-mother absence, however, showed a ``strong association with negative outcomes'' (p.~1646). Chen and others (2019) conducted structural equation modeling on the cross-sectional data collected from fourth to seventh graders in the countryside of one province. They found that mother migration was ``negatively associated with children's social competence and academic performance,'' while father migration had no direct effects on the two outcomes (pp.~860-861).
 
-The social norms designate men as breadwinners and women as caregivers. Studies noted that in some Asian and Latin American societies, children are more likely to accept fathers' migration than mothers' (Murphy, 2022). Left behind children may even resent their migrant mothers, viewing them as transgressing on the expected care-giving roles. I propose the second hypothesis:
+In China, the social norms designate men as breadwinners and women as caregivers. Studies noted that in some Asian and Latin American societies, children are more likely to accept fathers' migration than mothers' (Murphy, 2022). Left behind children may even resent their migrant mothers, viewing them as transgressing on the expected care-giving roles. I propose the second hypothesis:
 
 \(H_2\) In the short term, mother migration negatively affect the cognitive development and academic performance of children left behind, while father migration does not show a effect.
 
 \hypertarget{chinas-context}{%
 \subsection{China's Context}\label{chinas-context}}
 
-Three features make China a suitable case for studying left behind children. The first feature is the huge scale of internal labor migration. According to the National Bureau of Statistics, the year 2021 recorded 292.5 million in-country migrant workers (NBS, 2022). The number of left behind Chinese children reached 68.7 million in 2015 (NBS et al., 2017). The second feature is the neoliberal welfare regime. Neoliberalism extends the logic of the market to most spheres of human life. Driven by the neoliberal doctrine, the government shifts its responsibilities of social services and welfare to individuals and communities. Since China initiated pro-market reforms in the 1980s, the state has reduced its welfare provisions and passed them to individuals and families (Zhan, 2020). The third feature is the authoritarian control against citizens. According to Gu (2021), the hukou (household registration) system controls people's mobility by binding a household's public welfare access with its place of registry. One can move to another place freely but cannot change hukou freely. For a rural household member moving to the city, it takes much time and effort to apply for urban hukou status. Without an urban hukou they cannot send children to public school in the host city. Facing financial and policy constraints, many migrant laborers have to leave children in their original domiciles.
+Three features make China a suitable case for studying left behind children. The first feature is the huge scale of internal labor migration. According to the National Bureau of Statistics, the year 2021 recorded 292.5 million in-country migrant workers (NBS, 2022). They form the backbone of essential industries, such as delivery, transportation, and manufacturing. The number of left behind Chinese children reached 68.7 million in 2015 (NBS et al., 2017). The second feature is the neoliberal welfare regime. Neoliberalism extends the logic of the market to most spheres of human life. Driven by the neoliberal doctrine, the government shifts its responsibilities of social services and welfare to individuals and communities. Since China initiated pro-market reforms in the 1980s, the state has reduced its welfare provisions and passed them to individuals and families (Duckett, 2020). The third is the authoritarian control against citizens. According to Gu (2021) and Zhang (2018), the hukou (household registration) system controls people's mobility by binding a household's public welfare access with its place of registry. One can move out of town freely but cannot change hukou freely. For rural household members moving to the city, it takes months -- if not years -- to apply for a new hukou. Before receiveing urban hukou, they enjoy limited access to public service in the host city, including public education for children. Facing financial and policy constraints, many migrant laborers have to leave children in their hometowns (Gu, 2021; Zhang, 2018). Migrant laborers had attempted to strike or protest, only to meet with police crackdown (Chan \& Selden, 2017).
 
-The research on China's left behind children has three major shortcomings. First, most literature focuses on children left behind in rural areas while neglecting the urban counterparts. (NBS et al., 2017) stated that the number of urban left behind children had been growing and expected that the trend would continue. The second shortcoming lies in data and sampling. Some studies draw from cross-sectional data, making it hard to infer causal relations (Jin et al., 2020; Zhou et al., 2014). Others suffer from a limited sample size of less than one thousand participants or a limited geographic coverage of one or a few towns (Jin et al., 2020; Liu et al., 2021; Shu, 2021; F. Yang et al., 2022). The third shortcoming lies in the selection and measurement of outcome. (Chang et al., 2019; Wang et al., 2019) measured students' educational performance with the test score of only one academic subject, namely mathematics. The test results of multiple subjects should be included to measure comprehensive academic achievement.
+The existing research about China's left behind children has three major shortcomings that I aim to tackle. The first is that most literature focuses on children left behind in rural areas while neglecting the urban counterparts. I included urban left behind children as well. The National Bureau of Statistics stated that the number of urban left behind children had been growing and expected that the trend would continue (NBS et al., 2017). The second shortcoming lies in data and sampling. Some studies draw from cross-sectional data, making it hard to infer causal relations (Jin et al., 2020; Zhou et al., 2014). Others suffer from a limited sample size of less than one thousand participants or a limited geographic coverage of one or a few towns (Jin et al., 2020; Y. Liu et al., 2021; Shu, 2021; F. Yang et al., 2022). I adopted a nationally representative two-wave panel dataset. The third shortcoming lies in the measurement of outcome. (Chang et al., 2019; Wang et al., 2019) measured students' educational performance with the test score of only one academic subject, namely mathematics. I included the test results of multiple subjects to measure comprehensive academic achievement.
 
 \newpage
 
@@ -260,18 +260,18 @@ I obtained the data from the China Education Panel Survey (CEPS) (NSRC, n.d.). I
 \hypertarget{measurement}{%
 \subsection{Measurement}\label{measurement}}
 
-I explored two categories of adolescence development: cognitive and academic abilities. One key dependent variable, the student's cognitive skill, was measured by a fifteen-minute standardized test. The test covered three types of reasoning: verbal, visuospatial, and numerical. The CEPS research team calculated the raw score based on the Item Response Theory and then standardized the score with a mean of zero and standard deviation of one.
+I explored two categories of educational performance: cognitive and academic abilities. One key dependent variable, the student's cognitive skill, was measured by a fifteen-minute standardized test. The test covered three types of reasoning: verbal, visuospatial, and numerical. The CEPS research team calculated the raw score based on the Item Response Theory and then standardized the score with a mean of zero and standard deviation of one.
 
-Another dependent variables concerned students' academic performance. This was measured by the total scores of mid-term exams in Chinese, mathematics, and English as provided by each school. These three subjects constitute the core parts in the senior high school entrance exam. Within one particular school, teachers of the same subject use the same syllabus, administering the same exams during a given assessment period. Therefore, test scores for core subjects are reliable indicators of learning performance in the same school and cohort. I aligned different grading scales (full mark of 100, 120, and 150 for one subject) to the hundred-point scale. Accordingly, the total score of three subjects has a 300-point scale.
+Another dependent variables concerned students' academic performance. This was measured by the total scores of mid-term exams in Chinese, mathematics, and English as provided by each school. These three subjects constitute the core parts in the senior high school entrance exam. Junior high school students study these subjects throughout three academic years. Within each cohort in one particular school, teachers adopt the same syllabus and administer the same exams during a given assessment period. Therefore, test scores for core subjects are reliable indicators of learning performance in the same school and cohort. I aligned different grading scales (full mark of 100, 120, and 150 for one subject) to the hundred-point scale. After the conversion, I checked for abnormal values outside the 0-100 range. 31 observations are outliers, accounting for less than one percent of the sample. I trim the values of subject exam score with minimum of zero and maximum of one hundred. In this way, I can limit the impact of outliers while retaining these observations in the sample. After trimming, I aggregated the subject exam scores to obtain a total score of a 300-point scale.
 
 The key independent variable, the parental migration status, was identified by two items in the parent survey. In both the baseline and the follow-up surveys, parents specified the family members living in the same household at the time. I constructed four treatment dummy variables measuring migration arrangements: any parents absent, only father absent, only mother absent, and both parents absent. These arrangements are mutually exclusive. The control group consisted of parents staying with their children throughout at both the baseline and the follow-up surveys. I then removed the observations that reported parental divorce or death. These type of parental absence are irrelevant to migration.
 
 \hypertarget{data-analysis}{%
 \subsection{Data analysis}\label{data-analysis}}
 
-I adopted R (Version 4.2.0; R Core Team, 2022) and the R-packages \emph{papaja} (Version 0.1.0.9999; Aust \& Barth, 2020), and \emph{tinylabels} (Version 0.2.3; Barth, 2022) for all the analyses, the \texttt{fixest} package for building the econometric models (Bergé, 2018), and the \texttt{modelsummary} package for presenting the results (Arel-Bundock, 2022). I built a two-way fixed effect model in a difference-in-differences (DID) design, following Bai and colleagues' (2018; 2020) approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. I first specified an unrestricted and unadjusted model: \[\Delta score_{i,j} = \alpha + \beta \cdot migr_{i} + \gamma \cdot C_{1} + \lambda \cdot C_{2} + \theta \cdot score_{i,j;1} + \varepsilon_{i,j}\] For student \(i\) taking the test of type \(j\), \(\Delta score_{i,j}\) is the change in test score between baseline and follow-up surveys, \(migr_{i}\) is the treatment dummy variable, \(C_{1}\) and \(C_{2}\) are respectively the classroom fixed-effects at baseline and follow-up, and \(score_{i,j;1}\) is the test score at baseline. The model is unrestricted because it does not restrict on the coefficient associated with the baseline scores. The model is unadjusted as it does not adjust for additional covariates. Theoretically, it is unnecessary to include covariates that vary over group but remain constant over time; They would cancel out in the two-way fixed effect model (Huntington-Klein, n.d.). The standard errors were clustered at the classroom level.
+I adopted \texttt{R} for all the analyses, the \texttt{fixest} package for building the econometric models (Berge et al., 2022), and the \texttt{modelsummary} package for presenting the results (Arel-Bundock, 2022). I built a two-way fixed effect model in a difference-in-differences (DID) design, following Bai and colleagues' (2018; 2020) approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. I first specified an unrestricted and unadjusted model: \[\Delta score_{i,j,k} = \alpha + \beta \cdot migr_{i} + \gamma \cdot C_{i} + \lambda \cdot C_{j} + \theta \cdot score_{i,j;1} + \varepsilon_{i,j,k}\] For student \(i\) in class \(j\) in baseline and class \(k\) in endline, \(\Delta score_{i,j}\) is the change in test score between baseline and follow-up surveys, \(migr_{i}\) is the treatment dummy variable, \(C_{j}\) and \(C_{k}\) are respectively the classroom fixed-effects at baseline and follow-up, and \(score_{i,j,k;1}\) is the test score at baseline. The model is unrestricted because it does not restrict on the coefficient associated with the baseline scores. The model is unadjusted as it does not adjust for additional covariates. Theoretically, it is unnecessary to include covariates that vary over group but remain constant over time; They would cancel out in the two-way fixed effect model (Huntington-Klein, n.d.). The standard errors were clustered at the classroom level.
 
-In addition, I present an unrestricted and adjusted DID model: \[\Delta score_{i,j} = \alpha + \beta \cdot migr_{i} + \gamma \cdot C_{1} + \lambda \cdot C_{2} + \theta \cdot score_{i,j;1} + \zeta \cdot X_{i} + \varepsilon_{i,j}\] where \(X_{i}\) is the vector of covariates capturing the characteristics of children, their parents, and their households. The control variables were measured in the baseline survey. This version of model lifts the restriction that covariates from the baseline survey would be associated with a coefficient that equals one.
+In addition, I present an unrestricted and adjusted DID model: \[\Delta score_{i,j,k} = \alpha + \beta \cdot migr_{i} + \gamma \cdot C_{i} + \lambda \cdot C_{j} + \theta \cdot score_{i,j,k;1} + \zeta \cdot X_{i} + \varepsilon_{i,j,k}\] where \(X_{i}\) is the vector of covariates capturing the characteristics of children, their parents, and their households. The control variables were measured in the baseline survey. This version of model lifts the restriction that covariates from the baseline survey would be associated with a coefficient that equals one.
 
 \newpage
 
@@ -302,7 +302,7 @@ Parental Migration Type & Both Parents At Home & 3452 & 84.4 \\
 \bottomrule
 \end{longtable}
 
-The table below provides the summary statistics.
+The tables below provide the whole-sample summary statistics. In addition, the violin plots in the appendix visualize the distribution of outcome variables for the treatmeng group and the control group.
 
 \begin{longtable}[]{@{}lrrrr@{}}
 \caption{The independent variables}\tabularnewline
@@ -314,7 +314,6 @@ The table below provides the summary statistics.
 & Mean & SD & Min & Max \\
 \midrule
 \endhead
-migr & 0.16 & 0.36 & 0.00 & 1.00 \\
 Cognitive score difference & 0.27 & 0.80 & -2.88 & 4.03 \\
 Cognitive score at wave 1 & 0.15 & 0.85 & -2.03 & 2.33 \\
 Cognitive score at wave 2 & 0.42 & 0.78 & -3.14 & 2.06 \\
@@ -507,7 +506,7 @@ Preschool attendance is associated with higher cognitive outcomes 0.07 SD, but i
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1835}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1835}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1927}}@{}}
-\caption{Parental migration's effect on children's cognitive abilities}\tabularnewline
+\caption{Parental migration's effect on children's academic abilities}\tabularnewline
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -670,11 +669,11 @@ FE: w2clsids & X & X & X & X \\
 \hypertarget{matching}{%
 \subsection{Matching}\label{matching}}
 
-Researchers noted that migrants represent a positively selected group compared to non-migrants (Van Hook \& Glick, 2020). One technique to tackle the selectivity issue is matching. This method works by pairing a unit in the treatment group with one or several units in the control group based on observable covariates. Popular choices include coarsened exact matching (CEM) (Waldman, 2022), nearest-neighbor propensity score matching (PSM) (H. Xu \& Xie, 2015), and nearest-neighbor Mahalanobis distance matching (MDM) (Guo et al., 2021). CEM is superior in achieving balance as it optimizes the entire joint distribution of covariates. The downside is that it leaves many units without an exact match and discards these unmatched units. The nearest-neighbor matching examines all the treated units and selects the closest eligible control unit to be paired. The eligibility as the ``closest'' can be determined with the differences in Mahalanobis distance or in propensity score. Propensity score denotes the probability of receiving treatment based on the specified covariates. Nearest-neighbor PSM does not try to optimize any condition as each pairing ignores how other units will be or have been paired. This matching method may result in more ``imbalance, model dependence, and bias'' on highly balanced data (King \& Nielsen, 2019).
+Researchers noted that migrants represent a positively selected group compared to non-migrants (Van Hook \& Glick, 2020), which may present systematic differences between left behind children and their non-left-behind peers. One technique to tackle this selection bias is matching. This method works by pairing a unit in the treatment group with one or several units in the control group based on observable covariates. Popular choices include coarsened exact matching (CEM) (Waldman, 2022) and nearest-neighbor propensity score matching (PSM) (H. Xu \& Xie, 2015). As Greifer (2022) introduced, CEM is superior in achieving balance as it optimizes the entire joint distribution of covariates. The downside is that it leaves many units without an exact match and discards these unmatched units. The nearest-neighbor matching examines all the treated units and selects the closest control unit to be paired. The eligibility as the ``closest'' can be determined with the differences in propensity score. Propensity score denotes the probability of receiving treatment based on the specified covariates. Nearest-neighbor PSM does not try to optimize any condition; each pairing ignores how other pairing will or have occurred (Greifer, 2022). King and Nelson (2019) argue against this matching method as it risks more ``imbalance, model dependence, and bias'' for highly balanced data.
 
-I conducted matching with all the covariates used in the adjusted DID model. I first attempted CEM, which left most units unmatched and resulted in a tiny sample. Then I combined exact matching (based on the student's county of residence) and nearest neighbor PSM (based on the other covariates), which is the configuration of Bai and others (2018). Exact matching based on county of residence preserves the original geographic distribution. The propensity score was estimated using a logistic regression of the treatment on the covariates. The matching ratio was set at one treatment unit with up to three control units.
+I adopted the \texttt{MatchIt} package to perform matching with all the covariates of the adjusted DID model (Ho et al., 2022). I first attempted CEM, which left most units unmatched and resulted in a tiny sample. Then I combined exact matching (based on the student's county of residence) and nearest neighbor PSM (based on the other covariates), which is the configuration of Bai and others (2018). Exact matching based on county of residence preserves the original geographic distribution. The propensity score was estimated using a logistic regression of the treatment on the covariates. The matching ratio was set at one treatment unit with up to three control units. The matching produced absolute standardized mean differences below 0.1 for all but a few covariates.
 
-Alike are the results with matching and those without. In the models of cognitive abilities, I obtained negative, statistically significant coefficients on the treatment variables in the any parent migrated household and only father migrated households. In the models of academic abilities, the treatment variables' coefficients are negative and statistically significant in the any parent migrated households and only mother migrated households. The magnitudes of the coefficients are also similar.
+Alike are the results from DID models with matching (DIDM) and those without. In the models of cognitive abilities, I obtained negative, statistically significant coefficients on the treatment variables in the any parent migrated household and only father migrated households. In the models of academic abilities, the treatment variables' coefficients are negative and statistically significant for the any parent migrated households and only mother migrated households. The significance level of any parent migration drops to ten percent. In all models, the magnitudes of the statistically significant coefficients are similar. I present the unadjusted DIDM models below and the adjusted DIDM models in the appendix.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1398}}
@@ -682,7 +681,7 @@ Alike are the results with matching and those without. In the models of cognitiv
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2151}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2151}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2258}}@{}}
-\caption{Parental migration's effect on children's cognitive abilities}\tabularnewline
+\caption{Parental migration's effect on children's cognitive abilities, estimated with matching}\tabularnewline
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -725,13 +724,16 @@ FE: w2clsids & X & X & X & X \\
 \textbf{Note:}
 \^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
 
+\textbf{Note:}
+\^{}\^{} 3:1 nearest neighbor propensity score matching with replacement; exact matching by county
+
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1398}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2043}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2151}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2151}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2258}}@{}}
-\caption{Parental migration's effect on children's academic abilities}\tabularnewline
+\caption{Parental migration's effect on children's academic abilities, estimated with matching}\tabularnewline
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -774,13 +776,65 @@ FE: w2clsids & X & X & X & X \\
 \textbf{Note:}
 \^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
 
+\textbf{Note:}
+\^{}\^{} 3:1 nearest neighbor propensity score matching with replacement; exact matching by county
+
+\newpage
+
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
+
+This thesis proposed a model to assess causality between parents' migration and their stay-behind children's educational performance in the short run. I built econometric models in the difference-in-differences design to analyze data from the 2013-2014 and 2014-2015 rounds of China Education Panel Survey. Results suggest that parental migration is, in the short run, negatively associated with children's educational performance as measured by academic exams and standardized cognitive tests. I further examined whether the effect varies across different arrangements of parental migration. Results indicate that father-only migration is negatively associated with children's cognitive abilities, while mother-only migration is negatively associated with children's academic abilities. In all scenarios, the educational performance of newly left behind children only decreased slightly compared to that of non-left-behind peers.
+
+My research has limitations in sample identification due to data constraint. First, the CEPS questionnaire asks if parents live in the household, but does not ask why parents are absent. I can only identify parental migration through such a condition: parental absence from a household without parental divorce or death. It is possible that some parents are jailed or hospitalized. These types of absence would be wrongly attributed to migration. Second, the CEPS also lacks information on parents' migration history. Possibly, some parents out-migrated at an earlier date, returned before the baseline survey, and migrated away again during the survey period. Their children might better cope with parental absence during the survey period, yet they would be mistaken as the newly left behind. Both limitations may lead to selection bias.
+
+Limitations also arise from unaccounted endogeneity and exogeneity. Endogenous factors may create selection bias. As Chen and coauthors (2009) stated: When migration opportunities arise, some parents may believe that leaving children behind would hamper children's education, thereby giving up the opportunity. Some other parents may believe that their children's schooling would not suffer from parental absence, thereby embarking on migration. Exogenous factors may create omitted variable bias. Suppose that a natural hazard hit many counties of a province in the sample. This shock can simultaneously increase parents' out-migration and reduce students' grades (Chen et al., 2009). I could not account for such shocks as CEPS data does not include detailed geographic information.
+
+From my research, we can find future directions for scholarly inquiry. Researchers can improve my research design with new releases of CEPS data. A three-wave panel dataset will facilitate the examination of parallel trend assumption through multi-period DID models. Researchers can also examine how would left behind children respond when one or both of the migrant parents return home and settle down (Liang \& Li, 2021). In English-language publications, only one piece has explored return migrants and their stay-behind children in the Chinese context (Z. Liu et al., 2018).
+
+Let us consider the policy implications. The small reduction of newly left behind children's schooling performance by no means suggest that policies can remain as they are. A slight drop of educational performance may worsen with time. Besides, parental migration also affects left behind children's mental health and non-cognitive skills (Antia et al., 2020). These outcomes are also important for human development. Policymakers should reduce institutional barriers at destination cities so that the split migrant families can unify without concern. Meanwhile, schools should dedicate more advisory and counseling support to left-behind children.
+
+\newpage
+
+\hypertarget{appendix}{%
+\section{Appendix}\label{appendix}}
+
+\hypertarget{figures}{%
+\subsection{Figures}\label{figures}}
+
+\begin{figure}
+\centering
+\includegraphics{MScThesisText_files/figure-latex/unnamed-chunk-10-1.pdf}
+\caption{\label{fig:unnamed-chunk-10}Changes in standardized cognitive test score for newly left behind students and non-left-behind students}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{MScThesisText_files/figure-latex/unnamed-chunk-11-1.pdf}
+\caption{\label{fig:unnamed-chunk-11}Changes in academic exam score for newly left behind students and non-left-behind students}
+\end{figure}
+
+\texttt{\{fig.cap\ =\ "Sample\ balance\ before\ and\ after\ matching\ by\ any\ parent\ migration"\}\ plot(summary(m.out),\ xlim\ =\ c(0,\ 0.55),\ position\ =\ \textquotesingle{}right\textquotesingle{})}
+
+\texttt{\{fig.cap\ =\ "Sample\ balance\ before\ and\ after\ matching\ by\ only\ mother\ migration"\}\ plot(summary(m.out\_mo\_only),\ xlim\ =\ c(0,\ 0.55),\ position\ =\ \textquotesingle{}right\textquotesingle{})}
+
+\begin{verbatim}
+```{fig.cap = "Sample balance before and after matching by only father migration"}
+plot(summary(m.out_fa_only), xlim = c(0, 0.55), position = 'right')
+\end{verbatim}
+
+\texttt{\{fig.cap\ =\ "Sample\ balance\ before\ and\ after\ matching\ by\ both\ parents\ migration"\}\ plot(summary(m.out\_both),\ xlim\ =\ c(0,\ 0.55),\ position\ =\ \textquotesingle{}right\textquotesingle{})}
+
+\hypertarget{tables}{%
+\subsection{Tables}\label{tables}}
+
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2661}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1743}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1835}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1835}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1927}}@{}}
-\caption{Parental migration's effect on children's cognitive abilities}\tabularnewline
+\caption{Parental migration's effect on children's academic abilities, estimated with matching}\tabularnewline
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -857,13 +911,16 @@ FE: w2clsids & X & X & X & X \\
 \textbf{Note:}
 \^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
 
+\textbf{Note:}
+\^{}\^{} 3:1 nearest neighbor propensity score matching with replacement; exact matching by county
+
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2661}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1743}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1835}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1835}}
   >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1927}}@{}}
-\caption{Parental migration's effect on children's academic abilities}\tabularnewline
+\caption{Parental migration's effect on children's academic abilities, estimated with matching}\tabularnewline
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
@@ -939,12 +996,9 @@ FE: w2clsids & X & X & X & X \\
 
 \textbf{Note:}
 \^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
-\newpage
 
-\hypertarget{discussion}{%
-\section{Discussion}\label{discussion}}
-
-Results show that parental migration is negatively associated with children's short-term cognitive and academic abilities.
+\textbf{Note:}
+\^{}\^{} 3:1 nearest neighbor propensity score matching with replacement; exact matching by county
 
 \newpage
 
@@ -959,20 +1013,14 @@ Antia, K., Boucsein, J., Deckert, A., Dambach, P., Račaitė, J., Šurkienė, G.
 \leavevmode\vadjust pre{\hypertarget{ref-arel-bundock2022}{}}%
 Arel-Bundock, V. (2022). \emph{Modelsummary: Summary tables and plots for statistical models and data: Beautiful, customizable, and publication-ready}. \url{https://vincentarelbundock.github.io/modelsummary/}
 
-\leavevmode\vadjust pre{\hypertarget{ref-R-papaja}{}}%
-Aust, F., \& Barth, M. (2020). \emph{{papaja}: {Prepare} reproducible {APA} journal articles with {R Markdown}}. \url{https://github.com/crsh/papaja}
-
 \leavevmode\vadjust pre{\hypertarget{ref-bai2020}{}}%
 Bai, Y., Neubauer, M., Ru, T., Shi, Y., Kenny, K., \& Rozelle, S. (2020). Impact of Second-Parent Migration on Student Academic Performance in Northwest China and its Implications. \emph{The Journal of Development Studies}, \emph{56}(8), 1523--1540. \url{https://doi.org/10.1080/00220388.2019.1690136}
 
 \leavevmode\vadjust pre{\hypertarget{ref-bai2018}{}}%
 Bai, Y., Zhang, L., Liu, C., Shi, Y., Mo, D., \& Rozelle, S. (2018). Effect of parental migration on the academic performance of left behind children in north western china. \emph{The Journal of Development Studies}, \emph{54}(7), 1154--1170. \url{https://doi.org/10.1080/00220388.2017.1333108}
 
-\leavevmode\vadjust pre{\hypertarget{ref-R-tinylabels}{}}%
-Barth, M. (2022). \emph{{tinylabels}: Lightweight variable labels}. \url{https://cran.r-project.org/package=tinylabels}
-
-\leavevmode\vadjust pre{\hypertarget{ref-berguxe92018}{}}%
-Bergé, L. (2018). \emph{Efficient estimation of maximum likelihood models with multiple fixed-effects: the R package FENmlm}. \url{https://ideas.repec.org/p/luc/wpaper/18-13.html}
+\leavevmode\vadjust pre{\hypertarget{ref-berge2022}{}}%
+Berge, L., Krantz, S., \& McDermott, G. (2022). \emph{Fixest: Fast fixed-effects estimations}. \url{https://CRAN.R-project.org/package=fixest}
 
 \leavevmode\vadjust pre{\hypertarget{ref-black2021}{}}%
 Black, M. M., Behrman, J. R., Daelmans, B., Prado, E. L., Richter, L., Tomlinson, M., Trude, A. C. B., Wertlieb, D., Wuermli, A. J., \& Yoshikawa, H. (2021). The principles of Nurturing Care promote human capital and mitigate adversities from preconception through adolescence. \emph{BMJ Global Health}, \emph{6}(4), e004436. \url{https://doi.org/10.1136/bmjgh-2020-004436}
@@ -986,11 +1034,20 @@ Botezat, A., \& Pfeiffer, F. (2020). The impact of parental labour migration on 
 \leavevmode\vadjust pre{\hypertarget{ref-bourdieu2002}{}}%
 Bourdieu, P. (2002). \emph{The Forms of Capital} (N. W. Biggart, Ed.; pp. 280--291). Blackwell Publishers Ltd. \url{https://doi.org/10.1002/9780470755679.ch15}
 
+\leavevmode\vadjust pre{\hypertarget{ref-debrauw2019}{}}%
+Brauw, A. de. (2019). Migration Out of Rural Areas and Implications for Rural Livelihoods. \emph{Annual Review of Resource Economics}, \emph{11}(1), 461--481. \url{https://doi.org/10.1146/annurev-resource-100518-093906}
+
 \leavevmode\vadjust pre{\hypertarget{ref-debrauw2017}{}}%
 Brauw, A. de, \& Giles, J. (2017). Migrant Opportunity and the Educational Attainment of Youth in Rural China. \emph{Journal of Human Resources}, \emph{52}(1), 272--311. \url{https://doi.org/10.3368/jhr.52.1.0813-5900R}
 
+\leavevmode\vadjust pre{\hypertarget{ref-chan2017}{}}%
+Chan, J., \& Selden, M. (2017). The labour politics of china{'}s rural migrant workers. \emph{Globalizations}, \emph{14}(2), 259--271. \url{https://doi.org/10.1080/14747731.2016.1200263}
+
 \leavevmode\vadjust pre{\hypertarget{ref-chang2019}{}}%
 Chang, F., Jiang, Y., Loyalka, P., Chu, J., Shi, Y., Osborn, A., \& Rozelle, S. (2019). Parental migration, educational achievement, and mental health of junior high school students in rural China. \emph{China Economic Review}, \emph{54}, 337--349. \url{https://doi.org/10.1016/j.chieco.2019.01.007}
+
+\leavevmode\vadjust pre{\hypertarget{ref-chen2009}{}}%
+Chen, X., Huang, Q., Rozelle, S., Shi, Y., \& Zhang, L. (2009). Effect of Migration on Children's Educational Performance in Rural China. \emph{Comparative Economic Studies}, \emph{51}(3), 323--343. \url{https://doi.org/10.1057/ces.2008.44}
 
 \leavevmode\vadjust pre{\hypertarget{ref-chen2019}{}}%
 Chen, X., Li, D., Liu, J., Fu, R., \& Liu, S. (2019). Father migration and mother migration: Different implications for social, school, and psychological adjustment of left-behind children in rural china. \emph{Journal of Contemporary China}, \emph{28}(120), 849--863. \url{https://doi.org/10.1080/10670564.2019.1594100}
@@ -1001,14 +1058,20 @@ Cunningham, S. (2021). \emph{Causal inference: The mixtape}. Yale University Pre
 \leavevmode\vadjust pre{\hypertarget{ref-dewaard2018}{}}%
 DeWaard, J., Nobles, J., \& Donato, K. M. (2018). Migration and parental absence: A comparative assessment of transnational families in Latin America. \emph{Population, Space and Place}, \emph{24}(7), e2166. \url{https://doi.org/10.1002/psp.2166}
 
+\leavevmode\vadjust pre{\hypertarget{ref-duckett2020}{}}%
+Duckett, J. (2020). Neoliberalism, Authoritarian Politics and Social Policy in China. \emph{Development and Change}, \emph{51}(2), 523--539. \url{https://doi.org/10.1111/dech.12568}
+
 \leavevmode\vadjust pre{\hypertarget{ref-goldin2016}{}}%
 Goldin, C. (2016). \emph{Human Capital} (C. Diebolt \& M. Haupert, Eds.; pp. 55--86). Springer. \url{https://doi.org/10.1007/978-3-642-40406-1_23}
+
+\leavevmode\vadjust pre{\hypertarget{ref-greifer2022}{}}%
+Greifer, N. (2022). \emph{Matching methods}. \url{https://kosukeimai.github.io/MatchIt/articles/matching-methods.html}
 
 \leavevmode\vadjust pre{\hypertarget{ref-gu2021}{}}%
 Gu, X. (2021). {`}Save the children!{'}: Governing left-behind children through family in China{'}s Great Migration. \emph{Current Sociology}, 0011392120985874. \url{https://doi.org/10.1177/0011392120985874}
 
-\leavevmode\vadjust pre{\hypertarget{ref-guo2021}{}}%
-Guo, S., Li, L., Sun, Y., Houang, R., \& Schmidt, W. H. (2021). Does boarding benefit the mathematics achievement of primary and middle school students? Evidence from china. \emph{Asia Pacific Journal of Education}, \emph{41}(1), 16--38. \url{https://doi.org/10.1080/02188791.2020.1760081}
+\leavevmode\vadjust pre{\hypertarget{ref-ho2022}{}}%
+Ho, D., Imai, K., King, G., Stuart, E., Whitworth, A., \& Greifer, N. (2022). \emph{MatchIt: Nonparametric preprocessing for parametric causal inference}. \url{https://CRAN.R-project.org/package=MatchIt}
 
 \leavevmode\vadjust pre{\hypertarget{ref-hong2019}{}}%
 Hong, Y., \& Fuller, C. (2019). Alone and {``}left behind{''}: A case study of {``}left-behind children{''} in rural china. \emph{Cogent Education}, \emph{6}(1), 1654236. \url{https://doi.org/10.1080/2331186X.2019.1654236}
@@ -1022,8 +1085,14 @@ Jin, X., Chen, W., Sun, I. Y., \& Liu, L. (2020). Physical health, school perfor
 \leavevmode\vadjust pre{\hypertarget{ref-king2019}{}}%
 King, G., \& Nielsen, R. (2019). Why Propensity Scores Should Not Be Used for Matching. \emph{Political Analysis}, \emph{27}(4), 435--454. \url{https://doi.org/10.1017/pan.2019.11}
 
+\leavevmode\vadjust pre{\hypertarget{ref-liang2021}{}}%
+Liang, Z., \& Li, W. (2021). Migration and children in China: a review and future research agenda. \emph{Chinese Sociological Review}, \emph{53}(3), 312--331. \url{https://doi.org/10.1080/21620555.2021.1908823}
+
 \leavevmode\vadjust pre{\hypertarget{ref-liu2021}{}}%
 Liu, Y., Deng, Z., \& Katz, I. (2021). Transmission of Educational Outcomes Across Three Generations: Evidence From Migrant Workers{'} Children in China. \emph{Applied Research in Quality of Life}. \url{https://doi.org/10.1007/s11482-021-09990-y}
+
+\leavevmode\vadjust pre{\hypertarget{ref-liu2018}{}}%
+Liu, Z., Yu, L., \& Zheng, X. (2018). No longer left-behind: The impact of return migrant parents on children's performance. \emph{China Economic Review}, \emph{49}, 184--196. \url{https://doi.org/10.1016/j.chieco.2017.06.004}
 
 \leavevmode\vadjust pre{\hypertarget{ref-murphy2022}{}}%
 Murphy, R. (2022). What does {`}left behind{'} mean to children living in migratory regions in rural China? \emph{Geoforum}, \emph{129}, 181--190. \url{https://doi.org/10.1016/j.geoforum.2022.01.012}
@@ -1042,9 +1111,6 @@ NSRC. (n.d.). \emph{Overview-china education panel survey}. \url{http://ceps.ruc
 
 \leavevmode\vadjust pre{\hypertarget{ref-popova2018}{}}%
 Popova, A. (2018). Risk factors for the safety of the children from transnational families children left behind. \emph{Anthropological Researches and Studies}, \emph{1}(8), 25--35. \url{https://doi.org/10.26758/8.1.3}
-
-\leavevmode\vadjust pre{\hypertarget{ref-R-base}{}}%
-R Core Team. (2022). \emph{R: A language and environment for statistical computing}. R Foundation for Statistical Computing. \url{https://www.R-project.org/}
 
 \leavevmode\vadjust pre{\hypertarget{ref-shu2021}{}}%
 Shu, B. (2021). Parental Migration, Parental Emotional Support, and Adolescent Children{'}s Life Satisfaction in Rural China: The Roles of Parent and Child Gender. \emph{Journal of Family Issues}, \emph{42}(8), 1663--1705. \url{https://doi.org/10.1177/0192513X20946345}
@@ -1070,8 +1136,8 @@ Yang, D. (2008). International Migration, Remittances and Household Investment: 
 \leavevmode\vadjust pre{\hypertarget{ref-yang2022}{}}%
 Yang, F., Wang, Z., Liu, J., \& Tang, S. (2022). The Effect of Social Interaction on Rural Children{'}s Self-identity: an Empirical Study Based on Survey Data from Jintang County, China. \emph{Child Indicators Research}, \emph{15}(3), 839--861. \url{https://doi.org/10.1007/s12187-021-09887-0}
 
-\leavevmode\vadjust pre{\hypertarget{ref-zhan2020}{}}%
-Zhan, Y. (2020). The moralization of philanthropy in China: NGOs, voluntarism, and the reconfiguration of social responsibility. \emph{China Information}, \emph{34}(1), 68--87. \url{https://doi.org/10.1177/0920203X19879593}
+\leavevmode\vadjust pre{\hypertarget{ref-zhang2018}{}}%
+Zhang, C. (2018). Governing neoliberal authoritarian citizenship: Theorizing hukou and the changing mobility regime in china. \emph{Citizenship Studies}, \emph{22}(8), 855--881. \url{https://doi.org/10.1080/13621025.2018.1531824}
 
 \leavevmode\vadjust pre{\hypertarget{ref-zhou2014}{}}%
 Zhou, M., Murphy, R., \& Tao, R. (2014). Effects of Parents' Migration on the Education of Children Left Behind in Rural China. \emph{Population and Development Review}, \emph{40}(2), 273--292. \url{https://doi.org/10.1111/j.1728-4457.2014.00673.x}
