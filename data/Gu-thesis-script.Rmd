@@ -12,6 +12,7 @@ library(modelsummary)
 library(MatchIt)
 #library(vtable)
 library(ggplot2)
+library(cobalt) 
 #library(gtsummary)
 #library(DescTools)
 #knitr::opts_chunk$set(modelsummary_get="broom")
@@ -790,7 +791,20 @@ m.out <- matchit(
   distance = "glm",
   exact = migr ~ ctyids
   )
-fig_msmd_any <- summary(m.out) %>% plot(xlim = c(0, 0.55), position = 'right')
+```
+
+```{r}
+sum_m.out <- summary(m.out)
+fig_msmd_any <- plot(sum_m.out, xlim = c(0, 0.55), position = 'right')
+```
+
+```{r}
+love.plot(
+  m.out,
+  stats = "variance.ratios",
+  binary = "std", 
+  #limits = c(0, 0.55),
+  )
 ```
 
 ```{r}
@@ -820,7 +834,20 @@ m.out_mo_only <-
   ratio = 3,
   exact = migr_mo_only ~ ctyids
   )
-fig_msmd_mo_only <- summary(m.out_mo_only) %>% plot(xlim = c(0, 0.55), position = 'right')
+```
+
+```{r}
+sum_m.out_fa_only <- summary(m.out_fa_only)
+fig_msmd_fa_only <- plot(sum_m.out_fa_only, xlim = c(0, 0.55), position = 'right')
+```
+
+```{r}
+love.plot(
+  m.out_mo_only,
+  stats = "variance.ratios",
+  binary = "std", 
+  #limits = c(0, 1.5),
+  )
 ```
 
 ```{r}
@@ -849,7 +876,16 @@ m.out_fa_only <- matchit(
   ratio = 3,
   exact = migr_fa_only ~ ctyids
   )
-fig_msmd_fa_only <- summary(m.out_fa_only) %>% plot(xlim = c(0, 0.55), position = 'right')
+sum_m.out_fa_only <- summary(m.out_fa_only)
+fig_msmd_fa_only <- plot(sum_m.out_fa_only, xlim = c(0, 0.55), position = 'right')
+```
+```{r}
+love.plot(
+  m.out_fa_only,
+  stats = "variance.ratios",
+  binary = "std", 
+  #limits = c(0, 0.55),
+  )
 ```
 
 ```{r}
@@ -878,7 +914,25 @@ m.out_both <- matchit(
   ratio = 3,
   exact = migr_both ~ ctyids
   )
-fig_msmd_both <- plot(summary(m.out_both), xlim = c(0, 0.55), position = 'right')
+```
+
+```{r}
+ #plot(summary(m.out_both), xlim = c(0, 0.55), position = 'right')
+love.plot(
+  m.out_both,
+  threshold = c(m = .1),
+  binary = "std", 
+  limits = c(0, 0.55),
+  abs = T
+  )
+love.plot(
+  m.out_both,
+  stats = "variance.ratios",
+  binary = "std", 
+  #limits = c(0, 0.55),
+  abs = T
+  )
+
 ```
 
 ```{r}
