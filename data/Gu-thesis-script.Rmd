@@ -12,6 +12,7 @@ library(modelsummary)
 library(MatchIt)
 #library(vtable)
 library(ggplot2)
+library(labelled)
 library(cobalt) 
 #library(gtsummary)
 #library(DescTools)
@@ -46,7 +47,7 @@ Assemble a panel dataset in wide format
 ```{r}
 dw1 <- d_stu1 %>% left_join(d_par1, by=c('ids', 'schids', 'clsids', 'ctyids', 'fall')) 
 dw2 <- d_stu2 %>% left_join(d_par2, by=c('ids', 'clsids', 'w2clsids', 'schids', 'ctyids', 'w2fall'))
-d <- dw1 %>% right_join(dw2, by=c('ids', 'clsids', 'schids', 'ctyids'))
+d <- dw1 %>% right_join(dw2, by=c('ids', 'clsids', 'schids', 'ctyids')) %>% remove_labels()
 ```
 
 ```{r}
@@ -59,14 +60,6 @@ d <- d %>% mutate(
   w2mat_100 = w2mat/w2upmat*100,
   w2eng_100 = w2eng/w2upeng*100
 )
-```
-
-```{}
-set.seed(1)
-d %>% select(
-  w1chn_100:w2eng_100) %>%
-ggplot(aes(x=w1chn_100:w2eng_100)) + 
-  geom_boxplot(alpha=0.2)
 ```
 
 Trimming outliers
@@ -272,8 +265,7 @@ d_migr <- d_cl %>%
   child.age, child.is.girl, child.has.rural.hukou, child.in.boarding.school, child.is.ethnic.minority, child.had.skipped.grade, child.had.repeated.grade, child.went.to.preschool, parent.has.white.collar.job, home.has.internet,
   child.health.self.rated, child.educational.aspiration, 
   parent.educational.level, parent.expectation.on.child, 
-  home.extracurricular.book, home.economic.resource) %>%
-  remove_labels()
+  home.extracurricular.book, home.economic.resource) 
 ```
 
 ```{r}
@@ -339,13 +331,6 @@ table_dependent_variable <- datasummary(
 table_dependent_variable
 ```
 
-```{r}
-table_independent_variable <- datasummary_skim(
-    data=d_idpvar,
-    type = 'categorical',
-    output = 'markdown')
-table_independent_variable
-```
 
 ```{r}
 d_idpvar <- d_migr %>% 
@@ -359,10 +344,14 @@ d_idpvar$`Parental Migration Type`[d_idpvar$migr_both==1] <- 'Both Parents Migra
 d_idpvar <- d_idpvar %>% select(!migr & !migr_mo_only & !migr_fa_only & !migr_both)
 ```
 
+
 ```{r}
-
+table_independent_variable <- datasummary_skim(
+    data=d_idpvar,
+    type = 'categorical',
+    output = 'markdown')
+table_independent_variable
 ```
-
 
 ```{r}
 d_ctvar <- d_migr %>%
@@ -443,7 +432,7 @@ test_table <- datasummary_balance(
 test_table
 ```
 
-```{r}
+```{}
 #table_control_variable <- 
 table_balance <- st(
   d_ctvar,
@@ -460,6 +449,7 @@ table_control_variable <- datasummary_skim(
   type = 'categorical',
   output = 'markdown'
 )
+table_control_variable
 ```
 
 ```{r}
@@ -473,7 +463,7 @@ d_migr <- d_migr %>% select(!migr & !migr_mo_only & !migr_fa_only & !migr_both)
 ```
 
 Whole sample summary
-```{r}
+```{}
 table_sum <- st(
   d_migr,
   digits = 2, 
@@ -481,7 +471,7 @@ table_sum <- st(
 table_sum
 ```
 
-```{r}
+```{}
 table_sum_migr <- st(
   d_migr,
   group = 'Parental Migration', 
@@ -799,15 +789,6 @@ fig_msmd_any <- plot(sum_m.out, xlim = c(0, 0.55), position = 'right')
 ```
 
 ```{r}
-love.plot(
-  m.out,
-  stats = "variance.ratios",
-  binary = "std", 
-  #limits = c(0, 0.55),
-  )
-```
-
-```{r}
 dm <- match.data(m.out)
 ```
 
@@ -837,8 +818,8 @@ m.out_mo_only <-
 ```
 
 ```{r}
-sum_m.out_fa_only <- summary(m.out_fa_only)
-fig_msmd_fa_only <- plot(sum_m.out_fa_only, xlim = c(0, 0.55), position = 'right')
+sum_m.out_mo_only <- summary(m.out_mo_only)
+fig_msmd_mo_only <- plot(sum_m.out_mo_only, xlim = c(0, 0.55), position = 'right')
 ```
 
 ```{r}
@@ -879,6 +860,25 @@ m.out_fa_only <- matchit(
 sum_m.out_fa_only <- summary(m.out_fa_only)
 fig_msmd_fa_only <- plot(sum_m.out_fa_only, xlim = c(0, 0.55), position = 'right')
 ```
+
+```{r}
+love.plot(
+  m.out,
+  stats = "variance.ratios",
+  binary = "std", 
+  #limits = c(0, 0.55),
+  )
+```
+
+```{r}
+love.plot(
+  m.out_mo_only,
+  stats = "variance.ratios",
+  binary = "std", 
+  #limits = c(0, 0.55),
+  )
+```
+
 ```{r}
 love.plot(
   m.out_fa_only,
@@ -1152,3 +1152,8 @@ feols(cog_dif ~ migr*supervision.less + cog3pl + child.age + child.is.girl + chi
     msummary(stars = c('†' = .1, '*' = .05, '**' = .01, '***' = .001),
            output = 'markdown')
 ```
+
+```{r}
+bal.tab(m.out)
+```
+
