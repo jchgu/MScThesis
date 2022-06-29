@@ -68,6 +68,7 @@ bibliography: references.bib
 load('.Rdata')
 library("papaja")
 library("cobalt")
+library("kableExtra")
 r_refs("references.bib")
 ```
 
@@ -93,7 +94,7 @@ In this thesis, my research question is: To what extent do different arrangement
 
 ## Theoretical Framework
 
-Between parental migration and children's education, the mechanisms trace to two theoretical frameworks. One is the resource generation model. It holds that parental migration brings forth greater resources in the form of economic capital. Economic capital is, in Bourdieu's words, "immediately and directly convertible into money and may be institutionalized in the form of property rights" [-@bourdieu2002, p.16]. Economic capital is transferable to human capital, which is the stock of "skills, talents, health, and expertise" in people that enhance their productivity [@goldin2016; @botev2019]. @yang2008 noted that in the Philippes, a sharp depreciation of peso increased the amount of remittances from migrant laborers working abroad. This subsequently boosted children's school enrollment and educational expenditure. In China, @chang2019 interviewed migrant workers and their family members. Oftentimes, they found that labor migration presented the only way to sustain their children's education and livelihood.
+Between parental migration and children's education, the mechanisms trace to two theoretical frameworks. One is the resource generation model. It holds that parental migration brings forth greater resources in the form of economic capital. Economic capital is, in Bourdieu's words, "immediately and directly convertible into money and may be institutionalized in the form of property rights" [-@bourdieu2002, p.16]. Economic capital is transferable to human capital, which is the stock of "skills, talents, health, and expertise" in people that enhance their productivity [@goldin2016; @botev2019]. @yang2008 noted that in the Philippines, a sharp depreciation of peso increased the amount of remittances from migrants working abroad. This subsequently boosted children's school enrollment and educational expenditure. In China, @chang2019 interviewed migrant workers and their family members. Oftentimes, they found that labor migration presented the only way to sustain their children's education and livelihood.
 
 The other theoretical model is the family disruption model. Children flourish under parental nurturing care. This term refers to the "stable environments that promote health and adequate nutrition, protect from threats, and provide opportunities for learning and responsive, emotionally supportive and developmentally enriching relationships" [@black2021, p.1]. Parental migration decreases nurturing care, as characterized by less homework supervision and emotional support by parents [@wen2019]. Hong talked to a group of left-behind children at a rural school [@hong2019]. These students expressed the utter sense of loneliness "with no advocate, no support and with no one looking out for them" (p. 13). Many of them felt indifferent to grades and disengaged with school. Some even longed to quit school to pursue a free, independent life (p. 14).
 
@@ -111,15 +112,15 @@ $H_2$ In the short term, mother's migration negatively affect the cognitive deve
 
 ## China's Context
 
-Three features make China a suitable case for studying left-behind children. The first feature is the huge scale of internal labor migration. According to the National Bureau of Statistics, the year 2021 recorded 292.5 million in-country migrant workers [@nbs2022]. They form the backbone of essential industries, such as retail, delivery, transportation, and manufacturing. The number of left-behind Chinese children reached 68.7 million in 2015 [@nbs2017]. The internal migration stemmed from the neoliberal economic regime.
+Three features make China a suitable case for studying left-behind children. The first feature is the huge scale of internal labor migration. According to the National Bureau of Statistics, the year 2021 recorded 292.5 million in-country migrant workers [@nbs2022]. They form the backbone of essential industries, such as retail, delivery, transportation, and manufacturing. The 2015 one-percent National Population Sample Survey estimated that 68.7 million Chinese children were left behind [@nbs2017]. The internal migration stemmed from the neoliberal economic regime.
 
-The neoliberal economic regime sounds at odds with China, a so-called socialist country. Actually, in the 1980s, the ruling communist party ditched the planned economy, initiated market reforms, and opened up the country. Since then, China has integrated in the global economy and contributed substantial growth to it. The economic reform and globalization have enriched the coastal cities like Shanghai and Shenzhen. The rural hinterlands, however, have lagged behind. The regional inequality needs social policy to amend, but China's welfare programs are discriminatory -- it segregates the population. Those who reap the greatest benefits are public servants, urban dwellers, and formally employed people. As rural people migrate to the city, they find themselves with limited access to social welfare in the destination. The municipal governments only provide welfare to local residents and expect non-local residents access public services elsewhere [@duckett2020; @zhang2018].
+The neoliberal economic regime sounds at odds with China, a so-called socialist country. Actually, in the 1980s, the ruling communist party ditched the planned economy, initiated market reforms, and opened up the country. Since then, China has integrated in the global economy and contributed substantial growth to it. The economic reform and globalization have enriched the coastal cities like Shanghai and Shenzhen. The rural hinterlands, however, have lagged behind. The regional inequality needs social policy to amend, but China's welfare program is discriminatory -- it segregates the population. Those who reap the greatest benefits are public servants, urban dwellers, and formally employed people. As rural people migrate to the city, they find themselves with limited access to social welfare in the destination. The municipal governments only provide welfare to local residents and expect non-local residents access public services elsewhere [@duckett2020; @zhang2018].
 
 The institutionalized discrimination against migrant laborers find its roots in China's "multilevel citizenship" system. As @vortherms2021 demonstrated, the constituents of citizenship -- "membership rules and rights entitlements" -- operate below the national level in China. The local state confers most of the rights and defines who is eligible to these rights through the *hukou*, or household registration system:
 
 > A political institution rooted in centuries of Chinese bureaucracy, the modern hukou is the primary identity document defining membership and entitlements for local citizenship. Accessing fundamental citizenship rights depends on your registration status ... Registration includes basic identifying information, a specific address of registration, and a type: urban, rural, or resident. [@vortherms2021]
 
-In other words, the hukou system binds one's citizenship rights with one's place of registry. In theory, anyone can move out of town freely. In practice, they cannot change hukou freely. When rural residents move to the city, it takes months -- if not years -- to apply for a new hukou. Before receiving urban hukou, they can hardly send their children into public schools in the host city [@gu2021]. Migrant workers had organized petitions, strikes, and protests, only to fall on deaf ears or even end with police crackdown [@chan2017]. Facing financial and policy constraints, many migrant laborers have to leave children in their hometowns.
+In other words, the hukou system binds one's citizenship rights with one's place of registry. In theory, anyone can move out of town freely. In practice, they cannot change hukou freely. When rural residents move to the city, it takes months -- if not years -- to apply for a new hukou. Before receiving urban hukou, they can hardly send their children into public schools in the host city [@gu2022]. Migrant workers have organized petitions, strikes, and protests. These actions often fell on deaf ears and sometimes even ended with police crackdown [@chan2019]. Facing financial and policy constraints, many migrant laborers have to leave children in their hometowns.
 
 The existing research about China's left-behind children has three major shortcomings. The first is that most literature focuses on children left behind in rural areas while neglecting the urban counterparts. The National Bureau of Statistics stated that the number of urban left-behind children had been growing and expected that the trend would continue [@nbs2017]. My sample includes urban left-behind children as well. The second shortcoming lies in sampling and research design. Some studies suffer from a limited sample size of less than one thousand participants or a limited geographic coverage of one to a few towns [@liu2021; @yang2022; @shu2021]. Others only estimated correlation using cross-sectional data [@akezhuoli2022; @jin2020]. These studies could have employed causal inference techniques like fixed effect, matching, or inverse probability of treatment weighting. The third shortcoming lies in the measurement of outcome. @chang2019 and @wang2019 measured students' educational performance with the test score of only one academic subject, namely mathematics. To tackle these limitations, I adopted a nationally representative two-wave panel dataset. I included the test results of multiple subjects to measure comprehensive academic achievement.
 
@@ -159,25 +160,43 @@ In addition, I present an unrestricted and adjusted DID model: $$\Delta score_{i
 
 Table 1 below summarizes the changes in migration status in the sample. All `r printnum(nrow(d_cl))` children were living together with parents in one household in baseline, but about fifteen percent saw at least one parent migrated during the two waves of survey. In these new migrant households, only-mother migration and only-father migration each accounted for two out of five cases. The remaining one-fifth was both-parents migration.
 
-```{r i-var}
+\renewcommand{\arraystretch}{0.75}
+```{r i-var, fig.cap='Parental migration status at follow-up survey'}
 table_independent_variable
 ```
 
-: Parental migration status at follow-up survey.
+\newpage
 
-Tables 2 and 3 below provide the whole-sample summary statistics. In addition, the violin plots in the appendix visualize the distribution of outcome variables for the treatment group and the control group.
+Tables 2 below summarizes the dependent variables by the control group and the treatment group. In addition, the violin plots in the appendix visualize the distribution of outcome variables.
 
-```{r d-var}
-table_dependent_variable
+```{r fig.cap='Dependent variables by parental migration'}
+tab_dpvar |> 
+  kable(booktabs = T, position = "left", row.names = F) |>
+  add_indent(c(2,3,5,6)) |>
+  add_header_above(c(" ", "No = 3452" = 2, "Yes = 636" = 2)) |>
+  add_header_above(c(" ", "Parental Migration" = 4)) |>
+  footnote(general = '* p < 0.05, ** p < 0.01, *** p < 0.001')
 ```
 
-: The independent variables
+\newpage
 
-```{r c-var}
-table_control_variable
+```{r fig.cap='Dichotomous control variables by parental migration'}
+tab_ctvar_dit |>
+  kable(booktabs = T, position = "left", row.names = F) |>
+  add_header_above(c(" ", "No = 3452" = 2, "Yes = 636" = 2)) |>
+  add_header_above(c(" ", "Parental Migration" = 4)) |>
+  footnote(general = '* p < 0.05, ** p < 0.01, *** p < 0.001')
 ```
 
-: The control variables
+\newpage
+
+```{r fig.cap='Continuous control variables by parental migration'}
+tab_ctvar_cnt |>
+  kable(booktabs = T, position = "left", row.names = F) |>
+  add_header_above(c(" ", "No = 3452" = 2, "Yes = 636" = 2)) |>
+  add_header_above(c(" ", "Parental Migration" = 4)) |>
+  footnote(general = '* p < 0.05, ** p < 0.01, *** p < 0.001')
+```
 
 ## Regression Analysis
 
@@ -188,6 +207,8 @@ The results only partially support the hypothesis two -- mother migration has a 
 ```{r reg-cog}
 table_cog
 ```
+
+\newpage
 
 ```{r reg-ttl}
 table_ttl
@@ -223,6 +244,8 @@ Alike are the results from DID models with matching (DIDM) and those without. In
 table_m_cog
 ```
 
+\newpage
+
 ```{r reg-m-ttl}
 table_m_ttl
 ```
@@ -233,13 +256,13 @@ table_m_ttl
 
 This thesis proposes a model to infer causality between parents' migration and their stay-behind children's educational performance in the short run. I build econometric models in the difference-in-differences design to analyze data from the 2013-2014 and 2014-2015 rounds of China Education Panel Survey. Results suggest that parental migration is, in the short run, negatively associated with children's educational performance as measured by academic exams and standardized cognitive tests. I further examine whether the effect varies across different arrangements of parental migration. Results indicate that father-only migration is negatively associated with children's cognitive abilities, while mother-only migration is negatively associated with children's academic abilities. In all scenarios, the educational performance of newly left-behind children only decreases slightly compared to that of non-left-behind peers.
 
-My research has limitations in sampling due to data constraint. Regarding sample size, the treatment group for the both-parents migration is small (n = 131), making the statistical power low. Regarding identification, I could only identify parental migration through such a condition: parental absence from a household without parental divorce or death. This is because the CEPS questionnaire asked if parents were living in the household, but did not ask why parents were absent. If some parents were jailed or hospitalized, their absence would be wrongly attributed to migration. Besides, I could not control for the migration history of parents, which are not included in the CEPS data. Possibly, some parents out-migrated at an earlier date, returned before the baseline survey, and migrated away again during the survey period. Their children might better cope with parental absence during the survey period, yet they would be mistaken as the newly left-behind. These limitations may bias the estimation.
+My research has limitations in sampling due to data constraint. Regarding sample size, the treatment group for the both-parents migration is small (n = 131), making the statistical power low. Regarding identification, I could only identify parental migration through such a condition: parental absence from a household without parental divorce or death. This is because the CEPS questionnaire asked if parents were living in the household, but did not ask why parents were absent. If some parents were jailed or hospitalized, their absence would be wrongly attributed to migration. Besides, I could not control for the migration history of parents, which are not included in the CEPS data. As I previously wrote, some parents out-migrated at an earlier date, returned before the baseline survey, and migrated away again during the survey period. Their children might better cope with parental absence during the survey period, yet they would be mistaken as the newly left-behind . These limitations may bias the estimation.
 
 Limitations also arise from unaccounted endogeneity and exogeneity. As @chen2009 stated in their research on left-behind children, endogenous factors may create selection bias. When migration opportunities arise, some parents may believe that leaving children behind would hamper children's education, thereby giving up the opportunity. Some other parents may believe that their children's schooling would not suffer from parental absence, thereby embarking on migration. Parental beliefs of this sort are unavailable in CEPS data. Exogenous factors may create omitted variable bias. Suppose that a natural hazard hit many counties of a province in the sample. This shock can simultaneously increase parents' out-migration and reduce stay-behind students' grades [@chen2009]. I could not account for such shocks as CEPS data does not include detailed geographic information.
 
-From my research, we can find new directions for scholarly inquiry. First, when the CEPS team releases the next round of data, researchers can capitalize a the three-wave panel dataset to build multi-period DID models. This would facilitate examination of the parallel trend assumption. Second, researchers can try novel methods. Machine learning, for example, can estimate the heterogeneous effects across subgroups [@liu2021a]. Synthetic control can evaluate the aggregate outcome of "large-scale but infrequent interventions" at municipal or provincial levels [@abadie2021], such as the policy experimentations that liberalize the hukou system in certain cities [@wang2020]. Third, researchers can go beyond outbound migration to study return migration of parents [@liang2021]. Only a few publications, such as that of @liu2018, have explored return migrants and their stay-behind children in the Chinese context.
+From my research, we can find new directions for scholarly inquiry. First, when the CEPS team releases the next round of data, researchers can capitalize a the three-wave panel dataset to build multi-period DID models. This would facilitate examination of the parallel trend assumption. Second, researchers can try novel methods. Machine learning, for example, can estimate the heterogeneous effects across subgroups [@liu2021a]. Third, researchers can go beyond outbound migration to study return migration of parents [@liang2021]. Only a few publications have explored return migrants and their stay-behind children in the Chinese context [@démurger2015; @liu2018].
 
-Let us consider the policy implications for China. The government has pushed for reforming the multilevel citizenship scheme. By 2022, small- and medium-sized cities have liberalized the application for local, urban hukou. However, the most popular migration destinations are metropolises like Beijing and Shanghai. These mega-cities still restrict migrant workers' local citizenship rights [@wang2020]. The hukou scheme shall not remain as it is, despite the small reduction of newly left behind children's schooling performance. The slight reduction is only the short-term consequence. Longer duration of parental migration may hamper educational performance to a greater extent. Besides, educational attainment is only part of human development outcomes. Other outcomes like mental health and non-cognitive skills are also subjected to parental absence's influence [@antia2020]. Policymakers should accelerate the reforms on the multilevel citizenship scheme, opening more doors for parents to migrate together with their children. Meanwhile, schools should dedicate more advisory and counseling support to children who stay behind.
+Let us consider the policy implications for China. The government has enacted reforms in the multilevel citizenship scheme. By 2022, small- and medium-sized cities have liberalized the application for local, urban hukou. However, the most popular migration destinations are metropolises like Beijing and Shanghai. These mega-cities still restrict migrant workers' local citizenship rights [@wang2020]. The hukou scheme shall not remain as it is, despite the small reduction of newly left behind children's schooling performance. The slight reduction is only the short-term consequence. Longer duration of parental migration may hamper educational performance to a greater extent [@liang2020; @meng2017]. Besides, educational attainment is only part of human development outcomes. Other outcomes like mental health and non-cognitive skills are also subjected to parental absence's influence [@antia2020]. Policymakers should accelerate the reforms on the multilevel citizenship scheme, opening more doors for parents to migrate together with their children. Schools could dedicate more advisory and counseling support to children who stay behind. "Social workers could test models for training paraprofessionals within different communities" to support left-behind children [@wang2020a, p. 1436].
 
 \newpage
 
@@ -271,7 +294,7 @@ fig_cog_by_migration_type
 
 \newpage
 
-```{r v-plot-ttl-1, fig.cap = paste("(ref:cog-dif)", "(ref:migr-type)")}
+```{r v-plot-ttl-1, fig.cap = paste("(ref:ttl-dif)", "(ref:migr-type)")}
 fig_ttl_by_migration_type
 ```
 
@@ -288,8 +311,7 @@ fig_ttl_by_migration_type
 (ref:cobalt-both) by both parents migration
 
 ```{r cobal-any, fig.cap = paste("(ref:cobalt-match)", "(ref:cobalt-any)")}
-love.plot(
-  m.out,
+m.out |> love.plot(
   threshold = c(m = .1),
   binary = "std", 
   limits = c(0, 0.55),
@@ -300,8 +322,7 @@ love.plot(
 \newpage
 
 ```{r cobal-mo, fig.cap = paste("(ref:cobalt-match)", "(ref:cobalt-mo)")}
-love.plot(
-  m.out_mo_only,
+m.out_mo_only |> love.plot(
   threshold = c(m = .1),
   binary = "std", 
   limits = c(0, 0.55),
@@ -312,8 +333,7 @@ love.plot(
 \newpage
 
 ```{r cobal-fa, fig.cap = paste("(ref:cobalt-match)", "(ref:cobalt-fa)")}
-love.plot(
-  m.out_fa_only,
+m.out_fa_only |> love.plot(
   threshold = c(m = .1),
   binary = "std", 
   limits = c(0, 0.55),
@@ -324,8 +344,7 @@ love.plot(
 \newpage
 
 ```{r cobal-both, fig.cap = paste("(ref:cobalt-match)", "(ref:cobalt-both)")}
-love.plot(
-  m.out_both,
+m.out_both |> love.plot(
   threshold = c(m = .1),
   binary = "std", 
   limits = c(0, 0.55),
