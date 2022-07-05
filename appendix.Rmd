@@ -1,0 +1,19 @@
+# Tables
+
+```{r tab-reg-cog-adj}
+table_adj_cog
+```
+
+```{r tab-reg-ttl-adj}
+table_adj_ttl
+```
+
+```{r tab-reg-m-adj-cog}
+table_m_adj_cog
+```
+
+```{r tab-reg-m-adj-ttl}
+table_m_adj_ttl
+```
+
+\newpage
