@@ -36,10 +36,10 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={Parental Migration and Left-Behind Children's Cognitive and Academic Performances},
+  pdftitle={Newly Left-Behind Children's Educational Performance Drops Slightly After Parental Migration},
   pdfauthor={Jiancheng Gu1},
   pdflang={en-EN},
-  pdfkeywords={keywords},
+  pdfkeywords={labor migration, left-behind children, educational performance},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
@@ -175,7 +175,7 @@
     {}{\InnerPatchFailed}%
   }
 {}{\PatchFailed}
-\keywords{keywords\newline\indent Word count: X}
+\keywords{labor migration, left-behind children, educational performance\newline\indent Word count: 6,600}
 \usepackage{csquotes}
 \makeatletter
 \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
@@ -189,11 +189,17 @@
   {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
 \makeatother
 
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{setspace}
+\onehalfspacing
+
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 
-\title{Parental Migration and Left-Behind Children's Cognitive and Academic Performances}
+\title{Newly Left-Behind Children's Educational Performance Drops Slightly After Parental Migration}
 \author{Jiancheng Gu\textsuperscript{1}}
 \date{}
 
@@ -202,72 +208,114 @@
 
 \affiliation{\vspace{0.5cm}\textsuperscript{1} Faculty of Social Sciences, Vrije Universiteit Amsterdam}
 
+\abstract{%
+Millions of children worldwide are ``left behind'' at home communities as their parents migrate away for work.
+Parents' labor migration increases household income but decreases parental care, thereby exerting mixed influences on child development outcomes like educational attainment.
+To what extent do different arrangements of parental migration affect children's educational performance in the short term?
+Studying the case of China, I obtained a sample of four thousand junior high school students from a nationally representative two-wave panel survey.
+I differentiated household migration arrangements of any one parent, of mother only, of father only, and of both parents.
+I measured children's schooling performance by cognitive test scores and academic exam grades.
+For causal inference, I built difference-in-differences models with propensity score matching.
+Results show that the newly left-behind children's performance at school dropped slightly compared to that of non-left-behind peers.
+Mother-only migration is negatively associated with children's academic grades and cognitive abilities.
+Father-only migration is negatively associated with children's cognitive abilities, but its magnitude is greater than mother-only migration.
+}
+
+
+
 \begin{document}
 \maketitle
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-Millions of children are resided in their home communities but separated from their parents as either one or both parents have migrated for work (Antia et al., 2020). These are the so-called ``left behind children'' who are common in migrant-sending regions -- Latin America, Sub-Sahara Africa, East Europe, and large parts of Asia. We do not know the global size of left behind children population, but we can find estimate from in-country surveys. (DeWaard et al., 2018) analyzed the Mexican and Latin American Migration Projects and estimated that around fifteen percent of children were left behind in Mexico, El Salvador, Nicaragua, and Puerto Rico in the 2000s. (Popova, 2018) cited a 2016 study by UN Children's Fund Bulgaria indicating that one-fifth of Bulgarian children had one or both parents working abroad. In China, the 2015 one-percent National Population Sample Survey showed that one out of four children lived under parental absence induced by migration (NBS et al., 2017).
+Globally, millions of children reside in their home communities but live apart from their parents as either one or both parents have migrated for work. These are the so-called ``left-behind children'' or ``stay-behind children.'' They are common in migrant-sending regions, such as Latin America, Sub-Sahara Africa, East Europe, and large parts of Asia. Researchers estimated that one-sixth of Mexican children (DeWaard et al., 2018), one-fifth of Bulgarian children (Popova, 2018), and one-fourth of Chinese children were separated from their migrating parents (NBS et al., 2017). The issue of left-behind children has caught the attention of policymakers and legislators. In a resolution, the Council of Europe's Parliamentary Assembly (2021) expressed concern about ``the scale of this phenomenon and the long-term damage it creates'' and declared that leaving ``millions of labour migrants' children without parental care is a mass violation of human rights''.
 
-The issue of left behind children has attracted public attention. In March 2021, the Parliamentary Assembly of Council of Europe (2021) passed a resolution that
+How are stay-behind children faring in the absence of parents? Research findings are mixed due to the differential effects of parental migration. Consider children's education. According to the review articles by Brauw (2019) and Van Hook and Glick (2020), labor migrants send remittances back, which can fund children's schooling as well as improve their nutritional and living conditions. To what degree can the inflow of remittances compensate for the loss of parental attention? Parental migration decreases the amount and quality of parental guidance, protection, and support. It is uncertain how these two opposing effects together shape children's educational performance. This uncertainty merits empirical investigation.
+
+A challenge arises in estimating the effect of parent's migration on children's educational achievement. Experiments can unveil causal relations. It is unfeasible and unethical to design an experiment that randomly assigns parents to migrate without their children. Alternatively, a quasi-experimental design can help with causal inference. It requires that the cause be on par with random assignment to participants, conditional on identification assumptions (Cunningham, 2021).
+
+My research question is: To what extent do different arrangements of parental migration affect the educational performance of left-behind children in the short term? I choose China as the case and analyze data from a two-wave panel survey. The nationally representative sample includes children in both urban and rural areas. I develop a difference-in-differences model for causal inference and apply propensity score matching for robustness checks. The outcome is measured with children's cognitive test score and academic exam grade. I demonstrate that parental migration reduces the educational performance of children staying behind, but only to a small extent.
+
+\hypertarget{chinas-context}{%
+\subsection{China's Context}\label{chinas-context}}
+
+Three features make China a suitable case for studying left-behind children. The first feature is the huge scale of internal labor migration. According to the National Bureau of Statistics, the year 2021 recorded 292.5 million in-country migrant workers. They form the backbone of essential industries, such as retail, transportation, and manufacturing. The 2015 one-percent National Population Sample Survey estimated that 68.7 million Chinese children were left behind (NBS, 2022; NBS et al., 2017).
+
+The internal migration stemmed from the neoliberal economic regime. Scholars like Duckett (2020) and Zhan (2020) argued that China conforms to the neoliberal trend, extending the logic of the market to other domains of human life. In the 1980s, the ruling communist party ditched the planned economy, initiated market reforms, and opened up the country. Since then, China has integrated in the global economy and contributed substantial growth to it. The economic reform and globalization have enriched the coastal cities like Shanghai and Shenzhen. The rural hinterlands, however, have lagged behind. Simultaneously, many people have left the countryside for the city. The regional inequality needs social policy to amend. But China's welfare program, as Qian (2021) argued, is fragmented and stratified. People who reap the greatest benefits are public servants, urban dwellers, and formally employed workers. As rural migrants arrive in the city, they find themselves with limited access to social welfare, such as health care and children's education (Qian, 2021). The welfare system's exclusion of rural migrants means that the state shifts its responsibility to individuals, resembling the neoliberal governmentality (Zhan, 2020).
+
+The institutional discrimination against labor migrants finds its roots in China's ``multilevel citizenship'' system. As Vortherms (2021) explained, the constituents of citizenship -- ``membership rules and rights entitlements'' -- operate below the national level in China. The local state confers most of the rights and defines who is eligible to these rights through \emph{hukou}, or the household registration system:
 
 \begin{quote}
-deplores the complacency of both countries of origin and countries of destination of labour migration, which tend to tolerate excessive labour migration as it has significant short-term benefits in the form of remittances for the former, and of a cheap, flexible labour force for the latter. This situation is not acceptable, and it is not sustainable. Leaving millions of children without parental care is a mass violation of human rights and an unnecessary threat to the stability and prosperity of our countries. (p.~1)
+A political institution rooted in centuries of Chinese bureaucracy, the modern hukou is the primary identity document defining membership and entitlements for local citizenship. Accessing fundamental citizenship rights depends on your registration status \ldots{} Registration includes basic identifying information, a specific address of registration, and a type: urban, rural, or resident. (Vortherms, 2021)
 \end{quote}
 
-The resolution suggests that parental migration impacts child development by exerting different effects that work oppositely. Consider children's education. According to Van Hook and Glick (2020), labor migrants send remittances back home, boosting the family income. Higher income can fund children's schooling as well as improve their nutritional and living conditions. All these may enhance children's educational outcome. The inflow of remittances, however, cannot substitute for the loss of parental care. Parental migration halts the day-to-day, face-to-face contact between parents and children. It decreases the amount and quality of parental guidance, protection, and support. All these may hinder children's school performance. It is uncertain how these two opposing effects shape children's educational performance, which merits empirical investigation.
+In other words, the hukou system binds one's citizenship rights with one's place of registry. In theory, Chinese citizens can migrate freely within the country. In practice, they cannot change hukou freely. When rural residents move to the city, it takes months -- if not years -- to apply for a new hukou. Before receiving urban hukou, they can hardly send their children into public schools in the host city (Gu, 2022). Migrant workers have organized petitions, strikes, and protests. These actions often fell on deaf ears and sometimes even ended with police crackdown (Chan, 2019). Facing financial and policy constraints, many migrant laborers have to leave children in their hometowns.
 
-A challenge arises in when we want to assess the causality between parental migration and children's education. Experiments can unveil causal relations, but it is unfeasible and unethical to design an experiment that randomly assigns parents to migrate without their children. Alternatively, we can infer causality from a quasi-experimental design -- that is, when the cause is on par with random assignment to participants in the analysis, conditional on identification assumptions (Cunningham, 2021).
+How does China counter the issue of labor migration and left-behind children? According to X. Wang (2020) and Zhang (2018), the government has gradually liberalized the multilevel citizenship scheme. It has introduced residence permit for internal migrants as the basis for social entitlements. First-tier cities like Beijing and Shanghai have brought forth a point-based system to grant hukou to newcomers. The system's evaluation criteria include in-demand talents and skills, educational and professional qualifications, and consecutive years of employment and tax-payment. This parallels how European states differentially incorporate foreign immigrants into national welfare regimes (Zhang, 2018). Another policy response, as stated by Roberts and Hannum (2018), is the centralized boarding school. The Ministry of Education promotes boarding schools in the rural county-seats. These schools serve as a cost-effective way to enroll students in surrounding villages and to look after the left-behind children. In reality, such schools ``are often ill-equipped to ensure the healthy upbringing and psychological wellbeing of children'' (p.~6).
 
-Three features make China a suitable case for studying left behind children. The first feature is the huge scale of internal labor migration. According to the National Bureau of Statistics, the year 2021 recorded 292.5 million in-country migrant workers (NBS, 2022). The second feature is the neoliberal welfare regime. Neoliberalism extends the logic of the market to most spheres of human life. Driven by the neoliberal doctrine, the government shifts its responsibilities of social services and welfare to individuals and communities. Since China initiated pro-market reforms in the 1980s, the state has reduced its welfare provisions and passed them to individuals and families (Zhan, 2020). The third feature is the authoritarian control against citizens. According to Gu (2021), the hukou (household registration) system controls people's mobility by binding a household's public welfare access with its place of registry. For a rural household member moving to the city, it takes much time and effort to apply for urban hukou status. Without an urban hukou they cannot send children to public school in the host city. Facing financial and policy constraints, many migrant laborers have to leave children in their original domiciles. The number of left behind Chinese children reached 68.7 million in 2015 (NBS et al., 2017).
+Social scientists have researched extensively about China's left-behind children, but the current literature still has three major shortcomings. The first is that most literature focuses on children left behind in rural areas while neglecting the urban counterparts. The National Bureau of Statistics stated that the number of urban left-behind children had been growing and expected that the trend would continue (NBS et al., 2017). The second shortcoming lies in sampling and research design. Some studies suffer from a limited sample size of less than one thousand participants or a limited geographic coverage of one to a few towns (Y. Liu et al., 2021; Shu, 2021; F. Yang et al., 2022). Others only estimated correlation using cross-sectional data (Akezhuoli et al., 2022; Huang et al., 2020; Jin et al., 2020). These studies could have employed causal inference techniques like fixed effect, matching, or inverse probability of treatment weighting. The third shortcoming lies in the measurement of outcome. Chang et al. (2019) and L. Wang et al. (2019) measured students' educational performance with the standardized test score of only one academic subject, namely mathematics. To tackle these limitations, I adopted a nationally representative two-wave panel dataset. My sample includes urban left-behind children as well. I included the test results of multiple subjects to measure comprehensive academic achievement.
 
-To what extent do parental migration affect the cognitive development and academic performance of left-behind children in the short term? I analyze the data from a nationally representative two-wave panel survey. The sample includes children in both urban and rural areas. I develop a difference-in-differences design for causal inference. The dependent variables include children's cognitive test score and Chinese, mathematics, and English exam scores.
+\hypertarget{theory-and-hypotheses}{%
+\subsection{Theory and Hypotheses}\label{theory-and-hypotheses}}
 
-\newpage
+Between parental migration and children's education, the mechanisms trace to two theoretical frameworks. One is the resource generation model. It holds that parental migration brings forth greater resources in the form of economic capital. Economic capital is, in Bourdieu's words, ``immediately and directly convertible into money and may be institutionalized in the form of property rights'' (2002, p. 16). Economic capital is transferable to human capital, which is the stock of ``skills, talents, health, and expertise'' in people that enhance their productivity (Botev et al., 2019; Goldin, 2016). D. Yang (2008) noted that in the Philippines, a sharp depreciation of peso increased the amount of remittances from migrants working abroad. This subsequently boosted children's school enrollment and educational expenditure. Cebotari (2020) developed a fixed effect model with longitudinal data collected in Ghana. He found that stay-behind children's education benefited from ``the steady inflow of both in-kind and monetary remittances'' contributed by migrant parents. In China, Chang et al. (2019) interviewed migrant workers and their family members. Oftentimes, labor migration presented the only way to sustain their children's education and livelihood. Peng (2018) interviewed first-generation migrant mothers whose initial migration dated back to the 1990s. To them, ``good mothering'' primarily meant offering economic support for their children in education, which can help their children climb the ladder of success.
 
-\hypertarget{literature-review}{%
-\section{Literature Review}\label{literature-review}}
+The other theoretical model is the family disruption model. Children flourish under parental nurturing care. This term refers to the ``stable environments that promote health and adequate nutrition, protect from threats \ldots{} opportunities for learning,'' and ``responsive, emotionally supportive and developmentally enriching relationships'' (Black et al., 2021, p. 1). Parental migration decreases nurturing care, as characterized by less homework supervision and emotional support by parents (Wen \& Xie, 2019). Hong talked to a group of left-behind children at a rural school (Hong \& Fuller, 2019). These students expressed the utter sense of loneliness ``with no advocate, no support and with no one looking out for them'' (p.~13). Many of them felt indifferent to grades and disengaged with school. Some even longed to quit school to pursue a free, independent life (p.~14). Similarly, Murphy (2022) talked to left-behind adolescents at a village. Some of them ``embraced the `left-behind' label'' because it captured their need for more parental care (p.~185), ``especially companionship and affection in daily life'' (p.~186).
 
-Researchers obtained mixed results regarding how migration-induced parental absence affects children's education. Using data collected from junior high school students, Li and colleagues (2017) found that parental migration negatively impacts left-behind children's achievement in mathematical test. Wang and others (2019) also collected data from students of junior high school, but discovered no overall effect of parental migration on the mathematical test grades of children left behind. Bai and coauthors (2018) gathered data from primary school pupils. They reported that parental migration ``does not appear to have a negative effect'' on the English test results of left-behind children, and ``in some cases even appears to have a positive effect'' (p.~1165). The inconsistency can result from factors such as the left-behind children's age and gender, the migrant parent's original domicile and eventual destination, and the arrangement of which parent migrate for how long.
+Given the two opposing effects, researchers have obtained mixed results on how parental migration impacts children's education. Botezat and Pfeiffer (2020) adopted past immigration rate as an instrumental variable. They found a positive effect of parents' migration on academic grades of adolescents aged eleven to fifteen in Romania. The team of L. Wang et al. (2019) collected data from junior high school students in central China. Their two-way fixed-effect model showed no significant effect of parental migration on left-behind children's achievement in mathematical test. Nguyen (2016) conducted fixed-effect regression and demonstrated that parental migration was associated with lower cognitive capabilities among Indian and Vietnamese children aged five to eight.
 
-Between parental migration and children's education, the mechanisms trace to two theoretical frameworks. One model, the resource generation model, holds that parental migration brings forth greater resources in the form of economic capital. Economic capital is, in Bourdieu's words, ``immediately and directly convertible into money and may be institutionalized in the form of property rights'' (2002, p. 16). Economic capital is transferable to human capital, which is the stock of ``skills, talents, health, and expertise'' in people that enhance their productivity (Botev et al., 2019; Goldin, 2016). (Chang et al., 2019) provided evidence through interviews with migrant workers and their family members. The informants agreed that the city offered more jobs and higher pay than did the countryside. Oftentimes, they found that labor migration presented the only way to sustain their children's education and livelihood.
+Parental migration immediately disrupts family structure, which in turn lowers academic performance of children. It takes longer time for labor migration to generate resources that improve children's educational attainment. I propose the first hypothesis:
 
-The other theoretical model is the family disruption model. Children flourish under parental nurturing care. This term refers to the ``stable environments that promote health and adequate nutrition, protect from threats, and provide opportunities for learning and responsive, emotionally supportive and developmentally enriching relationships'' (Black et al., 2021, p. 1). Parental migration decreases nurturing care, thereby hindering children's developmental outcomes. The loss of nurturing care slows children's accumulation of human capital. Hong talked to a group of left behind children in grade nine when she conducted ethnography at a rural school (Hong \& Fuller, 2019). These students expressed the utter sense of loneliness ``with no advocate, no support and with no one looking out for them'' (p.~13). Many of them felt indifferent to school grades, and some even longed to ditch school to pursue a free, independent life (p.~14).
+\(H_1\) In the short term, parental migration reduces the educational performance of children left-behind.
 
-I hypothesized that (H1) in the short term, parental migration negatively affect the cognitive development and academic performance of children left behind. This is because parental migration immediately disrupts family structure, resulting in lower academic performance of children. It takes longer time for parental migration to generate resources that improve children's performance at school.
+\(H_1a\) In the short term, parental migration negatively affects left-behind children's cognitive test score.
 
-Researchers have studied whether the impact differ between mother absence and father absence in the context of labor migration. Xu and others (2019) adopted a fixed-effects propensity score weighting model on cross-sectional data collected from seventh and ninth graders in rural areas across China. They found that the absence of father only or both parents had ``little or no association with negative outcomes'' on children's academic and cognitive performances. Only-mother absence, however, showed a ``strong association with negative outcomes'' (p.~1646). Chen and others (2019) conducted structural equation modeling on the cross-sectional data collected from fourth to seventh graders in the countryside of one province. They found that mother migration was ``negatively associated with children's social competence and academic performance,'' while father migration had no direct effects on the two outcomes (pp.~860-861).
+\(H_1b\) In the short term, parental migration negatively affects left-behind children's academic exam score.
 
-I hypothesized that (H2) in the short term, mother migration negatively affect the cognitive development and academic performance of children left behind, while father migration does not show a effect. This relates to the social norms that designate men as breadwinners and women as caregivers. Studies noted that in some Asian and Latin American societies, children are more likely to accept fathers' migration than mothers' (Murphy, 2022). Left behind children may even resent their migrant mothers, viewing them as transgressing on the expected care-giving roles.
+Researchers have studied whether the impact differ between mother's migration and father's migration. Xu et al. (2019) adopted a fixed-effects propensity score weighting model on cross-sectional data collected from seventh and ninth graders in rural areas across China. They found that the absence of father only or both parents had ``little or no association with negative outcomes'' on children's academic and cognitive performances. Only-mother absence, however, showed a ``strong association with negative outcomes'' (p.~1646). Chen et al. (2019) conducted structural equation modeling on the cross-sectional data collected from fourth to seventh graders in the countryside of one province. They found that maternal migration was ``negatively associated with children's social competence and academic performance,'' while paternal migration had no direct effects on the two outcomes (pp.~860-861).
 
-The research on China's left behind children has three major shortcomings. First, most literature focuses on children left behind in rural areas while neglecting the urban counterparts. (NBS et al., 2017) stated that the number of urban left behind children had been growing and expected that the trend would continue. The second shortcoming lies in data and sampling. Some studies draw from cross-sectional data, making it hard to infer causal relations (Jin et al., 2020; Zhou et al., 2014). Others suffer from a limited sample size of less than one thousand participants or a limited geographic coverage of one or a few towns (Jin et al., 2020; Liu et al., 2021; Shu, 2021; Yang et al., 2022). The third shortcoming lies in the selection and measurement of outcome. (Chang et al., 2019; Wang et al., 2019) measured students' educational performance with the test score of only one academic subject, namely mathematics. The test results of multiple subjects should be included to measure comprehensive academic achievement.
+Scholars like Murphy (2020) noted that in some Asian and Latin American societies, the social norms designate men as breadwinners and women as caregivers. Under such norms, fathers' migration is more likely to win children's acceptance than does mothers' migration. Left-behind children may even resent their migrant mothers for transgressing on the expected care-giving roles (Murphy, 2020). I propose the second hypothesis:
+
+\(H_2\) In the short term, mother's migration more negatively affect the educational performance of children left-behind than do father's migration.
+
+\(H_2a\) In the short term, mother's migration more negatively affect left-behind children's cognitive test score than do father's migration.
+
+\(H_2b\) In the short term, mother's migration more negatively affect left-behind children's academic exam score than do father's migration.
 
 \newpage
 
 \hypertarget{methods}{%
 \section{Methods}\label{methods}}
 
-\hypertarget{participants}{%
-\subsection{Participants}\label{participants}}
+\hypertarget{sampling}{%
+\subsection{Sampling}\label{sampling}}
 
-I obtained the data from the China Education Panel Survey (CEPS) (NSRC, n.d.). It is a nationally representative, school-based survey featuring junior high school students. The survey administrator is the National Survey Research Center at Renmin University of China. The research team adopted multi-stage stratified probability proportional to size sampling and administered a paper-and-pencil questionnaire to each participant. The baseline survey took place in the 2013-2014 academic year with a sample size of about twenty thousand students in the seventh and ninth grades. These students were nested in 438 classrooms of 112 schools in 28 urban districts or rural counties. The follow-up survey in the 2014-2015 academic year lost track of the ninth grade cohort and only surveyed 9449 of the seventh grade cohort. I further restricted the sample to students staying with both parents at the original domicile at the baseline survey. To deal with missing values, I adopted list-wise deletion for dependent, independent, and control variables. The final sample size amounted to 4040 .
+I obtained the data from the China Education Panel Survey (CEPS) (NSRC, n.d.). It is a nationally representative, school-based survey featuring junior high school students. Currently, two waves of data are available. The CEPS team operates under the National Survey Research Center at the Renmin University of China. The survey team adopted multi-stage stratified probability proportional to size sampling and administered a paper-and-pencil questionnaire to each participant. The wave one baseline survey took place in the 2013-2014 academic year with a sample size of about twenty thousand students in the seventh and ninth grades. They were nested in 438 classrooms of 112 schools in 28 urban districts or rural counties (hereafter `counties'). The wave two follow-up survey in the 2014-2015 academic year lost track of the ninth grade cohort and only surveyed 10279 of the seventh grade cohort. I further restricted the sample to students living with both parents at the original domicile (place of hukou registry) at the baseline survey. To tackle missing values, I adopted list-wise deletion for the dependent, independent, and control variables. The final sample size amounts to 4062.
 
 \hypertarget{measurement}{%
 \subsection{Measurement}\label{measurement}}
 
-I explored two categories of adolescence development: cognitive and academic abilities. One key dependent variable, the student's cognitive skill, was measured by a fifteen-minute standardized test. The test covered three types of reasoning: verbal, visuospatial, and numerical. The CEPS research team calculated the raw score based on Item Response Theory and then standardized the score with a mean of zero and standard deviation of one.
+I explored two categories of educational performance: cognitive and academic abilities. One key dependent variable, the student's cognitive skill, was measured by a fifteen-minute standardized test administered by the CEPS research team. The test covered three types of reasoning: verbal, visuospatial, and numerical. The baseline and follow-up tests consisted of 20 and 35 items, respectively. The raw score was calculated based on the Item Response Theory (W. Wang \& Li, 2015). I transformed the raw scores to the 100-point scale. I chose the raw score instead of the z-score, as z-standardization fails to document the change of mean between time points, which is also of interest (Moeller, 2015).
 
-The other set of dependent variables concerned students' academic performance. This was measured by the total scores of mid-term exams in Chinese, mathematics, and English as provided by each school. I aligned different grading scales (full mark of 100, 120, and 150 for one subject) to the hundred-point scale. Accordingly, the total score of three subjects has a 300-point scale.
+Another dependent variable concerned students' academic performance. This was measured by the average scores of mid-term exams in Chinese, mathematics, and English as provided by each school. Exam scores are reliable indicators of learning performance, and are comparable across schools for the same cohort of students. This is related to how junior high schools operate within the compulsory education system in China. According to OECD (2016), China's junior secondary education is a unified system that does not distinguish between academic and vocational tracks. At school, the subjects of Chinese, mathematics, and English are core subjects and others as supplementary subjects. Throughout junior high school, students study the core subjects in preparation for the senior high school entrance exam. Within each cohort in one particular school, teachers use the same syllabus and administer the same exams during a given assessment period. Across cities and regions, junior high schools adopt the educational content and assessment set by the Ministry of Education (OECD, 2016).
 
-The key independent variable, the parental migration status, was identified by two items in the parent survey. In both the baseline and the follow-up surveys, parents specified the family members living in the same household at the time. I constructed six treatment dummy variables measuring migration arrangements: both parents absent, only father absent, only mother absent, father absent (unconditional on mother's migration status), mother absent (unconditional on father's migration status). These arrangements can overlap with each other. The control group consisted of parents staying with their children throughout at both the baseline and the follow-up surveys. I then removed the observations that reported parental divorce or death. These type of parental absence are irrelevant to migration.
+I transformed the exam grades through the following steps. I first aligned different grading scales (full mark of 100, 120, and 150 for one subject) with the 100-point scale. After the conversion, I checked for abnormal values lower than zero or higher than one hundred. 30 observations were outliers, accounting for less than one percent of the sample. I retained these observations in the sample and trimmed the subject exam scores. The trimming ensured that all values would be within the 0-100 range. In this way, I can limit the impact of outliers. Finally, I calculated the average score of these three subjects.
 
-\hypertarget{data-analysis}{%
-\subsection{Data analysis}\label{data-analysis}}
+The key independent variable, the parental migration status, was identified by two items in the parent survey. In both the baseline and the follow-up surveys, parents specified the family members living in the same household at the time. I constructed four treatment dummy variables measuring migration arrangements: any parents migrated, only father migrated, only mother migrated, and both parents migrated. The latter three arrangements are mutually exclusive. The control group consisted of parents staying with their children throughout the two waves of survey. I then removed the observations that reported parental divorce or death. These type of parental absence are irrelevant to migration.
 
-I adopted R (Version 4.2.0; R Core Team, 2022) and the R-packages \emph{papaja} (Version 0.1.0.9999; Aust \& Barth, 2020), and \emph{tinylabels} (Version 0.2.3; Barth, 2022) for all the analyses, the \texttt{fixest} package for building the econometric models (Bergé, 2018), and the \texttt{modelsummary} package for presenting the results (Arel-Bundock, 2022). I built a two-way fixed effect model in a difference-in-differences (DID) design, following Bai and colleagues' (2018; 2020) approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. I first specified an unrestricted and unadjusted model: \[\Delta score_{i,c} = \alpha + \beta \cdot migr_{i,c} + \gamma \cdot FE_{c} + \lambda \cdot score_{i,c;base} + \varepsilon_{i,c}\] For student \(i\) in classroom \(c\), \(\Delta score_{i,c}\) is the change in test score between baseline and follow-up surveys, \(migr_{i,c}\) is the treatment dummy variable, \(FE_{c}\) is the classroom-level fixed effect, and \(score_{i,c;base}\) is the test score at baseline. The model is unrestricted because it does not restrict on the coefficient associated with the baseline scores. The model is unadjusted as it does not adjust for additional covariates. Theoretically, it is unnecessary to include covariates that vary over group but remain constant over time; They would cancel out in the two-way fixed effect model (Huntington-Klein, n.d.). The standard errors were clustered at the classroom level.
+The control variables at children's level included age, gender, self-rated health, hukou type, number of siblings, whether the child is ethnic minority of Han Chinese, whether the child had skipped grade or repeated grade, and the level of education that the child aspires to achieve. At the household level, I controlled the levels of education of father and mother, the parental expectation on the child's level of education, whether the parent has a white collar job, whether the household has internet access, the perceived household financial conditions, and the number of extracurricular books at home. The lists of covariates are in Table~\ref{tab:tab-ctvar-dit} -- Table~\ref{tab:tab-ctvar-msr} in the Results section.
 
-In addition, I presented an unrestricted and adjusted DID model: \[\Delta score_{i,c} = \alpha + \beta \cdot migr_{i,c} + \gamma \cdot FE_{c} + \lambda \cdot score_{i,c;base} + \theta \cdot X_{i,c} + \varepsilon_{i,c}\] where \(X_{i,c}\) is the vector of covariates capturing the characteristics of children, their parents, and their households. The control variables were measured in the baseline survey. This version of model lifts the restriction that covariates from the baseline survey would be associated with a coefficient that equals one.
+\hypertarget{analytical-strategy}{%
+\subsection{Analytical Strategy}\label{analytical-strategy}}
+
+I built a two-way fixed effect model in a difference-in-differences (DID) design, following Bai and colleagues' (2018; 2020) approach. The model served to analyze the educational outcome of children newly left behind by parents vis-a-vis that of children staying together with parents. I first specified an unrestricted and unadjusted model: \[\Delta score_{i,j} = \alpha + \beta \cdot migr_{i} + \gamma \cdot score_{i;1} + \lambda \cdot S_{j} + \varepsilon_{i,j}\] For student \(i\) in school \(j\), \(\Delta score_{i,j}\) is the change in test score between the two waves of surveys, \(migr_{i}\) is the treatment dummy variable, \(score_{i,j;1}\) is the test score at baseline, and \(S_{j}\) is the school fixed-effect. School fixed-effect can account for differences due to time-invariant factors at the school and county levels, as students nested in one school are also in the same county. An alternative is to use a class fixed-effect to control for time-invariant factors at the classroom level and above. However, about one-sixth of the students were reassigned into new classes at the end of baseline academic year. As the reassignment of classroom will complicate the model, I ruled out the classroom fixed-effect.
+
+The DID model is unrestricted because it does not restrict on the coefficient associated with the baseline scores. The model is unadjusted as it does not adjust for additional covariates. Theoretically, it is unnecessary to include covariates that vary over group but remain constant over time; They would cancel out in the two-way fixed effect model (Huntington-Klein, 2022). The standard errors are clustered at the classroom level.
+
+In addition, I made an unrestricted and adjusted DID model: \[\Delta score_{i,j} = \alpha + \beta \cdot migr_{i} + \gamma \cdot score_{i;1} + \lambda \cdot S_{j} + \theta \cdot X_{i} + \varepsilon_{i,j}\] where \(X_{i}\) is the vector of covariates capturing the characteristics of children, their parents, and their households. The control variables were measured in the baseline survey. This version of model lifts the restriction that covariates from the baseline survey would be associated with a coefficient that equals one.
+
+I adopted \texttt{R} (version 4.2.0) for all the analyses (R Core Team, 2022). This involved the following packages: \texttt{tidyverse} (version 1.3.1) for data cleaning (Wickham et al., 2019); \texttt{fixest} (version 0.10.4) for econometric modeling (Berge et al., 2022); \texttt{MatchIt} (version 4.4.0) and \texttt{cobalt} (version 4.3.2) for matching (Greifer, 2022b; Ho et al., 2022); \texttt{modelsummary} (version 1.0.0), \texttt{vtable} (version 1.3.3), and \texttt{kableExtra} (version 1.3.4) for presenting the results (Arel-Bundock, 2022; Huntington-Klein, 2021; Zhu, 2021); and \texttt{papaja} (version 0.1.0) for typesetting (Aust \& Barth, 2022).
 
 \newpage
 
@@ -277,514 +325,397 @@ In addition, I presented an unrestricted and adjusted DID model: \[\Delta score_
 \hypertarget{descriptive-statistics}{%
 \subsection{Descriptive Statistics}\label{descriptive-statistics}}
 
-The table below summarizes the changes in migration status in the sample. All 4040 children were living together with parents in one household in baseline, but about fifteen percent saw at least one parent migrated during the two waves of survey. In these new migrant households, only-mother migration and only-father migration each accounted for two out of five cases. The remaining one-fifth was both-parents migration.
+Table~\ref{tab:tab-idpvar} summarizes the independent variables, namely the migration status reported in the wave two survey. All 4062 children were living with parents in one household in baseline, but about sixteen percent saw at least one parent migrated between the two waves of survey. I call these students ``newly left-behind children'' and their households ``new migration households.'' In these new migration households, only-mother migration and only-father migration each accounted for two out of five cases. The remaining one-fifth were both-parents migration.
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}@{}}
-\caption{Parental migration status at follow-up survey. Among the columns: (2) = (3) + (5) + (7), (4) = (3) + (7), (6) = (5) + (7).}\tabularnewline
+\renewcommand{\arraystretch}{0.72}
+
+\begin{longtable}[]{@{}lll@{}}
+\caption{\label{tab:tab-idpvar}Independent variables by parental migration}\tabularnewline
 \toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-(1) No migration
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(2) Any Parent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(3) Only Mother
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(4) Mother (Uncond.)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(5) Only Father
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(6) Father (Uncond.)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(7) Both Parents
-\end{minipage} \\
+Variable & N & Percent \\
 \midrule
 \endfirsthead
 \toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-(1) No migration
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(2) Any Parent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(3) Only Mother
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(4) Mother (Uncond.)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(5) Only Father
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(6) Father (Uncond.)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-(7) Both Parents
-\end{minipage} \\
+Variable & N & Percent \\
 \midrule
 \endhead
-3415 & 625 & 253 & 381 & 244 & 372 & 128 \\
+Parental Migration & & \\
+\ldots{} No & 3422 & 84.2\% \\
+\ldots{} Yes & 640 & 15.8\% \\
+Parental Migration Type & & \\
+\ldots{} Both Parents at Home & 3422 & 84.2\% \\
+\ldots{} Both Parents Migrated & 130 & 3.2\% \\
+\ldots{} Only Father Migrated & 252 & 6.2\% \\
+\ldots{} Only Mother Migrated & 258 & 6.4\% \\
 \bottomrule
 \end{longtable}
 
-The following two tables summarizes the control variables. The distributions between girls and boys, urban and rural hukou holders, as well as Han Chinese and ethnic minorities largely align with the figures reported in the 2015 one-percent National Population Sample Survey (NBS et al., 2017).
+\newpage
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
-\caption{The control variables at children's level}\tabularnewline
+The dependent variables are summarized by the control group versus the treatment group in Table 2 below and Figure~\ref{fig:v-plot-cog} -- Figure~\ref{fig:v-plot-ttl-1} in the appendix. Compared to non-left-behind peers, newly left-behind children scored lower in wave two's cognitive and academic tests; Their cognitive test score increased less and their academic exam score dropped more. T-tests show that for the baseline outcomes, the differences of the mean values between-group are probably due to chance. For the wave two outcomes and the between-wave changes, the differences of the mean value are statistically significant.
+
+\begin{table}
+
+\caption{\label{tab:tab-dpvar}Dependent variables by parental migration}
+\centering
+\begin{tabular}[t]{llllll}
 \toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Explanation
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Value
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-N
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-\%
-\end{minipage} \\
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Parental Migration} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{No = 3422} & \multicolumn{2}{c}{Yes = 640} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+Variable & Mean & Sd & Mean & Sd & Test\\
+\midrule
+Cognitive test score difference & 11.48 & 19.85 & 9.58 & 20.71 & p=0.028*\\
+\hspace{1em}Wave 1 score & 56.75 & 16.63 & 55.98 & 16.62 & p=0.282\\
+\hspace{1em}Wave 2 score & 68.22 & 18.45 & 65.56 & 19.54 & p<0.001***\\
+Academic exam score difference & -2.78 & 10.91 & -4 & 11.78 & p=0.01**\\
+\hspace{1em}Wave 1 score & 71.21 & 16.37 & 70.4 & 16.93 & p=0.256\\
+\addlinespace
+\hspace{1em}Wave 2 score & 68.43 & 18.28 & 66.4 & 19.49 & p=0.011*\\
+\bottomrule
+\multicolumn{6}{l}{\rule{0pt}{1em}\textit{Note: }}\\
+\multicolumn{6}{l}{\rule{0pt}{1em}* p < 0.05, ** p < 0.01, *** p < 0.001}\\
+\end{tabular}
+\end{table}
+
+\newpage
+
+Table~\ref{tab:tab-ctvar-dit} summarizes the bivariate analysis on the binary control variables. New migration households had lower internet access rate. Among the newly left-behind children, male sex, past grade retention, and boarding at school were more common compared to the non-left-behind peers. Chi-square tests show that these differences in variance are unlikely due to chance.
+
+\begin{table}
+
+\caption{\label{tab:tab-ctvar-dit}Dichotomous control variables by parental migration}
+\centering
+\begin{tabular}[t]{llllll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Parental Migration} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{No = 3422} & \multicolumn{2}{c}{Yes = 640} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+Variable & N & Percent & N & Percent & Test\\
+\midrule
+child.is.girl &  &  &  &  & X2=12.261***\\
+... 0 & 1637 & 48\% & 355 & 55\% & \\
+... 1 & 1785 & 52\% & 285 & 45\% & \\
+child.has.rural.hukou &  &  &  &  & X2=1.09\\
+... 0 & 1887 & 55\% & 338 & 53\% & \\
+\addlinespace
+... 1 & 1535 & 45\% & 302 & 47\% & \\
+child.in.boarding.school &  &  &  &  & X2=4.49*\\
+... 0 & 2470 & 72\% & 435 & 68\% & \\
+... 1 & 952 & 28\% & 205 & 32\% & \\
+child.is.ethnic.minority &  &  &  &  & X2=0.514\\
+\addlinespace
+... 0 & 3190 & 93\% & 591 & 92\% & \\
+... 1 & 232 & 7\% & 49 & 8\% & \\
+child.had.skipped.grade &  &  &  &  & X2=0.056\\
+... 0 & 3386 & 99\% & 632 & 99\% & \\
+... 1 & 36 & 1\% & 8 & 1\% & \\
+\addlinespace
+child.had.repeated.grade &  &  &  &  & X2=10.485**\\
+... 0 & 3121 & 91\% & 557 & 87\% & \\
+... 1 & 301 & 9\% & 83 & 13\% & \\
+child.went.to.preschool &  &  &  &  & X2=0.923\\
+... 0 & 523 & 15\% & 108 & 17\% & \\
+\addlinespace
+... 1 & 2899 & 85\% & 532 & 83\% & \\
+parent.has.white.collar.job &  &  &  &  & X2=0.001\\
+... 0 & 2705 & 79\% & 505 & 79\% & \\
+... 1 & 717 & 21\% & 135 & 21\% & \\
+home.has.internet &  &  &  &  & X2=12.967***\\
+\addlinespace
+... 0 & 1054 & 31\% & 244 & 38\% & \\
+... 1 & 2368 & 69\% & 396 & 62\% & \\
+\bottomrule
+\multicolumn{6}{l}{\rule{0pt}{1em}\textit{Note: }}\\
+\multicolumn{6}{l}{\rule{0pt}{1em}0 = No, 1 = Yes; * p < 0.05, ** p < 0.01, *** p < 0.001}\\
+\end{tabular}
+\end{table}
+
+\newpage
+
+Table~\ref{tab:tab-ctvar-cnt} displays the bivariate analysis for categorical control variables, and Table~\ref{tab:tab-ctvar-msr} documents their measurement scales. While the majority of mothers and fathers had only finished high school or below, they held big expectations for children. Eight out of ten parents wished that their children complete university education. Scholars like Willis (2019) explained this pattern with the Chinese social norms and cultural traditions. In ancient China, the Confucian teaching emphasized the cultivation of personhood through learning, diligence, and persistence. In real life, knowledge could translate into power and privilege. Ordinary people could study for the highly competitive \emph{keju} (civil service examination). As the world's ``earliest meritocratic institution,'' this national exam system recruited top performers into the imperial government and the elite class (T. Chen et al., 2020, p. 2030). Nowadays in China, the emperor and \emph{keju} are long gone, but the influences are long-lasting. Chinese parents hope that their children receive the best education to secure a decent career (Luo et al., 2013; Ng \& Wei, 2020).
+
+\begin{table}
+
+\caption{\label{tab:tab-ctvar-cnt}Categorical and continuous control variables by parental migration}
+\centering
+\begin{tabular}[t]{llllll}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Parental Migration} \\
+\cmidrule(l{3pt}r{3pt}){2-5}
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{No = 3422} & \multicolumn{2}{c}{Yes = 640} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-5}
+Variable & Mean & Sd & Mean & Sd & Test\\
+\midrule
+child.age & 12.45 & 0.63 & 12.51 & 0.73 & F=4.263*\\
+child.number.of.sibling & 0.58 & 0.74 & 0.66 & 0.82 & F=4.896*\\
+child.health & 4.17 & 0.87 & 4.14 & 0.9 & F=0.576\\
+child.education.aspiration & 3.96 & 1.12 & 3.93 & 1.19 & F=0.522\\
+mother.education.level & 1.53 & 1.17 & 1.57 & 1.25 & F=0.468\\
+\addlinespace
+father.education.level & 1.72 & 1.18 & 1.75 & 1.21 & F=0.274\\
+parent.expectation & 4.19 & 0.91 & 4.14 & 0.95 & F=1.627\\
+home.extracurricular.book & 3.42 & 1.18 & 3.32 & 1.28 & F=3.392\\
+home.economic.resource & 2.87 & 0.55 & 2.84 & 0.57 & F=1.52\\
+\bottomrule
+\multicolumn{6}{l}{\rule{0pt}{1em}\textit{Note: }}\\
+\multicolumn{6}{l}{\rule{0pt}{1em}* p < 0.05, ** p < 0.01, *** p < 0.001}\\
+\end{tabular}
+\end{table}
+
+\newpage
+
+\begin{longtable}[]{@{}lll@{}}
+\caption{\label{tab:tab-ctvar-msr}Measurement and distribution of categorical variables}\tabularnewline
+\toprule
+Variable & N & Percent \\
 \midrule
 \endfirsthead
 \toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Explanation
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Value
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-N
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-\%
-\end{minipage} \\
+Variable & N & Percent \\
 \midrule
 \endhead
-ch.girl & gender & 0 = Male & 1980 & 49.0 \\
-& & 1 = Female & 2060 & 51.0 \\
-ch.rural & hukou type & 0 = Rural & 2212 & 54.8 \\
-& & 1 = Urban & 1828 & 45.2 \\
-ch.health & self-rated health & 1 = Very poor & 21 & 0.5 \\
-& & 2 = Not very good & 112 & 2.8 \\
-& & 3 = Moderate & 800 & 19.8 \\
-& & 4 = Good & 1369 & 33.9 \\
-& & 5 = Very good & 1738 & 43.0 \\
-ch.boarding & boarding at school & 0 = No & 2885 & 71.4 \\
-& & 1 = Yes & 1155 & 28.6 \\
-ch.ethn.mnrt & ethnic minority other than Han Chinese & 0 = No & 3758 & 93.0 \\
-& & 1 = Yes & 282 & 7.0 \\
-ch.skip.grd & has skipped grade & 0 = No & 3996 & 98.9 \\
-& & 1 = Yes & 44 & 1.1 \\
-ch.repeat.grd & has repeated grade & 0 = No & 3662 & 90.6 \\
-& & 1 = Yes & 378 & 9.4 \\
-ch.preschool & attended preschool & 0 = No & 628 & 15.5 \\
-& & 1 = Yes & 3412 & 84.5 \\
-ch.aspr.univ & aspires to finish university bachelor's or above & 0 = No & 1158 & 28.7 \\
-& & 1 = Yes & 2882 & 71.3 \\
+child.health & & \\
+\ldots{} 1 = Very poor & 21 & 0.5\% \\
+\ldots{} 2 = Somewhat poor & 112 & 2.8\% \\
+\ldots{} 3 = Moderate & 797 & 19.6\% \\
+\ldots{} 4 = Good & 1373 & 33.8\% \\
+\ldots{} 5 = Very good & 1759 & 43.3\% \\
+child.education.aspiration & & \\
+\ldots{} 1 = Junior high school & 137 & 3.4\% \\
+\ldots{} 2 = Senior high school & 418 & 10.3\% \\
+\ldots{} 3 = Associate college & 615 & 15.1\% \\
+\ldots{} 4 = University & 1195 & 29.4\% \\
+\ldots{} 5 = Postgraduate & 1697 & 41.8\% \\
+mother.education.level & & \\
+\ldots{} 0 = Primary school and below & 702 & 17.3\% \\
+\ldots{} 1 = Junior high school & 1618 & 39.8\% \\
+\ldots{} 2 = Senior high school & 1034 & 25.5\% \\
+\ldots{} 3 = Associate college & 304 & 7.5\% \\
+\ldots{} 4 = University & 365 & 9\% \\
+\ldots{} 5 = Postgraduate & 39 & 1\% \\
+father.education.level & & \\
+\ldots{} 0 = Primary school and below & 441 & 10.9\% \\
+\ldots{} 1 = Junior high school & 1615 & 39.8\% \\
+\ldots{} 2 = Senior high school & 1170 & 28.8\% \\
+\ldots{} 3 = Associate college & 348 & 8.6\% \\
+\ldots{} 4 = University & 422 & 10.4\% \\
+\ldots{} 5 = Postgraduate & 66 & 1.6\% \\
+parent.expectation & & \\
+\ldots{} 1 = Junior high school & 34 & 0.8\% \\
+\ldots{} 2 = Senior high school & 254 & 6.3\% \\
+\ldots{} 3 = Associate college & 426 & 10.5\% \\
+\ldots{} 4 = University & 1569 & 38.6\% \\
+\ldots{} 5 = Postgraduate & 1779 & 43.8\% \\
+home.extracurricular.book & & \\
+\ldots{} 1 = Very few & 386 & 9.5\% \\
+\ldots{} 2 = Not many & 411 & 10.1\% \\
+\ldots{} 3 = Some & 1302 & 32.1\% \\
+\ldots{} 4 = Quite a few & 1104 & 27.2\% \\
+\ldots{} 5 = A great number & 859 & 21.1\% \\
+home.economic.resource & & \\
+\ldots{} 1 = Very poor & 110 & 2.7\% \\
+\ldots{} 2 = Somewhat poor & 589 & 14.5\% \\
+\ldots{} 3 = Moderate & 3112 & 76.6\% \\
+\ldots{} 4 = Somewhat rich & 240 & 5.9\% \\
+\ldots{} 5 = Very rich & 11 & 0.3\% \\
 \bottomrule
 \end{longtable}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
-  >{\raggedleft\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
-\caption{The control variables at parent's and household level}\tabularnewline
+\newpage
+
+\hypertarget{regression-analysis}{%
+\subsection{Regression Analysis}\label{regression-analysis}}
+
+I first present the results on children's cognitive test score. The unadjusted DID models show that newly left-behind adolescents are more likely to score lower in cognitive tests than do their non-left-behind counterparts (see Table 6 below). This lends support to Hypothesis 1a. Parental migration is linked to a 2.56 points decrease in cognitive test score. Hypothesis 2a is only partially supported. Compared with the non-left-behind peers, children with only father absent are associated with greater decrease (2.87 points) in cognitive test score than those with only mother absent (2.15 points). The adjusted DID models produce results similar to the unadjusted models, with one exception (see Table A1 in appendix). That is, for the cognitive score, the both-parent-migrated coefficient's magnitude is lower than that of father-migrated.
+
+\begin{table}
+
+\caption{Parental migration’s effect on children’s cognitive test score}
+\centering
+\begin{tabular}[t]{lcccc}
 \toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Explanation
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Value
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-N
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-\%
-\end{minipage} \\
+  & Any Parent & Only Mother & Only Father & Both Parents\\
 \midrule
-\endfirsthead
-\toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Explanation
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Value
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-N
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-\%
-\end{minipage} \\
+Migration & \num{-2.56}*** & \num{-2.15}* & \num{-2.87}* & \num{-2.96}*\\
+ & (\num{0.70}) & (\num{1.06}) & (\num{1.12}) & (\num{1.39})\\
+Baseline.score & \num{-0.71}*** & \num{-0.72}*** & \num{-0.71}*** & \num{-0.72}***\\
+ & (\num{0.02}) & (\num{0.02}) & (\num{0.02}) & (\num{0.02})\\
 \midrule
-\endhead
-par.edu.year & years of education of the best-educated parent & 0 = no formal education & 8 & 0.2 \\
-& & 6 = primary school & 235 & 5.8 \\
-& & 9 = junior high school & 1554 & 38.5 \\
-& & 12 = senior high school & 1239 & 30.7 \\
-& & 15 = associate college & 383 & 9.5 \\
-& & 16 = university undergraduate & 542 & 13.4 \\
-& & 19 = university postgraduate & 79 & 2.0 \\
-par.ccp & at least one parent is Communist Party member & 0 = No & 3498 & 86.6 \\
-& & 1 = Yes & 542 & 13.4 \\
-par.expt.univ & parent expects child to finish university bachelor's or above & 0 & 704 & 17.4 \\
-& & 1 & 3336 & 82.6 \\
-home.internet & internet access at home & 0 & 1285 & 31.8 \\
-& & 1 & 2755 & 68.2 \\
-home.book & number of extracurricular books at home, self-rated by child & 1 = Very few & 383 & 9.5 \\
-& & 2 = Not many & 406 & 10.0 \\
-& & 3 = Some & 1298 & 32.1 \\
-& & 4 = Quite a few & 1103 & 27.3 \\
-& & 5 = A great number & 850 & 21.0 \\
-home.finances & household financial situation self-rated by parent & 1 = Very poor & 113 & 2.8 \\
-& & 2 = Somewhat poor & 583 & 14.4 \\
-& & 3 = Moderate & 3102 & 76.8 \\
-& & 4 = Somewhat rich & 230 & 5.7 \\
-& & 5 = Very rich & 12 & 0.3 \\
+Num.Obs. & \num{4062} & \num{3680} & \num{3674} & \num{3552}\\
+R2 & \num{0.379} & \num{0.382} & \num{0.386} & \num{0.389}\\
+R2 Adj. & \num{0.361} & \num{0.363} & \num{0.367} & \num{0.369}\\
+FE: schids & X & X & X & X\\
 \bottomrule
-\end{longtable}
+\multicolumn{5}{l}{\rule{0pt}{1em}No control variables included in these models}\\
+\multicolumn{5}{l}{\rule{0pt}{1em}† p $<$ 0.1, * p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
+\end{tabular}
+\end{table}
 
-\hypertarget{multiple-regression}{%
-\subsection{Multiple Regression}\label{multiple-regression}}
+Next, I show the results on children's academic test grades. In line with Hypothesis 1b, the unadjusted DID models show that newly left-behind adolescents tend to perform worse in school exams than their non-left-behind peers (see Table 7 below). Parental migration is associated with a drop of 1.27 points in academic exam score. Hypothesis 2b finds partial support. The exam grade of only-mother-migrated children sees a 2.11 points decrease relative to non-left-behind counterparts. In the scenarios of only father migrated and both parents migrated, the results are not statistically significant. The adjusted DID models' results largely resemble those from the unadjusted models (See Table A2 in appendix). Adding control variables measured in the baseline survey does not change the coefficients for parental migration.
 
-The unrestricted and unadjusted DID models present the following results. For both cognitive test score and total exam grade, the any-parent-absent variable has a negative coefficient that differs significantly from zero. If a household sees any parent migrated, their child's cognitive test score and total exam grade would decrease relative to that of children whose parents stay with them, holding everything else constant.
+\newpage
 
-How about the coefficients of different types of migration arrangement? For total exam grade, the coefficients of mother absent and only mother absent are negative and significantly different from zero. The statistical significance does not hold for coefficients of father absent and only father absent. Regarding cognitive test score, all coefficients are negative and significantly different from zero, except for only mother absent. The effect size of father absent is greater than that of mother absent.
+\begin{table}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0909}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1570}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1653}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1240}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1653}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1240}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1736}}@{}}
-\caption{Parental migration's effect on children's cognitive abilities}\tabularnewline
+\caption{Parental migration’s effect on children’s academic exam score}
+\centering
+\begin{tabular}[t]{lcccc}
 \toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
-\end{minipage} \\
+  & Any Parent & Only Mother & Only Father & Both Parents\\
 \midrule
-\endfirsthead
-\toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
-\end{minipage} \\
+Migration & \num{-1.27}* & \num{-2.11}* & \num{-0.88} & \num{-0.19}\\
+ & (\num{0.54}) & (\num{0.91}) & (\num{0.72}) & (\num{0.72})\\
+Baseline.score & \num{0.05} & \num{0.05} & \num{0.05} & \num{0.04}\\
+ & (\num{0.03}) & (\num{0.03}) & (\num{0.03}) & (\num{0.03})\\
 \midrule
-\endhead
-Explanator & -0.10*** & -0.05 & -0.08* & -0.14*** & -0.14*** & -0.13* \\
-& (0.03) & (0.05) & (0.04) & (0.04) & (0.03) & (0.06) \\
-W1 score & -0.61*** & -0.62*** & -0.62*** & -0.61*** & -0.61*** & -0.62*** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-Num.Obs. & 4040 & 3668 & 3796 & 3659 & 3787 & 3543 \\
-R2 & 0.476 & 0.483 & 0.475 & 0.488 & 0.480 & 0.479 \\
-R2 Adj. & 0.446 & 0.451 & 0.443 & 0.456 & 0.448 & 0.445 \\
-R2 Within & 0.364 & 0.370 & 0.364 & 0.372 & 0.367 & 0.367 \\
-R2 Pseudo & & & & & & \\
-AIC & 7443.2 & 6769.4 & 7041.9 & 6674.9 & 6947.4 & 6547.5 \\
-BIC & 8830.1 & 8128.8 & 8415.1 & 8033.8 & 8320.1 & 7905.5 \\
-Log.Lik. & -3501.606 & -3165.681 & -3300.971 & -3118.446 & -3253.719 & -3053.770 \\
-Std.Errors & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids \\
-FE: clsids & X & X & X & X & X & X \\
+Num.Obs. & \num{4062} & \num{3680} & \num{3674} & \num{3552}\\
+R2 & \num{0.481} & \num{0.498} & \num{0.484} & \num{0.501}\\
+R2 Adj. & \num{0.466} & \num{0.483} & \num{0.468} & \num{0.485}\\
+FE: schids & X & X & X & X\\
 \bottomrule
-\end{longtable}
+\multicolumn{5}{l}{\rule{0pt}{1em}No control variables included in these models}\\
+\multicolumn{5}{l}{\rule{0pt}{1em}† p $<$ 0.1, * p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
+\end{tabular}
+\end{table}
 
-\textbf{Note:}
-\^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+Some predictors are strong in both models of cognitive and academic abilities. These are children's age, preschool attendance, and educational aspiration as well as parents' expectation on children. For students, one year older in age is associated with decreases of 2.61 points for cognitive test and of 0.44 points for academic exam. Preschool attendance is linked to increases of 2.33 points for cognitive test and of 1.17 points for academic exam. Higher educational expectation from parents and greater educational aspiration from children are both linked to higher scores. The coefficients are 2.34 points and 2.03 points for cognitive test, respectively; and 0.58 points and 0.77 points for academic exams, respectively.
+
+Several predictors are strong in predicting one outcome but not the other. Covariates that only relate to academic grades are children's gender and self-reported health, and the number of extracurricular books at home. Girls outperform boys by 1.62 points in academic exams, but do not show advantage in cognitive tests. Students who consider themselves healthier are associated with higher scores in academic exams. On the contrary, those who report having more extracurricular books at home are associated with lower scores in academic exams. Covariates that only relate to cognitive scores is the number of siblings. Having an additional sibling is associated with lower cognitive score of 0.99 points.
+
+\newpage
+
+\hypertarget{matching}{%
+\subsection{Matching}\label{matching}}
+
+Parental migration is not a randomly assigned treatment. A possible circumstance is that smart and ambitious students perform better at school, and high performance and ambition prompt parents to migrate to support children's schooling. Another scenario is that poverty may hinder children's educational achievement while driving parents to migrate. To tackle the selection bias herein, an applicable technique is matching. It aims to two groups comparable by pairing a unit in the treatment group with one or several units in the control group based on observable covariates (Greifer, 2022a).
+
+Popular choices for matching include propensity score matching (PSM) and coarsened exact matching (CEM). As Pan and Bai (2018) introduced, PSM will first calculate the propensity score, namely the probability of receiving treatment based on the specified covariates. This score serves as a measure of the distance between two units. When handling this distance, PSM can match the units with two different approaches. The nearest-neighbor approach examines all the treated units and selects the control unit closest in distance for pairing. This approach does not try to optimize any condition; each pair of units ignores how other pairing will occur or have occurred. The optimal-pair approach works in a similar fashion but tries to minimize the absolute pairwise distances in total (Pan \& Bai, 2018). Regardless of specific approaches, King and Nielsen (2019) argued against PSM in general as it risks more ``imbalance, model dependence, and bias'' for already balanced data (p.~444). They recommended CEM as a viable alternative ``for data with continuous, discrete, and mixed variables'' (p.~450). CEM is superior in achieving balance as it optimizes the entire joint distribution of covariates. The downside is that it leaves many units without a match and discards these unmatched units (Costalli \& Negri, 2021).
+
+I performed matching with all the covariates of the adjusted DID model on the four treatments respectively. My initial attempt with CEM left most units unmatched and resulted in a tiny sample. I then made do with PSM. I combined exact matching (based on the student's county of residence) and optimal-pair PSM (based on the other covariates). Exact matching based on county of residence can preserve the original geographic distribution (Bai et al., 2018). The propensity score was estimated using a logistic regression of the treatment on the covariates. The matching ratio of 3:1 means that one treatment unit would pair with up to three control units. According to the matching summary, most of the covariates' absolute standardized mean differences decrease and fall below 0.1 after matching, suggesting an improved overall balance. In appendix, Figure~\ref{fig:cobal-any} -- Figure~\ref{fig:cobal-both} display the absolute standardized mean differences before and after matching.
+
+The results from models with matching strongly resemble the models without matching (see Tables 8 -- 9 below, and Tables A3 -- A4 in appendix). In the models of cognitive test score, I obtained negative, statistically significant coefficients on all treatment variables except that of both-parents-migrated households. In the models of academic exam score, the treatment variables' coefficients are negative and statistically significant for the any-parent-migrated scenario and the only-mother-migrated scenario. The magnitudes of the statistically significant coefficients are similar to those in the models without matching.
 
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0909}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1570}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1653}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1240}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1653}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1240}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1736}}@{}}
-\caption{Parental migration's effect on children's academic abilities}\tabularnewline
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2239}}
+  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1791}}
+  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1940}}
+  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1940}}
+  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2090}}@{}}
+\caption{\label{tab:tab-reg-m-cog}Parental migration's effect on children's cognitive test scores, estimated with matching}\tabularnewline
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
+Any Parent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
+Only Mother
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
+Only Father
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
+Both Parents
 \end{minipage} \\
 \midrule
 \endfirsthead
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
+Any Parent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
+Only Mother
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
+Only Father
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
+Both Parents
 \end{minipage} \\
 \midrule
 \endhead
-Explanator & -2.88* & -6.31** & -4.12* & -0.71 & -0.71 & -0.18 \\
-& (1.21) & (2.22) & (1.71) & (1.64) & (1.31) & (2.19) \\
-W1 score & 0.04 & 0.04 & 0.03 & 0.04 & 0.04 & 0.03 \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-Num.Obs. & 4040 & 3668 & 3796 & 3659 & 3787 & 3543 \\
-R2 & 0.547 & 0.562 & 0.558 & 0.552 & 0.550 & 0.562 \\
-R2 Adj. & 0.521 & 0.534 & 0.531 & 0.524 & 0.522 & 0.533 \\
-R2 Within & 0.006 & 0.008 & 0.006 & 0.004 & 0.003 & 0.002 \\
-R2 Pseudo & & & & & & \\
-AIC & 37012.2 & 33524.8 & 34717.7 & 33408.4 & 34591.1 & 32296.6 \\
-BIC & 38399.1 & 34884.3 & 36090.9 & 34767.3 & 35963.7 & 33654.6 \\
-Log.Lik. & -18286.101 & -16543.420 & -17138.864 & -16485.186 & -17075.527 & -15928.290 \\
-Std.Errors & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids \\
-FE: clsids & X & X & X & X & X & X \\
-\bottomrule
-\end{longtable}
-
-\textbf{Note:}
-\^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
-
-To ensure robustness, I controlled for covariates in the unrestricted and adjusted DID models. The results from unadjusted models still hold, with only one exception. That is, for the cognitive test score, the both-parent-absent coefficient saw a change of statistical significance level from five percent level to ten percent level.
-
-In the cognitive test score regression, children's age is associated with a negative coefficient that significantly differ from zero. Children's aspiration for university education and parents' expectation on children finishing university are both associated with positive coefficients that significantly differ from zero. In the total exam grade regression, the aforementioned findings also hold. In addition, the female gender of children is linked to a positive, statistically significant coefficient. The children's self reported health and the best-educated parent's year of education also have positive, statistically significant coefficients.
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1129}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1532}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1613}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1210}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1613}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1210}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1694}}@{}}
-\caption{Parental migration's effect on children's cognitive abilities}\tabularnewline
-\toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
-\end{minipage} \\
-\midrule
-\endfirsthead
-\toprule
-\begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
-\end{minipage} \\
-\midrule
-\endhead
-Explanator & -0.10*** & -0.06 & -0.08* & -0.14*** & -0.13*** & -0.12† \\
-& (0.03) & (0.04) & (0.04) & (0.04) & (0.03) & (0.06) \\
-W1 score & -0.65*** & -0.66*** & -0.66*** & -0.65*** & -0.65*** & -0.65*** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-age & -0.08*** & -0.08*** & -0.09*** & -0.08*** & -0.09*** & -0.09*** \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.girl & -0.01 & -0.01 & -0.01 & -0.01 & -0.01 & -0.01 \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.health & -0.02 & -0.02 & -0.02 & -0.02 & -0.01 & -0.01 \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-ch.rural & 0.01 & 0.01 & 0.01 & 0.00 & 0.00 & 0.01 \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.03) \\
-ch.sibling & -0.02 & -0.02 & -0.02 & -0.02 & -0.02 & -0.02 \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-ch.preschool & 0.07* & 0.05† & 0.07* & 0.05† & 0.07* & 0.07* \\
-& (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
-ch.skip.grd & -0.18 & -0.14 & -0.11 & -0.20† & -0.18 & -0.11 \\
-& (0.12) & (0.12) & (0.12) & (0.12) & (0.12) & (0.13) \\
-ch.repeat.grd & -0.07† & -0.09* & -0.07† & -0.06 & -0.05 & -0.04 \\
-& (0.04) & (0.04) & (0.04) & (0.04) & (0.04) & (0.04) \\
-ch.boarding & 0.01 & 0.00 & 0.00 & 0.00 & 0.00 & -0.01 \\
-& (0.04) & (0.04) & (0.04) & (0.04) & (0.04) & (0.04) \\
-ch.aspr.univ & 0.16*** & 0.15*** & 0.16*** & 0.15*** & 0.16*** & 0.15*** \\
-& (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
-ch.ethn.mnrt & 0.05 & 0.06 & 0.05 & 0.04 & 0.03 & 0.03 \\
-& (0.06) & (0.06) & (0.06) & (0.06) & (0.06) & (0.06) \\
-par.edu.year & 0.01† & 0.01* & 0.01* & 0.01 & 0.01 & 0.01 \\
-& (0.00) & (0.00) & (0.00) & (0.00) & (0.00) & (0.00) \\
-par.expt.univ & 0.19*** & 0.22*** & 0.20*** & 0.21*** & 0.20*** & 0.21*** \\
-& (0.03) & (0.04) & (0.03) & (0.03) & (0.03) & (0.03) \\
-par.ccp & -0.02 & -0.03 & -0.03 & 0.00 & -0.01 & -0.02 \\
-& (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
-home.finances & -0.01 & -0.01 & -0.01 & 0.00 & 0.00 & 0.01 \\
-& (0.02) & (0.02) & (0.02) & (0.02) & (0.02) & (0.02) \\
-home.book & 0.01 & 0.01 & 0.01 & 0.01 & 0.01 & 0.01 \\
-& (0.01) & (0.01) & (0.01) & (0.01) & (0.01) & (0.01) \\
-home.internet & -0.01 & -0.01 & 0.00 & -0.01 & -0.01 & -0.01 \\
-& (0.03) & (0.03) & (0.03) & (0.03) & (0.03) & (0.03) \\
-Num.Obs. & 4040 & 3668 & 3796 & 3659 & 3787 & 3543 \\
-R2 & 0.505 & 0.512 & 0.504 & 0.516 & 0.508 & 0.507 \\
-R2 Adj. & 0.474 & 0.478 & 0.471 & 0.483 & 0.476 & 0.472 \\
-R2 Within & 0.399 & 0.404 & 0.399 & 0.406 & 0.401 & 0.401 \\
-R2 Pseudo & & & & & & \\
-AIC & 7248.7 & 6594.9 & 6862.4 & 6503.7 & 6770.3 & 6386.0 \\
-BIC & 8742.7 & 8059.8 & 8341.7 & 7968.1 & 8249.0 & 7848.9 \\
-Log.Lik. & -3387.339 & -3061.440 & -3194.183 & -3015.858 & -3148.127 & -2956.003 \\
-Std.Errors & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids \\
-FE: clsids & X & X & X & X & X & X \\
+Migration & -2.64*** & -2.76* & -3.41** & -1.96 \\
+& (0.74) & (1.22) & (1.25) & (1.74) \\
+Baseline.score & -0.70*** & -0.74*** & -0.62*** & -0.69*** \\
+& (0.02) & (0.04) & (0.03) & (0.05) \\
+Num.Obs. & 2503 & 1032 & 1008 & 515 \\
+R2 & 0.392 & 0.450 & 0.423 & 0.467 \\
+R2 Adj. & 0.363 & 0.384 & 0.356 & 0.352 \\
+FE: schids & X & X & X & X \\
 \bottomrule
 \end{longtable}
 
 \textbf{Note:}
 \^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
 
+\textbf{Note:}
+\^{}\^{} 3:1 optimal pair propensity score matching; exact matching by county
+
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1129}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1532}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1613}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1210}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1613}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1210}}
-  >{\centering\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1694}}@{}}
-\caption{Parental migration's effect on children's academic abilities}\tabularnewline
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2239}}
+  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1791}}
+  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1940}}
+  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1940}}
+  >{\centering\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2090}}@{}}
+\caption{\label{tab:tab-reg-m-ttl}Parental migration's effect on children's cognitive test scores, estimated with matching}\tabularnewline
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
+Any Parent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
+Only Mother
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
+Only Father
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
+Both Parents
 \end{minipage} \\
 \midrule
 \endfirsthead
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Any Parent Absent
+Any Parent
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Mother Absent
+Only Mother
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Mother Absent
+Only Father
 \end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Only Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Father Absent
-\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
-Both Parents Absent
+Both Parents
 \end{minipage} \\
 \midrule
 \endhead
-Explanator & -2.85* & -6.35** & -4.13* & -0.65 & -0.59 & 0.01 \\
-& (1.20) & (2.13) & (1.69) & (1.62) & (1.31) & (2.27) \\
-W1 score & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 \\
-& (0.02) & (0.03) & (0.03) & (0.03) & (0.02) & (0.02) \\
-age & -1.58* & -1.49* & -1.39* & -1.52* & -1.47* & -1.24† \\
-& (0.61) & (0.63) & (0.63) & (0.64) & (0.63) & (0.66) \\
-ch.girl & 4.34*** & 4.60*** & 4.46*** & 4.39*** & 4.18*** & 4.28*** \\
-& (0.89) & (0.92) & (0.92) & (0.91) & (0.91) & (0.93) \\
-ch.health & 1.08* & 1.09* & 1.06* & 0.96* & 0.91* & 0.89† \\
-& (0.43) & (0.45) & (0.44) & (0.46) & (0.45) & (0.47) \\
-ch.rural & 1.34 & 1.82 & 1.61 & 1.19 & 0.89 & 1.26 \\
-& (1.06) & (1.12) & (1.11) & (1.08) & (1.07) & (1.10) \\
-ch.sibling & 0.63 & 0.48 & 0.33 & 0.72 & 0.59 & 0.25 \\
-& (0.55) & (0.57) & (0.57) & (0.57) & (0.57) & (0.60) \\
-ch.preschool & 1.85 & 2.45* & 2.81* & 1.06 & 1.34 & 2.24† \\
-& (1.19) & (1.21) & (1.20) & (1.27) & (1.23) & (1.25) \\
-ch.skip.grd & 0.69 & 1.23 & 1.81 & 0.47 & 0.96 & 2.30 \\
-& (4.53) & (4.44) & (4.28) & (5.08) & (4.91) & (4.70) \\
-ch.repeat.grd & -1.41 & -0.40 & -0.34 & -0.98 & -0.76 & 0.40 \\
-& (1.80) & (1.94) & (1.84) & (1.86) & (1.72) & (1.78) \\
-ch.boarding & -1.23 & -0.31 & -0.92 & -0.88 & -1.47 & -1.19 \\
-& (1.62) & (1.62) & (1.67) & (1.67) & (1.76) & (1.82) \\
-ch.aspr.univ & 2.69* & 3.13** & 2.85* & 2.71* & 2.39* & 2.53* \\
-& (1.15) & (1.18) & (1.17) & (1.14) & (1.13) & (1.14) \\
-ch.ethn.mnrt & 0.21 & -0.44 & -0.52 & -0.51 & -0.41 & -1.24 \\
-& (2.08) & (2.22) & (2.21) & (2.28) & (2.27) & (2.44) \\
-par.edu.year & 0.44* & 0.49* & 0.46* & 0.54** & 0.50* & 0.53** \\
-& (0.20) & (0.20) & (0.20) & (0.20) & (0.20) & (0.20) \\
-par.expt.univ & 3.06* & 2.88* & 2.92* & 3.16* & 3.23* & 3.06* \\
-& (1.37) & (1.42) & (1.39) & (1.36) & (1.32) & (1.34) \\
-par.ccp & 0.24 & 0.50 & 0.30 & 0.20 & 0.02 & 0.08 \\
-& (1.06) & (1.20) & (1.17) & (1.17) & (1.14) & (1.22) \\
-home.finances & -0.89 & -0.44 & -0.55 & -0.74 & -0.81 & -0.47 \\
-& (0.81) & (0.85) & (0.83) & (0.86) & (0.84) & (0.85) \\
-home.book & -0.72† & -1.09* & -0.92* & -0.76† & -0.60 & -0.79† \\
-& (0.43) & (0.43) & (0.43) & (0.43) & (0.42) & (0.42) \\
-home.internet & -1.54 & -1.65 & -1.46 & -1.50 & -1.37 & -1.37 \\
-& (1.12) & (1.16) & (1.15) & (1.16) & (1.15) & (1.18) \\
-Num.Obs. & 4040 & 3668 & 3796 & 3659 & 3787 & 3543 \\
-R2 & 0.557 & 0.573 & 0.569 & 0.563 & 0.560 & 0.572 \\
-R2 Adj. & 0.530 & 0.544 & 0.540 & 0.533 & 0.530 & 0.541 \\
-R2 Within & 0.028 & 0.034 & 0.029 & 0.027 & 0.025 & 0.025 \\
-R2 Pseudo & & & & & & \\
-AIC & 36952.4 & 33462.4 & 34660.9 & 33354.2 & 34542.9 & 32251.3 \\
-BIC & 38446.5 & 34927.3 & 36140.1 & 34818.6 & 36021.6 & 33714.3 \\
-Log.Lik. & -18239.211 & -16495.201 & -17093.431 & -16441.114 & -17034.432 & -15888.663 \\
-Std.Errors & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids & by: clsids \\
-FE: clsids & X & X & X & X & X & X \\
+Migration & -1.22* & -1.65* & -1.15 & 0.46 \\
+& (0.57) & (0.81) & (0.86) & (0.98) \\
+Baseline.score & 0.05† & 0.07† & 0.04 & 0.01 \\
+& (0.03) & (0.04) & (0.04) & (0.04) \\
+Num.Obs. & 2503 & 1032 & 1008 & 515 \\
+R2 & 0.468 & 0.587 & 0.480 & 0.501 \\
+R2 Adj. & 0.444 & 0.538 & 0.420 & 0.393 \\
+FE: schids & X & X & X & X \\
 \bottomrule
 \end{longtable}
 
 \textbf{Note:}
 \^{}\^{} † p \textless{} 0.1, * p \textless{} 0.05, ** p \textless{} 0.01, *** p \textless{} 0.001
+
+\textbf{Note:}
+\^{}\^{} 3:1 optimal pair propensity score matching; exact matching by county
 
 \newpage
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
+
+This thesis infers the causal relation between parents' migration and their stay-behind children's educational performance in the short run. I build difference-in-differences models with fixed-effect to analyze data from the 2013-2014 and 2014-2015 rounds of China Education Panel Survey. Results suggest that parental migration is, in the short run, negatively associated with children's educational performance. This is evidenced by a 1.2 points drop in academic exam grades and a 2.5 points drop in cognitive test scores. This result contrasts with that of DID models by Bai et al. (2018): parental migration is linked to higher English test scores for stay-behind children. The discrepancy could be attributed their study's location, a Northwestern province with grinding poverty. There, the positive impact of resource generation probably outweighs the negative impact of family disruption, resulting in an overall positive effect (p.~1165). In my nationwide sample the reverse may hold. The households may be better off, so labor migration's additional income fails to compensate for the care deficit. Another plausibility is that family disruption precedes resource generation. The former's negative effect befalls the left-behind child soon after parental migration, but the latter's positive effect occurs a while later (Gao et al., 2019). Consequently, I obtain a short-term negative effect.
+
+I further examine whether the effect varies across different arrangements of parental migration. Results indicate that in the short term, only father's absence is not linked to children's academic performance; Only mother's absence is negatively associated with children's academic abilities, with a 2.1 points drop in the test score. This is in line with the findings of previous research. For example, Murphy (2020) observed that when a Chinese mother migrates, she defies the cultural expectations on maternal care, thereby harboring bitterness in the child's mind. This bitter sentiment can arise even if there is care by father or other relatives. Besides, only-mother migration sometimes indicates deeper issues within the household. The father may be unfit for work or engaged in domestic violence, prompting the mother's labor migration (Murphy, 2020). These may all hamper children's educational performance.
+
+Compared to only mother's migration, only father's migration carries a stronger influence on children's cognitive capability, as shown by a further decrease of 1 point in cognitive test score. This echoes the findings of Shen et al. (2021) -- in rural China, the father is often a household's best educated adult. His absence means a loss of household human capital, which slows the cognitive development of children. The stay-at-home mother may devote more to the caregiving role. This can partially buffer the impact by her husband's absence and help her child maintain academic performance.
+
+My research has limitations in sampling due to data constraint. Regarding identification, I could only identify parental migration through such a condition: a parent's absence from a household without parental divorce or death. This is because the CEPS questionnaire asked if parents were living in the household, but did not ask why parents were absent. If some parents were jailed or hospitalized, their absence would be wrongly attributed to migration. Besides, I could not control for the migration history of parents, which are not included in the CEPS data. According to Liang and Li (2021), some parents might have out-migrated at an earlier date and returned before the baseline survey. Their children would be attributed to the non-left-behind group. However, these children ``suffer similar disadvantage as that of left behind children'' (p.~12). Liang and Li (2021) argued for a new category: the formerly left-behind children.
+
+Limitations also arise from unaccounted endogeneity and exogeneity. As Chen et al. (2009) discussed in their paper on left-behind children, endogenous factors may create selection bias. When migration opportunities arise, some parents may worry that leaving children behind would hamper children's education, thereby giving up the opportunity. Some other parents may believe that their children's schooling would not suffer from parental absence, thereby embarking on migration. Parental beliefs of this sort are unavailable in CEPS data. Exogenous factors may create omitted variable bias. Suppose that a natural hazard hit many counties of a province in the sample. This shock can increase parents' out-migration and reduce stay-behind students' grades (Chen et al., 2009). I could not account for such shocks as CEPS data does not include detailed geographic information.
+
+From my research, we can find new directions for scholarly inquiry. Researchers can explore interaction and moderation in the pathways of resource generation and family disruption. When the CEPS team releases the next round of data, researchers can capitalize a the three-wave panel dataset to build multi-period DID models. This would help examine the parallel trend assumption. Novel methods also offer new possibilities. Machine learning, for example, can estimate the heterogeneous effects across subgroups (R. Liu, 2021). Looking beyond outbound migration, return migration of parents also worth studying (Liang \& Li, 2021). Not many publications have explored return migrants and their formerly left-behind children in China (Démurger \& Xu, 2015; Z. Liu et al., 2018).
+
+Let us consider the policy implications. China's multilevel citizenship scheme shall not remain as it is, despite the small reduction of newly left-behind children's schooling performance. The slight drop is only the short-term consequence; The lifelong cumulative effect on children may be extensive (Liang \& Sun, 2020; Meng \& Yamauchi, 2017). Besides, educational attainment is only part of human development outcomes. Other outcomes like mental health and non-cognitive skills are also subjected to parental absence's influence (Antia et al., 2020). Policymakers should accelerate the reforms on hukou, opening more doors for parents to migrate together with their children. Besides top-down policymaking, bottom-up approaches are also necessary. School administrators could dedicate more advisory and counseling programs. Social workers could provide paraprofessional training in communities (M. Wang et al., 2020).
 
 \newpage
 
@@ -793,14 +724,17 @@ FE: clsids & X & X & X & X & X & X \\
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-akezhuoli2022}{}}%
+Akezhuoli, H., Lu, J., Zhao, G., Xu, J., Wang, M., Wang, F., Li, L., \& Zhou, X. (2022). Mother's and father's migrating in china: Differing relations to mental health and risk behaviors among left-behind children. \emph{Frontiers in Public Health}, \emph{10}. \url{https://www.frontiersin.org/article/10.3389/fpubh.2022.894741}
+
 \leavevmode\vadjust pre{\hypertarget{ref-antia2020}{}}%
 Antia, K., Boucsein, J., Deckert, A., Dambach, P., Račaitė, J., Šurkienė, G., Jaenisch, T., Horstick, O., \& Winkler, V. (2020). Effects of International Labour Migration on the Mental Health and Well-Being of Left-Behind Children: A Systematic Literature Review. \emph{International Journal of Environmental Research and Public Health}, \emph{17}(12), 4335. \url{https://doi.org/10.3390/ijerph17124335}
 
-\leavevmode\vadjust pre{\hypertarget{ref-arel-bundock2022}{}}%
-Arel-Bundock, V. (2022). \emph{Modelsummary: Summary tables and plots for statistical models and data: Beautiful, customizable, and publication-ready}. \url{https://vincentarelbundock.github.io/modelsummary/}
+\leavevmode\vadjust pre{\hypertarget{ref-R-modelsummary}{}}%
+Arel-Bundock, V. (2022). {modelsummary}: Data and model summaries in {R}. \emph{Journal of Statistical Software}, \emph{103}(1), 1--23. \url{https://doi.org/10.18637/jss.v103.i01}
 
 \leavevmode\vadjust pre{\hypertarget{ref-R-papaja}{}}%
-Aust, F., \& Barth, M. (2020). \emph{{papaja}: {Prepare} reproducible {APA} journal articles with {R Markdown}}. \url{https://github.com/crsh/papaja}
+Aust, F., \& Barth, M. (2022). \emph{{papaja}: {Prepare} reproducible {APA} journal articles with {R Markdown}}. \url{https://cran.r-project.org/web/packages/papaja/index.html}
 
 \leavevmode\vadjust pre{\hypertarget{ref-bai2020}{}}%
 Bai, Y., Neubauer, M., Ru, T., Shi, Y., Kenny, K., \& Rozelle, S. (2020). Impact of Second-Parent Migration on Student Academic Performance in Northwest China and its Implications. \emph{The Journal of Development Studies}, \emph{56}(8), 1523--1540. \url{https://doi.org/10.1080/00220388.2019.1690136}
@@ -808,11 +742,8 @@ Bai, Y., Neubauer, M., Ru, T., Shi, Y., Kenny, K., \& Rozelle, S. (2020). Impact
 \leavevmode\vadjust pre{\hypertarget{ref-bai2018}{}}%
 Bai, Y., Zhang, L., Liu, C., Shi, Y., Mo, D., \& Rozelle, S. (2018). Effect of parental migration on the academic performance of left behind children in north western china. \emph{The Journal of Development Studies}, \emph{54}(7), 1154--1170. \url{https://doi.org/10.1080/00220388.2017.1333108}
 
-\leavevmode\vadjust pre{\hypertarget{ref-R-tinylabels}{}}%
-Barth, M. (2022). \emph{{tinylabels}: Lightweight variable labels}. \url{https://cran.r-project.org/package=tinylabels}
-
-\leavevmode\vadjust pre{\hypertarget{ref-berguxe92018}{}}%
-Bergé, L. (2018). \emph{Efficient estimation of maximum likelihood models with multiple fixed-effects: the R package FENmlm}. \url{https://ideas.repec.org/p/luc/wpaper/18-13.html}
+\leavevmode\vadjust pre{\hypertarget{ref-R-fixest}{}}%
+Berge, L., Krantz, S., \& McDermott, G. (2022). \emph{Fixest: Fast fixed-effects estimations}. \url{https://CRAN.R-project.org/package=fixest}
 
 \leavevmode\vadjust pre{\hypertarget{ref-black2021}{}}%
 Black, M. M., Behrman, J. R., Daelmans, B., Prado, E. L., Richter, L., Tomlinson, M., Trude, A. C. B., Wertlieb, D., Wuermli, A. J., \& Yoshikawa, H. (2021). The principles of Nurturing Care promote human capital and mitigate adversities from preconception through adolescence. \emph{BMJ Global Health}, \emph{6}(4), e004436. \url{https://doi.org/10.1136/bmjgh-2020-004436}
@@ -820,44 +751,113 @@ Black, M. M., Behrman, J. R., Daelmans, B., Prado, E. L., Richter, L., Tomlinson
 \leavevmode\vadjust pre{\hypertarget{ref-botev2019}{}}%
 Botev, J., Égert, B., Smidova, Z., \& Turner, D. (2019). \emph{A new macroeconomic measure of human capital with strong empirical links to productivity}. \url{https://doi.org/10.1787/d12d7305-en}
 
+\leavevmode\vadjust pre{\hypertarget{ref-botezat2020}{}}%
+Botezat, A., \& Pfeiffer, F. (2020). The impact of parental labour migration on left{-}behind children's educational and psychosocial outcomes: Evidence from Romania. \emph{Population, Space and Place}, \emph{26}(2). \url{https://doi.org/10.1002/psp.2277}
+
 \leavevmode\vadjust pre{\hypertarget{ref-bourdieu2002}{}}%
-Bourdieu, P. (2002). \emph{The Forms of Capital} (N. W. Biggart, Ed.; pp. 280--291). Blackwell Publishers Ltd. \url{https://doi.org/10.1002/9780470755679.ch15}
+Bourdieu, P. (2002). The Forms of Capital. In N. W. Biggart (Ed.), \emph{Readings in Economic Sociology} (pp. 280--291). Blackwell Publishers Ltd. \url{https://doi.org/10.1002/9780470755679.ch15}
+
+\leavevmode\vadjust pre{\hypertarget{ref-debrauw2019}{}}%
+Brauw, A. de. (2019). Migration Out of Rural Areas and Implications for Rural Livelihoods. \emph{Annual Review of Resource Economics}, \emph{11}(1), 461--481. \url{https://doi.org/10.1146/annurev-resource-100518-093906}
+
+\leavevmode\vadjust pre{\hypertarget{ref-cebotari2020}{}}%
+Cebotari, V. (2020). Migration, remittances, and child education in ghana. Evidence from a longitudinal study. In M. Konte \& L. Mously Mbaye (Eds.), \emph{Migration, remittances, and sustainable development in africa} (pp. 99--116). Routledge. \url{https://doi.org/10.4324/9780429288814-8}
+
+\leavevmode\vadjust pre{\hypertarget{ref-chan2019}{}}%
+Chan, J. (2019). State and labor in China, 1978{\textendash}2018. \emph{Journal of Labor and Society}, \emph{22}(2), 461--475. \url{https://doi.org/10.1111/wusa.12408}
 
 \leavevmode\vadjust pre{\hypertarget{ref-chang2019}{}}%
 Chang, F., Jiang, Y., Loyalka, P., Chu, J., Shi, Y., Osborn, A., \& Rozelle, S. (2019). Parental migration, educational achievement, and mental health of junior high school students in rural China. \emph{China Economic Review}, \emph{54}, 337--349. \url{https://doi.org/10.1016/j.chieco.2019.01.007}
 
+\leavevmode\vadjust pre{\hypertarget{ref-chen2020}{}}%
+Chen, T., Kung, J. K., \& Ma, C. (2020). Long Live Keju! The Persistent Effects of China{'}s Civil Examination System. \emph{The Economic Journal}, \emph{130}(631), 2030--2064. \url{https://doi.org/10.1093/ej/ueaa043}
+
+\leavevmode\vadjust pre{\hypertarget{ref-chen2009}{}}%
+Chen, X., Huang, Q., Rozelle, S., Shi, Y., \& Zhang, L. (2009). Effect of Migration on Children's Educational Performance in Rural China. \emph{Comparative Economic Studies}, \emph{51}(3), 323--343. \url{https://doi.org/10.1057/ces.2008.44}
+
 \leavevmode\vadjust pre{\hypertarget{ref-chen2019}{}}%
 Chen, X., Li, D., Liu, J., Fu, R., \& Liu, S. (2019). Father migration and mother migration: Different implications for social, school, and psychological adjustment of left-behind children in rural china. \emph{Journal of Contemporary China}, \emph{28}(120), 849--863. \url{https://doi.org/10.1080/10670564.2019.1594100}
+
+\leavevmode\vadjust pre{\hypertarget{ref-costalli2021}{}}%
+Costalli, S., \& Negri, F. (2021). Looking for twins: how to build better counterfactuals with matching. \emph{Italian Political Science Review / Rivista Italiana Di Scienza Politica}, \emph{51}(2), 215--230. \url{https://doi.org/10.1017/ipo.2021.1}
 
 \leavevmode\vadjust pre{\hypertarget{ref-cunningham2021}{}}%
 Cunningham, S. (2021). \emph{Causal inference: The mixtape}. Yale University Press. \url{https://mixtape.scunning.com/}
 
+\leavevmode\vadjust pre{\hypertarget{ref-duxe9murger2015}{}}%
+Démurger, S., \& Xu, H. (2015). Left-behind children and return migration in china. \emph{IZA Journal of Migration}, \emph{4}(1), 10. \url{https://doi.org/10.1186/s40176-015-0035-x}
+
 \leavevmode\vadjust pre{\hypertarget{ref-dewaard2018}{}}%
 DeWaard, J., Nobles, J., \& Donato, K. M. (2018). Migration and parental absence: A comparative assessment of transnational families in Latin America. \emph{Population, Space and Place}, \emph{24}(7), e2166. \url{https://doi.org/10.1002/psp.2166}
 
-\leavevmode\vadjust pre{\hypertarget{ref-goldin2016}{}}%
-Goldin, C. (2016). \emph{Human Capital} (C. Diebolt \& M. Haupert, Eds.; pp. 55--86). Springer. \url{https://doi.org/10.1007/978-3-642-40406-1_23}
+\leavevmode\vadjust pre{\hypertarget{ref-duckett2020}{}}%
+Duckett, J. (2020). Neoliberalism, Authoritarian Politics and Social Policy in China. \emph{Development and Change}, \emph{51}(2), 523--539. \url{https://doi.org/10.1111/dech.12568}
 
-\leavevmode\vadjust pre{\hypertarget{ref-gu2021}{}}%
-Gu, X. (2021). {`}Save the children!{'}: Governing left-behind children through family in China{'}s Great Migration. \emph{Current Sociology}, 0011392120985874. \url{https://doi.org/10.1177/0011392120985874}
+\leavevmode\vadjust pre{\hypertarget{ref-gao2019}{}}%
+Gao, Y., Bai, Y., Ma, Y., \& Shi, Y. (2019). Parental Migration{'}s Effects on the Academic and Non-Academic Performance of Left-Behind Children in Rural China. \emph{China Economist}, \emph{14}(5), 67--80. \url{https://doi.org/10.19602/j.chinaeconomist.2019.9.07}
+
+\leavevmode\vadjust pre{\hypertarget{ref-goldin2016}{}}%
+Goldin, C. (2016). Human Capital. In C. Diebolt \& M. Haupert (Eds.), \emph{Handbook of Cliometrics} (pp. 55--86). Springer. \url{https://doi.org/10.1007/978-3-642-40406-1_23}
+
+\leavevmode\vadjust pre{\hypertarget{ref-greifer2022}{}}%
+Greifer, N. (2022a). \emph{MatchIt: Getting started}. \url{https://kosukeimai.github.io/MatchIt/articles/MatchIt.html}
+
+\leavevmode\vadjust pre{\hypertarget{ref-R-cobalt}{}}%
+Greifer, N. (2022b). \emph{Cobalt: Covariate balance tables and plots}. \url{https://CRAN.R-project.org/package=cobalt}
+
+\leavevmode\vadjust pre{\hypertarget{ref-gu2022}{}}%
+Gu, X. (2022). {`}Save the children!{'}: Governing left-behind children through family in China{'}s Great Migration. \emph{Current Sociology}, \emph{70}(4), 513--538. \url{https://doi.org/10.1177/0011392120985874}
+
+\leavevmode\vadjust pre{\hypertarget{ref-R-MatchIt}{}}%
+Ho, D., Imai, K., King, G., Stuart, E., Whitworth, A., \& Greifer, N. (2022). \emph{MatchIt: Nonparametric preprocessing for parametric causal inference}. \url{https://CRAN.R-project.org/package=MatchIt}
 
 \leavevmode\vadjust pre{\hypertarget{ref-hong2019}{}}%
 Hong, Y., \& Fuller, C. (2019). Alone and {``}left behind{''}: A case study of {``}left-behind children{''} in rural china. \emph{Cogent Education}, \emph{6}(1), 1654236. \url{https://doi.org/10.1080/2331186X.2019.1654236}
 
-\leavevmode\vadjust pre{\hypertarget{ref-huntington-klein}{}}%
-Huntington-Klein, N. (n.d.). \emph{The effect: An introduction to research design and causality \textbar{} the effect}. \url{https://theeffectbook.net/index.html}
+\leavevmode\vadjust pre{\hypertarget{ref-huang2020}{}}%
+Huang, Y., Liang, Z., Song, Q., \& Tao, R. (2020). Family Arrangements and Children's Education Among Migrants: A Case Study of China. \emph{International Journal of Urban and Regional Research}, \emph{44}(3), 484--504. \url{https://doi.org/10.1111/1468-2427.12649}
+
+\leavevmode\vadjust pre{\hypertarget{ref-R-vtable}{}}%
+Huntington-Klein, N. (2021). \emph{Vtable: Variable table for variable documentation}. \url{https://CRAN.R-project.org/package=vtable}
+
+\leavevmode\vadjust pre{\hypertarget{ref-huntington-klein2022}{}}%
+Huntington-Klein, N. (2022). \emph{The Effect: An Introduction to Research Design and Causality}. CRC Press. \url{https://theeffectbook.net/index.html}
 
 \leavevmode\vadjust pre{\hypertarget{ref-jin2020}{}}%
 Jin, X., Chen, W., Sun, I. Y., \& Liu, L. (2020). Physical health, school performance and delinquency: A comparative study of left-behind and non-left-behind children in rural China. \emph{Child Abuse \& Neglect}, \emph{109}, 104707. \url{https://doi.org/10.1016/j.chiabu.2020.104707}
 
-\leavevmode\vadjust pre{\hypertarget{ref-li2017}{}}%
-Li, L., Wang, L., \& Nie, J. (2017). Effect of Parental Migration on the Academic Performance of Left-behind Middle School Students in Rural China. \emph{China \& World Economy}, \emph{25}(2), 45--59. \url{https://doi.org/10.1111/cwe.12193}
+\leavevmode\vadjust pre{\hypertarget{ref-king2019}{}}%
+King, G., \& Nielsen, R. (2019). Why Propensity Scores Should Not Be Used for Matching. \emph{Political Analysis}, \emph{27}(4), 435--454. \url{https://doi.org/10.1017/pan.2019.11}
+
+\leavevmode\vadjust pre{\hypertarget{ref-liang2021}{}}%
+Liang, Z., \& Li, W. (2021). Migration and children in China: a review and future research agenda. \emph{Chinese Sociological Review}, \emph{53}(3), 312--331. \url{https://doi.org/10.1080/21620555.2021.1908823}
+
+\leavevmode\vadjust pre{\hypertarget{ref-liang2020}{}}%
+Liang, Z., \& Sun, F. (2020). The lasting impact of parental migration on children's education and health outcomes: The case of china. \emph{Demographic Research}, \emph{S28}(9), 217--244. \url{https://doi.org/10.4054/DemRes.2020.43.9}
+
+\leavevmode\vadjust pre{\hypertarget{ref-liu2021a}{}}%
+Liu, R. (2021). Leveraging machine learning methods to estimate heterogeneous effects: Father absence in china as an example. \emph{Chinese Sociological Review}, \emph{54}(3), 223--251. \url{https://doi.org/10.1080/21620555.2021.1948828}
 
 \leavevmode\vadjust pre{\hypertarget{ref-liu2021}{}}%
 Liu, Y., Deng, Z., \& Katz, I. (2021). Transmission of Educational Outcomes Across Three Generations: Evidence From Migrant Workers{'} Children in China. \emph{Applied Research in Quality of Life}. \url{https://doi.org/10.1007/s11482-021-09990-y}
 
+\leavevmode\vadjust pre{\hypertarget{ref-liu2018}{}}%
+Liu, Z., Yu, L., \& Zheng, X. (2018). No longer left-behind: The impact of return migrant parents on children's performance. \emph{China Economic Review}, \emph{49}, 184--196. \url{https://doi.org/10.1016/j.chieco.2017.06.004}
+
+\leavevmode\vadjust pre{\hypertarget{ref-luo2013}{}}%
+Luo, R., Tamis-LeMonda, C. S., \& Song, L. (2013). Chinese parents{'} goals and practices in early childhood. \emph{Early Childhood Research Quarterly}, \emph{28}(4), 843--857. \url{https://doi.org/10.1016/j.ecresq.2013.08.001}
+
+\leavevmode\vadjust pre{\hypertarget{ref-meng2017}{}}%
+Meng, X., \& Yamauchi, C. (2017). Children of migrants: The cumulative impact of parental migration on children{'}s education and health outcomes in china. \emph{Demography}, \emph{54}(5), 1677--1714. \url{https://doi.org/10.1007/s13524-017-0613-z}
+
+\leavevmode\vadjust pre{\hypertarget{ref-moeller2015}{}}%
+Moeller, J. (2015). A word on standardization in longitudinal studies: don't. \emph{Frontiers in Psychology}, \emph{6}. \url{https://www.frontiersin.org/article/10.3389/fpsyg.2015.01389}
+
 \leavevmode\vadjust pre{\hypertarget{ref-murphy2022}{}}%
 Murphy, R. (2022). What does {`}left behind{'} mean to children living in migratory regions in rural China? \emph{Geoforum}, \emph{129}, 181--190. \url{https://doi.org/10.1016/j.geoforum.2022.01.012}
+
+\leavevmode\vadjust pre{\hypertarget{ref-murphy2020}{}}%
+Murphy, R. (2020). \emph{The children of china{'}s great migration}. Cambridge University Press. \url{https://doi.org/10.1017/9781108877251}
 
 \leavevmode\vadjust pre{\hypertarget{ref-nbs2022}{}}%
 NBS. (2022). \emph{2021 migrant workers monitor survey report {[}in Chinese{]}}. \url{http://www.stats.gov.cn/tjsj/zxfb/202204/t20220429_1830126.html}
@@ -865,17 +865,41 @@ NBS. (2022). \emph{2021 migrant workers monitor survey report {[}in Chinese{]}}.
 \leavevmode\vadjust pre{\hypertarget{ref-nbs2017}{}}%
 NBS, UNICEF, \& UNFPA. (2017). \emph{Population Status of Children in China in 2015: Facts and Figures}. \url{https://www.unicef.cn/media/9901/file/Population\%20Status\%20of\%20Children\%20in\%20China\%20in\%202015\%20Facts\%20and\%20Figures.pdf}
 
+\leavevmode\vadjust pre{\hypertarget{ref-ng2020}{}}%
+Ng, F. F.-Y., \& Wei, J. (2020). Delving Into the Minds of Chinese Parents: What Beliefs Motivate Their Learning-Related Practices? \emph{Child Development Perspectives}, \emph{14}(1), 61--67. \url{https://doi.org/10.1111/cdep.12358}
+
+\leavevmode\vadjust pre{\hypertarget{ref-nguyen2016}{}}%
+Nguyen, C. V. (2016). Does parental migration really benefit left-behind children? Comparative evidence from Ethiopia, India, Peru and Vietnam. \emph{Social Science \& Medicine}, \emph{153}, 230--239. \url{https://doi.org/10.1016/j.socscimed.2016.02.021}
+
 \leavevmode\vadjust pre{\hypertarget{ref-nsrc}{}}%
 NSRC. (n.d.). \emph{Overview-china education panel survey}. \url{http://ceps.ruc.edu.cn/English/Overview/Overview.htm}
 
+\leavevmode\vadjust pre{\hypertarget{ref-oecd2016}{}}%
+OECD. (2016). \emph{Education in china: A snapshot}. \url{https://www.oecd.org/china/Education-in-China-a-snapshot.pdf}
+
+\leavevmode\vadjust pre{\hypertarget{ref-pan2018}{}}%
+Pan, W., \& Bai, H. (2018). Propensity score methods for causal inference: an overview. \emph{Behaviormetrika}, \emph{45}(2), 317--334. \url{https://doi.org/10.1007/s41237-018-0058-8}
+
 \leavevmode\vadjust pre{\hypertarget{ref-parliamentaryassembly2021}{}}%
-Parliamentary Assembly. (2021). \emph{Resolution 2366: Impact of labour migration on {``}left-behind{''} children}. \url{https://pace.coe.int/pdf/750b8aea81ea5b757d3b0db7f9865a27e4982ffbc23c9f49d28122e772e123ef/resolution\%202366.pdf}
+Parliamentary Assembly. (2021). \emph{Resolution 2366: Impact of labour migration on {``}left-behind{''} children}. \url{https://pace.coe.int/en/files/29077/html}
+
+\leavevmode\vadjust pre{\hypertarget{ref-peng2018}{}}%
+Peng, Y. (2018). Migrant Mothering in Transition: A Qualitative Study of the Maternal Narratives and Practices of Two Generations of Rural-Urban Migrant Mothers in Southern China. \emph{Sex Roles}, \emph{79}(1), 16--35. \url{https://doi.org/10.1007/s11199-017-0855-7}
 
 \leavevmode\vadjust pre{\hypertarget{ref-popova2018}{}}%
 Popova, A. (2018). Risk factors for the safety of the children from transnational families children left behind. \emph{Anthropological Researches and Studies}, \emph{1}(8), 25--35. \url{https://doi.org/10.26758/8.1.3}
 
+\leavevmode\vadjust pre{\hypertarget{ref-qian2021}{}}%
+Qian, J. (2021). \emph{The Political Economy of Making and Implementing Social Policy in China}. Springer Singapore. \url{https://doi.org/10.1007/978-981-16-5025-3}
+
 \leavevmode\vadjust pre{\hypertarget{ref-R-base}{}}%
 R Core Team. (2022). \emph{R: A language and environment for statistical computing}. R Foundation for Statistical Computing. \url{https://www.R-project.org/}
+
+\leavevmode\vadjust pre{\hypertarget{ref-roberts2018}{}}%
+Roberts, P., \& Hannum, E. (2018). Education and Equity in Rural China: A critical introduction for the rural education field. \emph{Australian and International Journal of Rural Education}, \emph{28}(2). \url{https://doi.org/10.47381/aijre.v28i2.231}
+
+\leavevmode\vadjust pre{\hypertarget{ref-shen2021}{}}%
+Shen, W., Hu, L.-C., \& Hannum, E. (2021). Effect pathways of informal family separation on children's outcomes: Paternal labor migration and long-term educational attainment of left-behind children in rural China. \emph{Social Science Research}, \emph{97}, 102576. \url{https://doi.org/10.1016/j.ssresearch.2021.102576}
 
 \leavevmode\vadjust pre{\hypertarget{ref-shu2021}{}}%
 Shu, B. (2021). Parental Migration, Parental Emotional Support, and Adolescent Children{'}s Life Satisfaction in Rural China: The Roles of Parent and Child Gender. \emph{Journal of Family Issues}, \emph{42}(8), 1663--1705. \url{https://doi.org/10.1177/0192513X20946345}
@@ -883,11 +907,35 @@ Shu, B. (2021). Parental Migration, Parental Emotional Support, and Adolescent C
 \leavevmode\vadjust pre{\hypertarget{ref-vanhook2020}{}}%
 Van Hook, J., \& Glick, J. E. (2020). Spanning Borders, Cultures, and Generations: A~Decade of Research on Immigrant Families. \emph{Journal of Marriage and Family}, \emph{82}(1), 224--243. \url{https://doi.org/10.1111/jomf.12621}
 
+\leavevmode\vadjust pre{\hypertarget{ref-vortherms2021}{}}%
+Vortherms, S. A. (2021). Hukou as a case of multi-level citizenship. In Z. Guo (Ed.), \emph{The Routledge Handbook of Chinese Citizenship} (pp. 132--142). Routledge. \href{https://doi.org/10.4324/9781003225843-12}{doi.org/10.4324/9781003225843-12}
+
 \leavevmode\vadjust pre{\hypertarget{ref-wang2019}{}}%
 Wang, L., Zheng, Y., Li, G., Li, Y., Fang, Z., Abbey, C., \& Rozelle, S. (2019). Academic achievement and mental health of left-behind children in rural china: A causal study on parental migration. \emph{China Agricultural Economic Review}, \emph{11}(4), 569--582. \url{https://doi.org/10.1108/CAER-09-2018-0194}
 
+\leavevmode\vadjust pre{\hypertarget{ref-wang2020a}{}}%
+Wang, M., Victor, B. G., Hong, J. S., Wu, S., Huang, J., Luan, H., \& Perron, B. E. (2020). A Scoping Review of Interventions to Promote Health and Well-Being of Left-behind Children in Mainland China. \emph{The British Journal of Social Work}, \emph{50}(5), 1419--1439. \url{https://doi.org/10.1093/bjsw/bcz116}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wang2015}{}}%
+Wang, W., \& Li, P. (2015). \emph{Psychometric report for the cognitive ability tests of CEPS baseline survey (in chinese)}. \url{http://ceps.ruc.edu.cn/Enlish/dfiles/11184/14507142239451.pdf}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wang2020}{}}%
+Wang, X. (2020). Permits, Points, and Permanent Household Registration: Recalibrating Hukou Policy under {``}Top-Level Design{''}. \emph{Journal of Current Chinese Affairs}, \emph{49}(3), 269--290. \url{https://doi.org/10.1177/1868102619894739}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wen2019}{}}%
+Wen, Y., \& Xie, J. (2019). Missing families and villages: The care deficit faced by rural left-behind children in china and its implications. \emph{International Journal of Care and Caring}, \emph{3}(2), 247--262. \url{https://doi.org/10.1332/239788218X15421003245041}
+
+\leavevmode\vadjust pre{\hypertarget{ref-R-tidyverse}{}}%
+Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L. D., François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M., Pedersen, T. L., Miller, E., Bache, S. M., Müller, K., Ooms, J., Robinson, D., Seidel, D. P., Spinu, V., \ldots{} Yutani, H. (2019). Welcome to the {tidyverse}. \emph{Journal of Open Source Software}, \emph{4}(43), 1686. \url{https://doi.org/10.21105/joss.01686}
+
+\leavevmode\vadjust pre{\hypertarget{ref-willis2019}{}}%
+Willis, P. (2019). \emph{Being Modern in China: A Western Cultural Analysis of Modernity, Tradition and Schooling in China Today}. Polity.
+
 \leavevmode\vadjust pre{\hypertarget{ref-xu2019}{}}%
 Xu, Y., Xu, D., Simpkins, S., \& Warschauer, M. (2019). Does It Matter Which Parent is Absent? Labor Migration, Parenting, and Adolescent Development in China. \emph{Journal of Child and Family Studies}, \emph{28}(6), 1635--1649. \url{https://doi.org/10.1007/s10826-019-01382-z}
+
+\leavevmode\vadjust pre{\hypertarget{ref-yang2008}{}}%
+Yang, D. (2008). International Migration, Remittances and Household Investment: Evidence from Philippine Migrants{'} Exchange Rate Shocks. \emph{The Economic Journal}, \emph{118}(528), 591--630. \url{https://doi.org/10.1111/j.1468-0297.2008.02134.x}
 
 \leavevmode\vadjust pre{\hypertarget{ref-yang2022}{}}%
 Yang, F., Wang, Z., Liu, J., \& Tang, S. (2022). The Effect of Social Interaction on Rural Children{'}s Self-identity: an Empirical Study Based on Survey Data from Jintang County, China. \emph{Child Indicators Research}, \emph{15}(3), 839--861. \url{https://doi.org/10.1007/s12187-021-09887-0}
@@ -895,10 +943,317 @@ Yang, F., Wang, Z., Liu, J., \& Tang, S. (2022). The Effect of Social Interactio
 \leavevmode\vadjust pre{\hypertarget{ref-zhan2020}{}}%
 Zhan, Y. (2020). The moralization of philanthropy in China: NGOs, voluntarism, and the reconfiguration of social responsibility. \emph{China Information}, \emph{34}(1), 68--87. \url{https://doi.org/10.1177/0920203X19879593}
 
-\leavevmode\vadjust pre{\hypertarget{ref-zhou2014}{}}%
-Zhou, M., Murphy, R., \& Tao, R. (2014). Effects of Parents' Migration on the Education of Children Left Behind in Rural China. \emph{Population and Development Review}, \emph{40}(2), 273--292. \url{https://doi.org/10.1111/j.1728-4457.2014.00673.x}
+\leavevmode\vadjust pre{\hypertarget{ref-zhang2018}{}}%
+Zhang, C. (2018). Governing neoliberal authoritarian citizenship: Theorizing hukou and the changing mobility regime in china. \emph{Citizenship Studies}, \emph{22}(8), 855--881. \url{https://doi.org/10.1080/13621025.2018.1531824}
+
+\leavevmode\vadjust pre{\hypertarget{ref-R-kableExtra}{}}%
+Zhu, H. (2021). \emph{kableExtra: Construct complex table with 'kable' and pipe syntax}. \url{https://CRAN.R-project.org/package=kableExtra}
 
 \end{CSLReferences}
+
+\newpage
+
+\hypertarget{appendix-appendix}{%
+\appendix}
+
+
+\hypertarget{tables}{%
+\section{Tables}\label{tables}}
+
+\begin{table}
+
+\caption{Parental migration’s effect on children’s cognitive test score}
+\centering
+\begin{tabular}[t]{lcccc}
+\toprule
+  & Any Parent & Only Mother & Only Father & Both Parents\\
+\midrule
+Migration & \num{-2.52}*** & \num{-2.12}* & \num{-3.00}** & \num{-2.43}†\\
+ & (\num{0.69}) & (\num{1.05}) & (\num{1.12}) & (\num{1.37})\\
+Baseline.score & \num{-0.79}*** & \num{-0.79}*** & \num{-0.78}*** & \num{-0.79}***\\
+ & (\num{0.02}) & (\num{0.02}) & (\num{0.02}) & (\num{0.02})\\
+child.age & \num{-2.61}*** & \num{-2.56}*** & \num{-2.53}*** & \num{-2.51}***\\
+ & (\num{0.48}) & (\num{0.51}) & (\num{0.49}) & (\num{0.49})\\
+child.is.girl & \num{-0.75} & \num{-0.46} & \num{-0.73} & \num{-0.58}\\
+ & (\num{0.60}) & (\num{0.65}) & (\num{0.61}) & (\num{0.64})\\
+child.health & \num{-0.28} & \num{-0.22} & \num{-0.37} & \num{-0.25}\\
+ & (\num{0.33}) & (\num{0.33}) & (\num{0.35}) & (\num{0.34})\\
+child.has.rural.hukou & \num{0.13} & \num{0.47} & \num{0.22} & \num{0.67}\\
+ & (\num{0.63}) & (\num{0.64}) & (\num{0.67}) & (\num{0.70})\\
+child.number.of.sibling & \num{-0.99}* & \num{-1.06}* & \num{-0.89}* & \num{-0.96}*\\
+ & (\num{0.41}) & (\num{0.44}) & (\num{0.43}) & (\num{0.44})\\
+child.went.to.preschool & \num{2.33}** & \num{2.02}* & \num{2.21}** & \num{2.12}*\\
+ & (\num{0.79}) & (\num{0.87}) & (\num{0.83}) & (\num{0.87})\\
+child.had.skipped.grade & \num{-3.83} & \num{-3.84} & \num{-4.11} & \num{-2.98}\\
+ & (\num{2.64}) & (\num{2.76}) & (\num{2.73}) & (\num{2.90})\\
+child.had.repeated.grade & \num{-1.59} & \num{-2.61}* & \num{-1.92}† & \num{-1.45}\\
+ & (\num{0.96}) & (\num{1.19}) & (\num{1.14}) & (\num{1.14})\\
+child.in.boarding.school & \num{1.38} & \num{1.21} & \num{1.23} & \num{0.85}\\
+ & (\num{1.03}) & (\num{0.99}) & (\num{1.02}) & (\num{0.99})\\
+child.education.aspiration & \num{2.03}*** & \num{1.97}*** & \num{2.01}*** & \num{2.09}***\\
+ & (\num{0.29}) & (\num{0.31}) & (\num{0.29}) & (\num{0.31})\\
+child.is.ethnic.minority & \num{1.50} & \num{1.53} & \num{1.01} & \num{1.16}\\
+ & (\num{1.50}) & (\num{1.62}) & (\num{1.69}) & (\num{1.84})\\
+parent.expectation & \num{2.34}*** & \num{2.40}*** & \num{2.36}*** & \num{2.28}***\\
+ & (\num{0.35}) & (\num{0.35}) & (\num{0.34}) & (\num{0.34})\\
+parent.has.white.collar.job & \num{0.75} & \num{0.24} & \num{0.76} & \num{0.58}\\
+ & (\num{0.69}) & (\num{0.74}) & (\num{0.74}) & (\num{0.77})\\
+mother.education.level & \num{-0.02} & \num{0.02} & \num{-0.08} & \num{-0.16}\\
+ & (\num{0.31}) & (\num{0.33}) & (\num{0.36}) & (\num{0.35})\\
+father.education.level & \num{0.14} & \num{0.33} & \num{0.17} & \num{0.39}\\
+ & (\num{0.31}) & (\num{0.31}) & (\num{0.32}) & (\num{0.33})\\
+home.economic.resource & \num{-0.55} & \num{-0.60} & \num{-0.15} & \num{-0.15}\\
+ & (\num{0.52}) & (\num{0.53}) & (\num{0.52}) & (\num{0.55})\\
+home.extracurricular.book & \num{-0.03} & \num{-0.13} & \num{-0.09} & \num{-0.06}\\
+ & (\num{0.26}) & (\num{0.27}) & (\num{0.26}) & (\num{0.26})\\
+home.has.internet & \num{-0.56} & \num{-0.92} & \num{-0.85} & \num{-1.07}\\
+ & (\num{0.59}) & (\num{0.68}) & (\num{0.65}) & (\num{0.68})\\
+\midrule
+Num.Obs. & \num{4062} & \num{3680} & \num{3674} & \num{3552}\\
+R2 & \num{0.424} & \num{0.427} & \num{0.430} & \num{0.432}\\
+R2 Adj. & \num{0.405} & \num{0.406} & \num{0.409} & \num{0.410}\\
+FE: schids & X & X & X & X\\
+\bottomrule
+\multicolumn{5}{l}{\rule{0pt}{1em}† p $<$ 0.1, * p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
+\end{tabular}
+\end{table}
+
+\begin{table}
+
+\caption{Parental migration’s effect on children’s cognitive test score}
+\centering
+\begin{tabular}[t]{lcccc}
+\toprule
+  & Any Parent & Only Mother & Only Father & Both Parents\\
+\midrule
+Migration & \num{-1.23}* & \num{-2.08}* & \num{-0.82} & \num{-0.13}\\
+ & (\num{0.53}) & (\num{0.84}) & (\num{0.71}) & (\num{0.76})\\
+Baseline.score & \num{-0.01} & \num{-0.01} & \num{-0.01} & \num{-0.01}\\
+ & (\num{0.03}) & (\num{0.03}) & (\num{0.03}) & (\num{0.03})\\
+child.age & \num{-0.44}* & \num{-0.40}† & \num{-0.44}* & \num{-0.37}\\
+ & (\num{0.19}) & (\num{0.20}) & (\num{0.21}) & (\num{0.22})\\
+child.is.girl & \num{1.62}*** & \num{1.68}*** & \num{1.60}*** & \num{1.54}***\\
+ & (\num{0.38}) & (\num{0.39}) & (\num{0.37}) & (\num{0.39})\\
+child.health & \num{0.37}** & \num{0.40}** & \num{0.27}† & \num{0.29}*\\
+ & (\num{0.13}) & (\num{0.13}) & (\num{0.15}) & (\num{0.14})\\
+child.has.rural.hukou & \num{0.34} & \num{0.41} & \num{0.21} & \num{0.33}\\
+ & (\num{0.40}) & (\num{0.39}) & (\num{0.38}) & (\num{0.39})\\
+child.number.of.sibling & \num{0.29} & \num{0.22} & \num{0.39}† & \num{0.21}\\
+ & (\num{0.19}) & (\num{0.20}) & (\num{0.22}) & (\num{0.22})\\
+child.went.to.preschool & \num{1.17}* & \num{1.41}** & \num{0.75}† & \num{1.28}**\\
+ & (\num{0.46}) & (\num{0.48}) & (\num{0.43}) & (\num{0.46})\\
+child.had.skipped.grade & \num{0.54} & \num{1.14} & \num{0.75} & \num{1.16}\\
+ & (\num{1.79}) & (\num{1.58}) & (\num{2.01}) & (\num{1.62})\\
+child.had.repeated.grade & \num{-0.44} & \num{-0.16} & \num{-0.19} & \num{0.20}\\
+ & (\num{0.70}) & (\num{0.77}) & (\num{0.80}) & (\num{0.85})\\
+child.in.boarding.school & \num{-0.38} & \num{-0.18} & \num{-0.29} & \num{-0.40}\\
+ & (\num{0.52}) & (\num{0.48}) & (\num{0.48}) & (\num{0.53})\\
+child.education.aspiration & \num{0.77}*** & \num{0.87}*** & \num{0.79}*** & \num{0.79}**\\
+ & (\num{0.21}) & (\num{0.25}) & (\num{0.21}) & (\num{0.25})\\
+child.is.ethnic.minority & \num{-0.02} & \num{-0.12} & \num{-0.32} & \num{-0.51}\\
+ & (\num{0.71}) & (\num{0.78}) & (\num{0.85}) & (\num{0.91})\\
+parent.expectation & \num{0.58}* & \num{0.52}* & \num{0.58}* & \num{0.59}*\\
+ & (\num{0.25}) & (\num{0.24}) & (\num{0.28}) & (\num{0.27})\\
+parent.has.white.collar.job & \num{0.27} & \num{0.11} & \num{0.32} & \num{0.17}\\
+ & (\num{0.40}) & (\num{0.43}) & (\num{0.42}) & (\num{0.45})\\
+mother.education.level & \num{0.00} & \num{-0.01} & \num{0.06} & \num{0.12}\\
+ & (\num{0.18}) & (\num{0.19}) & (\num{0.17}) & (\num{0.18})\\
+father.education.level & \num{0.19} & \num{0.28} & \num{0.21} & \num{0.19}\\
+ & (\num{0.19}) & (\num{0.19}) & (\num{0.19}) & (\num{0.19})\\
+home.economic.resource & \num{-0.25} & \num{-0.07} & \num{-0.14} & \num{-0.12}\\
+ & (\num{0.27}) & (\num{0.28}) & (\num{0.29}) & (\num{0.27})\\
+home.extracurricular.book & \num{-0.28}† & \num{-0.43}** & \num{-0.31}† & \num{-0.31}*\\
+ & (\num{0.17}) & (\num{0.16}) & (\num{0.17}) & (\num{0.15})\\
+home.has.internet & \num{-0.41} & \num{-0.46} & \num{-0.32} & \num{-0.33}\\
+ & (\num{0.37}) & (\num{0.39}) & (\num{0.40}) & (\num{0.41})\\
+\midrule
+Num.Obs. & \num{4062} & \num{3680} & \num{3674} & \num{3552}\\
+R2 & \num{0.499} & \num{0.518} & \num{0.502} & \num{0.518}\\
+R2 Adj. & \num{0.482} & \num{0.500} & \num{0.483} & \num{0.500}\\
+FE: schids & X & X & X & X\\
+\bottomrule
+\multicolumn{5}{l}{\rule{0pt}{1em}† p $<$ 0.1, * p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
+\end{tabular}
+\end{table}
+
+\begin{table}
+
+\caption{Parental migration’s effect on children’s cognitive test scores, estimated with matching}
+\centering
+\begin{tabular}[t]{lcccc}
+\toprule
+  & Any Parent & Only Mother & Only Father & Both Parents\\
+\midrule
+Migration & \num{-2.52}*** & \num{-2.52}* & \num{-3.50}** & \num{-2.12}\\
+ & (\num{0.72}) & (\num{1.14}) & (\num{1.27}) & (\num{1.71})\\
+Baseline.score & \num{-0.78}*** & \num{-0.81}*** & \num{-0.71}*** & \num{-0.75}***\\
+ & (\num{0.02}) & (\num{0.04}) & (\num{0.03}) & (\num{0.05})\\
+child.age & \num{-3.14}*** & \num{-1.66} & \num{-3.31}*** & \num{-2.72}*\\
+ & (\num{0.58}) & (\num{1.01}) & (\num{0.90}) & (\num{1.27})\\
+child.is.girl & \num{-1.27}† & \num{-0.63} & \num{-1.61} & \num{-1.89}\\
+ & (\num{0.71}) & (\num{1.12}) & (\num{1.09}) & (\num{1.63})\\
+child.health & \num{-0.38} & \num{0.52} & \num{-0.68} & \num{0.36}\\
+ & (\num{0.41}) & (\num{0.66}) & (\num{0.70}) & (\num{0.86})\\
+child.has.rural.hukou & \num{-0.72} & \num{-0.48} & \num{-2.46}† & \num{-3.39}†\\
+ & (\num{0.89}) & (\num{1.45}) & (\num{1.41}) & (\num{1.85})\\
+child.number.of.sibling & \num{-0.60} & \num{-1.99}** & \num{-0.45} & \num{-1.43}\\
+ & (\num{0.54}) & (\num{0.71}) & (\num{0.84}) & (\num{1.10})\\
+child.went.to.preschool & \num{2.11}* & \num{0.27} & \num{3.26}** & \num{4.12}*\\
+ & (\num{0.91}) & (\num{1.45}) & (\num{1.03}) & (\num{1.94})\\
+child.had.skipped.grade & \num{-3.08} & \num{-2.72} & \num{-8.72}* & \num{2.29}\\
+ & (\num{2.75}) & (\num{5.27}) & (\num{3.72}) & (\num{6.39})\\
+child.had.repeated.grade & \num{-0.95} & \num{-6.19}† & \num{-2.20} & \num{-0.01}\\
+ & (\num{1.05}) & (\num{3.24}) & (\num{1.61}) & (\num{2.19})\\
+child.in.boarding.school & \num{1.73} & \num{1.97} & \num{0.55} & \num{-1.64}\\
+ & (\num{1.23}) & (\num{2.06}) & (\num{1.99}) & (\num{2.64})\\
+child.education.aspiration & \num{1.73}*** & \num{1.18}* & \num{1.08}** & \num{2.07}**\\
+ & (\num{0.36}) & (\num{0.58}) & (\num{0.37}) & (\num{0.79})\\
+child.is.ethnic.minority & \num{1.33} & \num{1.52} & \num{3.98} & \num{3.44}\\
+ & (\num{1.59}) & (\num{2.04}) & (\num{3.21}) & (\num{3.82})\\
+parent.expectation & \num{2.34}*** & \num{3.45}*** & \num{2.40}*** & \num{1.37}\\
+ & (\num{0.46}) & (\num{0.77}) & (\num{0.64}) & (\num{0.95})\\
+parent.has.white.collar.job & \num{1.19} & \num{0.37} & \num{0.32} & \num{-6.22}*\\
+ & (\num{0.91}) & (\num{1.12}) & (\num{1.71}) & (\num{3.10})\\
+mother.education.level & \num{0.11} & \num{0.57} & \num{0.14} & \num{-1.02}\\
+ & (\num{0.39}) & (\num{0.68}) & (\num{0.84}) & (\num{1.19})\\
+father.education.level & \num{0.05} & \num{-0.09} & \num{0.45} & \num{1.06}\\
+ & (\num{0.41}) & (\num{0.50}) & (\num{0.69}) & (\num{1.13})\\
+home.economic.resource & \num{-0.58} & \num{-2.71}** & \num{0.40} & \num{0.43}\\
+ & (\num{0.74}) & (\num{1.03}) & (\num{1.10}) & (\num{1.27})\\
+home.extracurricular.book & \num{0.03} & \num{0.02} & \num{-0.38} & \num{0.84}\\
+ & (\num{0.37}) & (\num{0.48}) & (\num{0.50}) & (\num{0.70})\\
+home.has.internet & \num{-1.26} & \num{1.94} & \num{-0.44} & \num{-3.04}†\\
+ & (\num{0.79}) & (\num{1.87}) & (\num{1.25}) & (\num{1.79})\\
+\midrule
+Num.Obs. & \num{2503} & \num{1032} & \num{1008} & \num{515}\\
+R2 & \num{0.438} & \num{0.495} & \num{0.477} & \num{0.523}\\
+R2 Adj. & \num{0.407} & \num{0.424} & \num{0.404} & \num{0.394}\\
+FE: schids & X & X & X & X\\
+\bottomrule
+\multicolumn{5}{l}{\rule{0pt}{1em}3:1 optimal pair propensity score matching; exact matching by county}\\
+\multicolumn{5}{l}{\rule{0pt}{1em}† p $<$ 0.1, * p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
+\end{tabular}
+\end{table}
+
+\begin{table}
+
+\caption{Parental migration’s effect on children’s academic exam scores, estimated with matching}
+\centering
+\begin{tabular}[t]{lcccc}
+\toprule
+  & Any Parent & Only Mother & Only Father & Both Parents\\
+\midrule
+Migration & \num{-1.22}* & \num{-1.88}* & \num{-1.33} & \num{0.47}\\
+ & (\num{0.55}) & (\num{0.81}) & (\num{0.87}) & (\num{1.06})\\
+Baseline.score & \num{0.06}** & \num{0.00} & \num{-0.02} & \num{-0.08}\\
+ & (\num{0.02}) & (\num{0.05}) & (\num{0.04}) & (\num{0.06})\\
+child.age & \num{-0.08} & \num{-0.71} & \num{-0.43} & \num{-0.69}\\
+ & (\num{0.27}) & (\num{0.50}) & (\num{0.44}) & (\num{0.56})\\
+child.is.girl & \num{1.99}*** & \num{1.69}*** & \num{1.99}** & \num{3.48}**\\
+ & (\num{0.50}) & (\num{0.49}) & (\num{0.61}) & (\num{1.29})\\
+child.health & \num{0.47}* & \num{0.73}** & \num{0.75}* & \num{0.28}\\
+ & (\num{0.20}) & (\num{0.26}) & (\num{0.34}) & (\num{0.65})\\
+child.has.rural.hukou & \num{0.03} & \num{0.60} & \num{0.31} & \num{2.16}†\\
+ & (\num{0.47}) & (\num{0.65}) & (\num{0.65}) & (\num{1.12})\\
+child.number.of.sibling & \num{0.25} & \num{0.02} & \num{0.01} & \num{-0.30}\\
+ & (\num{0.28}) & (\num{0.27}) & (\num{0.42}) & (\num{0.62})\\
+child.went.to.preschool & \num{1.27}* & \num{1.38}† & \num{-0.34} & \num{3.27}*\\
+ & (\num{0.58}) & (\num{0.74}) & (\num{0.77}) & (\num{1.41})\\
+child.had.skipped.grade & \num{0.88} & \num{-0.66} & \num{0.43} & \num{5.78}†\\
+ & (\num{2.20}) & (\num{1.42}) & (\num{3.12}) & (\num{3.44})\\
+child.had.repeated.grade & \num{-0.31} & \num{-2.82}† & \num{-2.23}* & \num{1.40}\\
+ & (\num{0.84}) & (\num{1.54}) & (\num{0.97}) & (\num{1.85})\\
+child.in.boarding.school & \num{-0.30} & \num{1.60} & \num{0.66} & \num{-1.63}\\
+ & (\num{0.74}) & (\num{1.13}) & (\num{0.85}) & (\num{1.70})\\
+child.education.aspiration & \num{0.52}* & \num{0.81}† & \num{0.85}** & \num{0.27}\\
+ & (\num{0.21}) & (\num{0.41}) & (\num{0.30}) & (\num{0.56})\\
+child.is.ethnic.minority & \num{0.78} & \num{0.18} & \num{2.24} & \num{0.11}\\
+ & (\num{0.72}) & (\num{1.05}) & (\num{1.42}) & (\num{2.54})\\
+parent.expectation & \num{0.64}** & \num{0.51} & \num{0.36} & \num{0.91}\\
+ & (\num{0.23}) & (\num{0.36}) & (\num{0.44}) & (\num{0.60})\\
+parent.has.white.collar.job & \num{0.40} & \num{0.09} & \num{0.54} & \num{1.35}\\
+ & (\num{0.44}) & (\num{0.57}) & (\num{0.75}) & (\num{1.24})\\
+mother.education.level & \num{-0.09} & \num{0.19} & \num{0.20} & \num{-0.79}\\
+ & (\num{0.23}) & (\num{0.32}) & (\num{0.35}) & (\num{0.57})\\
+father.education.level & \num{0.14} & \num{-0.21} & \num{-0.01} & \num{0.04}\\
+ & (\num{0.25}) & (\num{0.36}) & (\num{0.34}) & (\num{0.57})\\
+home.economic.resource & \num{-0.16} & \num{0.20} & \num{-0.39} & \num{-0.39}\\
+ & (\num{0.36}) & (\num{0.59}) & (\num{0.51}) & (\num{0.69})\\
+home.extracurricular.book & \num{-0.42}† & \num{-0.35} & \num{-0.40} & \num{0.51}\\
+ & (\num{0.23}) & (\num{0.31}) & (\num{0.30}) & (\num{0.49})\\
+home.has.internet & \num{-1.00}* & \num{-0.79} & \num{-1.48}* & \num{-0.83}\\
+ & (\num{0.42}) & (\num{0.83}) & (\num{0.62}) & (\num{1.17})\\
+\midrule
+Num.Obs. & \num{2503} & \num{1032} & \num{1008} & \num{515}\\
+R2 & \num{0.496} & \num{0.609} & \num{0.512} & \num{0.544}\\
+R2 Adj. & \num{0.469} & \num{0.554} & \num{0.445} & \num{0.421}\\
+FE: schids & X & X & X & X\\
+\bottomrule
+\multicolumn{5}{l}{\rule{0pt}{1em}3:1 optimal pair propensity score matching; exact matching by county}\\
+\multicolumn{5}{l}{\rule{0pt}{1em}† p $<$ 0.1, * p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
+\end{tabular}
+\end{table}
+
+\newpage
+
+\hypertarget{figures}{%
+\section{Figures}\label{figures}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{MScThesisText_files/figure-latex/v-plot-cog-1} \caption{Changes in cognitive test score for newly left-behind students and non-left-behind students}\label{fig:v-plot-cog}
+\end{figure}
+
+\newpage
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{MScThesisText_files/figure-latex/v-plot-ttl-1} \caption{Changes in academic exam score for newly left-behind students and non-left-behind students}\label{fig:v-plot-ttl}
+\end{figure}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{MScThesisText_files/figure-latex/v-plot-cog-1-1} \caption{Changes in cognitive test score by household migration arrangement}\label{fig:v-plot-cog-1}
+\end{figure}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{MScThesisText_files/figure-latex/v-plot-ttl-1-1} \caption{Changes in academic exam score by household migration arrangement}\label{fig:v-plot-ttl-1}
+\end{figure}
+
+\newpage
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{MScThesisText_files/figure-latex/cobal-any-1} \caption{Covariate balance before and after matching by any parent migration}\label{fig:cobal-any}
+\end{figure}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{MScThesisText_files/figure-latex/cobal-mo-1} \caption{Covariate balance before and after matching by mother-only migration}\label{fig:cobal-mo}
+\end{figure}
+
+\newpage
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{MScThesisText_files/figure-latex/cobal-fa-1} \caption{Covariate balance before and after matching by father-only migration}\label{fig:cobal-fa}
+\end{figure}
+
+\begin{figure}
+\includegraphics[height=0.4\textheight]{MScThesisText_files/figure-latex/cobal-both-1} \caption{Covariate balance before and after matching by both parents migration}\label{fig:cobal-both}
+\end{figure}
 
 
 \end{document}
