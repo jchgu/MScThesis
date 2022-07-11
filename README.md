@@ -48,7 +48,7 @@ It takes a few minutes to reproduce the analyses on a standard 2022 desktop mach
 
 # Instructions to Replicators
 
-Download the data files referenced above. Then store them in the folder `data/`, in the format that you download them in. Scripts are provided in the same folder. Run `data/Gu-thesis-script.Rmd` to execute all steps in sequence. 
+Download the data files referenced above. Then store them in the folder `data/`, in the format that you download them in. The script is provided in the same folder. Run `data/Gu-thesis-script.Rmd` to execute all steps in sequence. 
 
 The provided code reproduces 
 
