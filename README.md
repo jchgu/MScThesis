@@ -2,6 +2,8 @@
 
 Millions of children worldwide are "left behind" at home communities as their parents migrate away for work. Parents' labor migration increases household income but decreases parental care, thereby exerting mixed influences on child development outcomes like educational attainment. To what extent do different arrangements of parental migration affect children's educational performance in the short term?
 
+With this replication package, you can reproduce the results of my master's thesis using R. 
+
 # Data Availability and Provenance Statements
 
 My thesis uses the data from [China Education Panel Survey (CEPS)](http://ceps.ruc.edu.cn/English/Home.htm), including both wave 1 and wave 2. The data is subject to a redistribution restriction, but it is freely available from [Chinese National Survey Data Archive](http://www.cnsda.org/index.php) (registration required). The website is only in Chinese; You can use Google translate to navigate.
