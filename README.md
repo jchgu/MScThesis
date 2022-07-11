@@ -2,7 +2,7 @@
 
 Millions of children worldwide are "left behind" at home communities as their parents migrate away for work. Parents' labor migration increases household income but decreases parental care, thereby exerting mixed influences on child development outcomes like educational attainment. To what extent do different arrangements of parental migration affect children's educational performance in the short term?
 
-With this replication package, you can reproduce the results of my master's thesis using R. 
+You can reproduce the results of my master's thesis using R with this replication package. 
 
 # Data Availability and Provenance Statements
 
@@ -18,7 +18,6 @@ Below are the links to CEPS datasets and documentations:
 
 - [x] I certify that the author of the manuscript has legitimate access to and permission to use the data. 
 
-
 ## Summary of Availability
 
 - [x] All data are publicly available.
@@ -27,7 +26,7 @@ Below are the links to CEPS datasets and documentations:
 
 | Data files                                                   | Source | Notes               | Provided |
 | ------------------------------------------------------------ | ------ | ------------------- | -------- |
-| `cepsw1studentCN.dta`, `cepsw2studentCN.dta`, `cepsw1parentCN.dta`, `cepsw2parentCN.dta` | CEPS   | As per terms of use | No       |
+| `cepsw1studentEN.dta`, `cepsw2studentEN.dta`, `cepsw1parentEN.dta`, `cepsw2parentEN.dta` | CEPS   | As per terms of use | No       |
 
 # Computational requirements
 
