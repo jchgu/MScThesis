@@ -18,10 +18,10 @@ options(modelsummary_get="broom")
 
 ## Data cleaning
 ```{r Read data}
-d_stu1 <- read_dta('cepsw1studentCN.dta') #wave 1 student
-d_stu2 <- read_dta('cepsw2studentCN.dta') #wave 2 student
-d_par1 <- read_dta('cepsw1parentCN.dta') #wave 1 parent
-d_par2 <- read_dta('cepsw2parentCN.dta') #wave 2 parent
+d_stu1 <- read_dta('cepsw1studentEN.dta') #wave 1 student
+d_stu2 <- read_dta('cepsw2studentEN.dta') #wave 2 student
+d_par1 <- read_dta('cepsw1parentEN.dta') #wave 1 parent
+d_par2 <- read_dta('cepsw2parentEN.dta') #wave 2 parent
 ```
 
 ```{r}
