@@ -382,7 +382,7 @@ d_smr$`Parental Migration Type`[d_smr$migr_both==1] <- 'Both Parents'
 d_smr <- d_smr |> select(!migr_mo_only & !migr_fa_only & !migr_both)
 ```
 
-```{r}
+```{r Violin plot 1}
 set.seed(1)
 fig_cog <- d_smr |>
   ggplot(aes(x=`Parental Migration`, y=cog_dif, fill=`Parental Migration`)) + 
@@ -399,7 +399,7 @@ fig_cog <- d_smr |>
 fig_cog
 ```
 
-```{r}
+```{r Violin plot 2}
 set.seed(1)
 fig_ttl <-  d_smr |>
   ggplot(aes(x=`Parental Migration`, y=avg_dif, fill=`Parental Migration`)) + 
@@ -416,7 +416,7 @@ fig_ttl <-  d_smr |>
 fig_ttl
 ```
 
-```{r}
+```{r Violin plot 3}
 set.seed(1)
 fig_cog_by_migration_type <- d_smr |>
   ggplot(aes(x=`Parental Migration Type`, y=cog_dif, fill = `Parental Migration Type`)) + 
@@ -432,7 +432,7 @@ fig_cog_by_migration_type <- d_smr |>
 fig_cog_by_migration_type
 ```
 
-```{r}
+```{r Violin plot 4}
 set.seed(1)
 fig_ttl_by_migration_type <- d_smr |>
   ggplot(aes(x=`Parental Migration Type`, y=avg_dif, fill = `Parental Migration Type`)) + 
@@ -505,7 +505,7 @@ models_ttl <- list(
 'Both Parents' = did_ttl_both) 
 ```
 
-```{r}
+```{r Table for unadjusted regression on cognitive score}
 table_cog <- models_cog |> msummary(
   stars =  stars,
   fmt = 2,
@@ -516,7 +516,7 @@ table_cog <- models_cog |> msummary(
   output = 'latex')
 ```
 
-```{r}
+```{r Table for unadjusted regression on exam grade}
 table_ttl <- models_ttl |> msummary(
   stars =  stars,
   fmt = 2,
@@ -560,7 +560,7 @@ models_adj_ttl <- list(
 'Both Parents' = did_adj_ttl_both)
 ```
 
-```{r}
+```{r Table for adjusted regression on cognitive score}
 table_adj_cog <- models_adj_cog |> msummary(
   stars =  stars,
   fmt = 2,
@@ -571,7 +571,7 @@ table_adj_cog <- models_adj_cog |> msummary(
   )
 ```
 
-```{r}
+```{r Table for adjusted regression on exam grade}
 table_adj_ttl <- models_adj_ttl |> msummary(
   stars =  stars,
   fmt = 2,
@@ -686,28 +686,28 @@ m.out_both |> love.plot(
 
 ## Regression with matching
 
-```{r Unadjusted regression on cognitive score, with matching}
+```{r Unadjusted regression on cognitive score with matching}
 didm_cog <- feols(cog_dif ~ migr + w1cog_100 | schids, data = dm, weights = dm$weights)
 didm_cog_mo_only <- feols(cog_dif ~ migr_mo_only + w1cog_100 | schids, data = dm_mo_only, weights = dm_mo_only$weights)
 didm_cog_fa_only <- feols(cog_dif ~ migr_fa_only + w1cog_100 | schids, data = dm_fa_only, weights = dm_fa_only$weights)
 didm_cog_both <- feols(cog_dif ~ migr_both + w1cog_100 | schids, data = dm_both, weights = dm_both$weights)
 ```
 
-```{r Unadjusted regression on exam score, with matching}
+```{r Unadjusted regression on exam score with matching}
 didm_ttl <- feols(avg_dif ~ migr + w1avg_100 | schids, data = dm, weights = dm$weights)
 didm_ttl_mo_only <- feols(avg_dif ~ migr_mo_only + w1avg_100 | schids, data = dm_mo_only, weights = dm_mo_only$weights)
 didm_ttl_fa_only <- feols(avg_dif ~ migr_fa_only + w1avg_100 | schids, data = dm_fa_only, weights = dm_fa_only$weights)
 didm_ttl_both <- feols(avg_dif ~ migr_both + w1avg_100 | schids, data = dm_both, weights = dm_both$weights)
 ```
 
-```{r Adjusted regression on cognitive score, with matching}
+```{r Adjusted regression on cognitive score with matching}
 didm_adj_cog <- feols(cog_dif ~ migr + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm, weights = dm$weights)
 didm_adj_cog_mo_only <- feols(cog_dif ~ migr_mo_only + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm_mo_only, weights = dm_mo_only$weights)
 didm_adj_cog_fa_only <- feols(cog_dif ~ migr_fa_only + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm_fa_only, weights = dm_fa_only$weights)
 didm_adj_cog_both <- feols(cog_dif ~ migr_both + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm_both, weights = dm_both$weights)
 ```
 
-```{r Adjusted regression on exam score, with matching}
+```{r Adjusted regression on exam score with matching}
 didm_adj_ttl <- feols(avg_dif ~ migr + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm, weights = dm$weights)
 didm_adj_ttl_mo_only <- feols(avg_dif ~ migr_mo_only + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet  | schids, data = dm_mo_only, weights = dm_mo_only$weights)
 didm_adj_ttl_fa_only <- feols(avg_dif ~ migr_fa_only + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet  | schids, data = dm_fa_only, weights = dm_fa_only$weights)
@@ -752,7 +752,7 @@ models_m_adj_ttl <- list(
 'Both Parents' = didm_adj_ttl_both) 
 ```
 
-```{r}
+```{r Table for unadjusted regression on cognitive score with matching}
 table_m_cog <- models_m_cog |> msummary(
   stars =  stars,
   fmt = 2,
@@ -764,7 +764,7 @@ table_m_cog <- models_m_cog |> msummary(
   )
 ```
 
-```{r}
+```{r Table for unadjusted regression on exam grade with matching}
 table_m_ttl <- models_m_ttl |> msummary(
   stars =  stars,
   fmt = 2,
@@ -776,7 +776,7 @@ table_m_ttl <- models_m_ttl |> msummary(
 )
 ```
 
-```{r}
+```{r Table for adjusted regression on cognitive score with matching}
 table_m_adj_cog <- models_m_adj_cog |> msummary(
   stars =  stars,
   fmt = 2,
@@ -788,7 +788,7 @@ table_m_adj_cog <- models_m_adj_cog |> msummary(
   )
 ```
 
-```{r}
+```{r Table for adjusted regression on exam grade with matching}
 table_m_adj_ttl <- models_m_adj_ttl |> msummary(
   stars =  stars,
   fmt = 2,
@@ -799,3 +799,8 @@ table_m_adj_ttl <- models_m_adj_ttl |> msummary(
   output = 'latex'
  )
 ```
+
+```{r save image}
+save.image('.RData')
+```
+
