@@ -16,17 +16,17 @@ Below are the links to CEPS datasets and documentations:
 
 ## Statement about Rights
 
-- [x] I certify that the author of the manuscript has legitimate access to and permission to use the data. 
+- I certify that the author of the manuscript has legitimate access to and permission to use the data. 
 
 ## Summary of Availability
 
-- [x] All data are publicly available.
+- All data are publicly available.
 
 ## Dataset list
 
 | Data files                                                   | Source | Notes               | Provided |
 | ------------------------------------------------------------ | ------ | ------------------- | -------- |
-| `cepsw1studentEN.dta`, `cepsw2studentEN.dta`, `cepsw1parentEN.dta`, `cepsw2parentEN.dta` | CEPS   | As per terms of use | No       |
+| `cepsw1studentEN.dta`, `cepsw2studentEN.dta`, `cepsw1parentEN.dta`, `cepsw2parentEN.dta` | CEPS   | As per terms of use | Yes (through external site)  |
 
 # Computational requirements
 
