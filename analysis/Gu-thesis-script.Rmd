@@ -1,0 +1,806 @@
+---
+title: 'parental migration and adolescents educational performance'
+output: html_notebook
+---
+
+```{r Load packages}
+library(tidyverse) 
+library(haven)
+library(fixest)
+library(modelsummary)
+library(MatchIt)
+library(vtable)
+library(labelled)
+library(cobalt) 
+library(DescTools)
+options(modelsummary_get="broom") 
+```
+
+## Data cleaning
+```{r Read data}
+d_stu1 <- read_dta('cepsw1studentEN.dta') #wave 1 student
+d_stu2 <- read_dta('cepsw2studentEN.dta') #wave 2 student
+d_par1 <- read_dta('cepsw1parentEN.dta') #wave 1 parent
+d_par2 <- read_dta('cepsw2parentEN.dta') #wave 2 parent
+```
+
+```{r}
+d_stu1 <- d_stu1 |> 
+  subset(grade9==0) |> 
+  select(!c(frame, subsample, sweight, grade9))
+d_stu2 <- d_stu2 |> 
+  select(!c(w2frame, w2subsample, w2sweight, w1w2sweight))
+d_par1 <- d_par1 |> 
+  subset(grade9==0) |> 
+  select(!c(frame, subsample, grade9)) #Remove wave 1's observations of grade 9; they were not followed up in wave 2
+```
+
+```{r Merge data}
+d <- d_stu1 |> 
+  left_join(d_par1, by=c('ids', 'schids', 'clsids', 'ctyids', 'fall')) |>
+  left_join(d_stu2, by=c('ids', 'schids', 'clsids', 'ctyids')) |>
+  left_join(d_par2, by=c('ids', 'clsids', 'w2clsids', 'schids', 'ctyids', 'w2fall')) |> 
+  remove_labels() #Assemble a panel dataset in wide format
+```
+
+```{r Sample}
+d_cl <- d |> 
+  filter(w2a0801==1) |> #keep parents who are married (and alive)
+  filter(be1201==1 & be1202==1) |> #keep households with both parents staying at baseline
+  filter(stmigrant==1) #keep local children 
+```
+
+## Variables 
+```{r Exam grade conversion}
+d_cl <- d_cl |> mutate(
+  w1chn_100 = tr_chn/w2upchn*100, #raw exam scores at 100-point scale
+  w1mat_100 = tr_mat/w2upmat*100,
+  w1eng_100 = tr_eng/w2upeng*100,
+  w2chn_100 = w2chn/w2upchn*100,
+  w2mat_100 = w2mat/w2upmat*100,
+  w2eng_100 = w2eng/w2upeng*100
+)
+```
+
+```{r Outlier detection}
+outlier <- d_cl |> filter(
+  w1chn_100<0 | w1chn_100>100 | w1mat_100<0 | w1mat_100>100 | w1eng_100<0 | w1eng_100>100 |
+  w2chn_100<0 | w2chn_100>100 | w2mat_100<0 | w2mat_100>100 | w2eng_100<0 | w2eng_100>100)
+```
+
+```{r Trim outlying values}
+d_cl <- d_cl |> mutate(
+  w1chn_100_trim = Winsorize(w1chn_100, minval = 0, maxval = 100),
+  w2chn_100_trim = Winsorize(w2chn_100, minval = 0, maxval = 100),
+  w1mat_100_trim = Winsorize(w1mat_100, minval = 0, maxval = 100),
+  w2mat_100_trim = Winsorize(w2mat_100, minval = 0, maxval = 100),
+  w1eng_100_trim = Winsorize(w1eng_100, minval = 0, maxval = 100),
+  w2eng_100_trim = Winsorize(w2eng_100, minval = 0, maxval = 100)
+)
+```
+
+```{r Outcome variables}
+d_cl <- d_cl |> mutate(
+  w1ttl_100 = w1chn_100_trim + w1mat_100_trim + w1eng_100_trim,
+  w2ttl_100 = w2chn_100_trim + w2mat_100_trim + w2eng_100_trim,
+  w1avg_100 = w1ttl_100/3,
+  w2avg_100 = w2ttl_100/3,
+  w1cog_100 = stcog*100/20,
+  w2cog_100 = w2cogscore*100/35,
+  avg_dif = w2avg_100 - w1avg_100,
+  cog_dif = w2cog_100 - w1cog_100,
+  ) |>
+  drop_na(avg_dif, cog_dif)
+```
+
+```{r Control variables}
+d_cl <- d_cl |> mutate(
+         child.age = 2013 - a02a, 
+         child.is.girl = if_else(a01 == 2, 1, 0), 
+         child.has.rural.hukou = sthktype, 
+         child.in.boarding.school = stbrd, 
+         child.is.ethnic.minority = if_else(a03 != 1, 1, 0), 
+         child.health = a17, 
+         child.had.skipped.grade = if_else(c03 == 0, 0, 1), 
+         child.had.repeated.grade = if_else(c04 == 0, 0, 1), 
+         child.went.to.preschool = if_else(c01 == 1, 1, 0), 
+         child.number.of.sibling = if_else(stonly == 1, 0, stsib),
+         parent.has.white.collar.job = if_else(be08==1|be08==2|be08==3, 1, 0),
+         home.economic.resource = steco_5c, 
+         home.has.internet = if_else(b13 == 2, 1, 0), 
+         home.extracurricular.book = b12 
+) |> drop_na(
+child.age, child.is.girl, child.has.rural.hukou, child.health, child.in.boarding.school, child.is.ethnic.minority, child.health, child.had.skipped.grade, child.had.repeated.grade, child.went.to.preschool, child.number.of.sibling, 
+parent.has.white.collar.job, home.has.internet, home.extracurricular.book, home.economic.resource)
+```
+
+```{r Mother education}
+d_cl <- d_cl |> mutate(mother.education.level = NA)
+d_cl$mother.education.level[d_cl$stmedu == 1|d_cl$stmedu == 2] <- 0 
+d_cl$mother.education.level[d_cl$stmedu == 3] <- 1
+d_cl$mother.education.level[d_cl$stmedu == 4|d_cl$stmedu == 5|d_cl$stmedu == 6] <- 2
+d_cl$mother.education.level[d_cl$stmedu == 7] <- 3
+d_cl$mother.education.level[d_cl$stmedu == 8] <- 4
+d_cl$mother.education.level[d_cl$stmedu == 9] <- 5
+```
+
+```{r Father education}
+d_cl <- d_cl |> mutate(father.education.level = NA)
+d_cl$father.education.level[d_cl$stfedu == 1|d_cl$stfedu == 2] <- 0
+d_cl$father.education.level[d_cl$stfedu == 3] <- 1
+d_cl$father.education.level[d_cl$stfedu == 4|d_cl$stfedu == 5|d_cl$stfedu == 6] <- 2
+d_cl$father.education.level[d_cl$stfedu == 7] <- 3
+d_cl$father.education.level[d_cl$stfedu == 8] <- 4
+d_cl$father.education.level[d_cl$stfedu == 9] <- 5
+```
+
+```{r Parent expectation}
+d_cl <- d_cl |> mutate(parent.expectation = NA)
+d_cl$parent.expectation[d_cl$ba18 == 1|d_cl$ba18 == 2] <- 1
+d_cl$parent.expectation[d_cl$ba18 == 3|d_cl$ba18 == 4|d_cl$ba18 == 5] <- 2
+d_cl$parent.expectation[d_cl$ba18 == 6] <- 3
+d_cl$parent.expectation[d_cl$ba18 == 7] <- 4
+d_cl$parent.expectation[d_cl$ba18 == 8|d_cl$ba18 == 9] <- 5
+```
+
+```{r Child aspiration}
+d_cl <- d_cl |> mutate(child.education.aspiration = NA)
+d_cl$child.education.aspiration[d_cl$c22 == 1|d_cl$c22 == 2|d_cl$c22 == 10] <- 1
+d_cl$child.education.aspiration[d_cl$c22 == 3|d_cl$c22 == 4|d_cl$c22 == 5] <- 2
+d_cl$child.education.aspiration[d_cl$c22 == 6] <- 3
+d_cl$child.education.aspiration[d_cl$c22 == 7] <- 4
+d_cl$child.education.aspiration[d_cl$c22 == 8|d_cl$c22 == 9] <- 5
+```
+
+```{r}
+d_cl <- d_cl |>  drop_na(
+  mother.education.level, 
+  father.education.level,
+  parent.expectation, 
+  child.education.aspiration)
+```
+
+## Treatment groups
+At least one parent migrated (Control group as no parent migrated)
+```{r}
+d_cl <- d_cl |> mutate(
+  migr = if_else((w2ba0201==0 | w2ba0202==0), 1, 0), #Any parent became Migrated from household between baseline and endline survey
+  migr_fa_only = NA,
+  #migr_fa = NA,
+  migr_mo_only = NA,
+  #migr_mo = NA,
+  migr_both = NA
+  ) |> drop_na(migr)
+```
+
+Only mother migrated
+```{r Any parent migrated}
+d_cl <- d_cl |> mutate(
+  migr = if_else((w2ba0201==0 | w2ba0202==0), 1, 0), #Any parent became absent from household between baseline and endline survey
+  migr_fa_only = NA,
+  migr_mo_only = NA,
+  migr_both = NA
+  ) |> drop_na(migr)
+```
+
+```{r Only mother migrated}
+d_cl$migr_mo_only[d_cl$migr == 0] <- 0
+d_cl$migr_mo_only[d_cl$w2ba0201==1 & d_cl$w2ba0202==0] <- 1 
+```
+
+```{r Only father migrated}
+d_cl$migr_fa_only[d_cl$migr == 0] <- 0
+d_cl$migr_fa_only[d_cl$w2ba0201==0 & d_cl$w2ba0202==1] <- 1 
+```
+
+```{r Both parents migrated}
+d_cl$migr_both[d_cl$migr == 0] <- 0
+d_cl$migr_both[d_cl$w2ba0201==0 & d_cl$w2ba0202==0] <- 1
+```
+
+## Descriptive statistics
+```{r Cleaned data}
+df <- d_cl |>
+  select(
+  migr, migr_mo_only, migr_fa_only, migr_both, schids, ctyids,
+  w1cog_100, w2cog_100, w1avg_100, w2avg_100, cog_dif, avg_dif,
+  child.age, child.number.of.sibling, child.is.girl, child.has.rural.hukou, child.in.boarding.school, child.is.ethnic.minority, child.had.skipped.grade, child.had.repeated.grade, child.went.to.preschool, parent.has.white.collar.job, home.has.internet,
+  child.health, child.education.aspiration, 
+  mother.education.level, father.education.level, parent.expectation, 
+  home.extracurricular.book, home.economic.resource) 
+```
+
+```{r}
+d_migr <- df |>
+  mutate(`Parental Migration` = if_else((migr==1), 'Yes', 'No')) |>
+  select(!migr)
+```
+
+```{r Data for treatment variable summary}
+d_idpvar <- df |> 
+  select(migr:migr_both) |>
+  mutate(`Parental Migration` = if_else(migr==1, 'Yes', 'No')) |>
+  mutate(`Parental Migration Type` = NA) 
+d_idpvar$`Parental Migration Type`[d_idpvar$migr==0] <- 'Both Parents at Home'
+d_idpvar$`Parental Migration Type`[d_idpvar$migr_mo_only==1] <- 'Only Mother Migrated'
+d_idpvar$`Parental Migration Type`[d_idpvar$migr_fa_only==1] <- 'Only Father Migrated'
+d_idpvar$`Parental Migration Type`[d_idpvar$migr_both==1] <- 'Both Parents Migrated'
+d_idpvar <- d_idpvar |> select(!migr & !migr_mo_only & !migr_fa_only & !migr_both)
+```
+
+```{r Treatment variable summary}
+tab_idpvar <- st(
+  data = d_idpvar,
+  out = 'return'
+)
+tab_idpvar[tab_idpvar == 4062] <- ''
+tab_idpvar
+```
+
+```{r Data for outcome variable summary}
+d_dpvar <- d_migr |>
+  select(`Parental Migration`, cog_dif, w1cog_100, w2cog_100, avg_dif, w1avg_100, w2avg_100) |>
+  set_variable_labels(
+    w1cog_100 ='Wave 1 score',
+    w2cog_100 = 'Wave 2 score',
+    w1avg_100 ='Wave 1 score',
+    w2avg_100 = 'Wave 2 score',
+    cog_dif = 'Cognitive test score difference',
+    avg_dif = 'Academic exam score difference'
+  )
+```
+
+```{r Outcome variable summary}
+tab_dpvar <- 
+  st(
+  data = d_dpvar,
+  summ = c('mean(x)', 'sd(x)'),
+  digits = 2, 
+  group = 'Parental Migration',
+  group.test = list(
+    star.cutoffs = c(0.001, 0.01, 0.05),
+    format = 'p={pval}{stars}'),
+  labels = T,
+  out = 'return') 
+tab_dpvar <- tab_dpvar[-c(1),]
+tab_dpvar[tab_dpvar =='p=&lt0.001***']<-'p<0.001***'
+tab_dpvar 
+```
+
+```{r Data for binary control variable summary}
+d_ctvar_dit <- d_migr |>
+  select(`Parental Migration`,child.is.girl, child.has.rural.hukou, child.in.boarding.school, child.is.ethnic.minority, child.had.skipped.grade, child.had.repeated.grade, child.went.to.preschool, parent.has.white.collar.job, home.has.internet) |> 
+  mutate_all(as_factor)
+```
+
+```{r Binary control variable summary}
+tab_ctvar_dit <- 
+  st(
+  data = d_ctvar_dit,
+  digits = 2,
+  group = 'Parental Migration',
+  group.test = list(star.cutoffs = c(0.001, 0.01, 0.05)),
+  out = "return"
+  )
+tab_ctvar_dit <- tab_ctvar_dit[-c(1),]
+tab_ctvar_dit[tab_ctvar_dit == 3422|tab_ctvar_dit == 640] <- ''
+tab_ctvar_dit 
+```
+
+```{r Data for categorical control variable summary}
+d_ctvar_cnt <- d_migr |>
+  select(`Parental Migration`, child.age, child.number.of.sibling, child.health, child.education.aspiration, 
+  mother.education.level, father.education.level, parent.expectation, 
+  home.extracurricular.book, home.economic.resource)
+```
+
+```{r Categorical control variable summary}
+tab_ctvar_cnt <- d_ctvar_cnt |> st(
+  digits = 2, 
+  summ = c('mean(x)', 'sd(x)'),
+  group = 'Parental Migration',
+  group.test = list(star.cutoffs = c(0.001, 0.01, 0.05)),
+  out = "return")
+tab_ctvar_cnt <- tab_ctvar_cnt[-c(1),]
+tab_ctvar_cnt
+```
+
+```{r Data for categorical control variable measurement}
+d_ctvar_label <- d_ctvar_cnt|>
+  select(!(`Parental Migration`:child.number.of.sibling)) |> 
+  add_value_labels(
+    father.education.level = c(
+     '0 = Primary school and below' = 0,
+     '1 = Junior high school' = 1 ,
+     '2 = Senior high school' = 2,
+     '3 = Associate college' = 3,
+     '4 = University' = 4,
+     '5 = Postgraduate' = 5),
+    mother.education.level = c(
+     '0 = Primary school and below' = 0,
+     '1 = Junior high school' = 1 ,
+     '2 = Senior high school' = 2,
+     '3 = Associate college' = 3,
+     '4 = University' = 4,
+     '5 = Postgraduate' = 5),
+    child.education.aspiration = c(
+     '1 = Junior high school' = 1 ,
+     '2 = Senior high school' = 2,
+     '3 = Associate college' = 3,
+     '4 = University' = 4,
+     '5 = Postgraduate' = 5),
+    child.education.aspiration = c(
+     '1 = Junior high school' = 1 ,
+     '2 = Senior high school' = 2,
+     '3 = Associate college' = 3,
+     '4 = University' = 4,
+     '5 = Postgraduate' = 5), 
+    parent.expectation = c(
+     '1 = Junior high school' = 1 ,
+     '2 = Senior high school' = 2,
+     '3 = Associate college' = 3,
+     '4 = University' = 4,
+     '5 = Postgraduate' = 5),
+    home.economic.resource = c(
+      '1 = Very poor' = 1,
+      '2 = Somewhat poor' = 2,
+      '3 = Moderate' = 3,
+      '4 = Somewhat rich' = 4,
+      '5 = Very rich' = 5),
+    child.health = c(
+      '1 = Very poor' = 1,
+      '2 = Somewhat poor' = 2,
+      '3 = Moderate' = 3,
+      '4 = Good' = 4,
+      '5 = Very good' = 5),
+    home.extracurricular.book = c(
+      '1 = Very few' = 1,
+      '2 = Not many' = 2,
+      '3 = Some' = 3,
+      '4 = Quite a few' = 4,
+      '5 = A great number' = 5),
+    ) |>
+  as_factor()
+```
+
+```{r Measurement for categorical control variable}
+tab_var <- st(
+  data = d_ctvar_label,
+  out = 'return'
+)
+tab_var[tab_var == 4062] <- ''
+tab_var
+```
+
+```{r Data for violin plots}
+d_smr <- d_migr |> 
+  mutate(`Parental Migration Type` = 0) 
+d_smr$`Parental Migration Type`[d_smr$migr==0] <- 'Both Parents At Home'
+d_smr$`Parental Migration Type`[d_smr$migr_mo_only==1] <- 'Only Mother'
+d_smr$`Parental Migration Type`[d_smr$migr_fa_only==1] <- 'Only Father'
+d_smr$`Parental Migration Type`[d_smr$migr_both==1] <- 'Both Parents'
+d_smr <- d_smr |> select(!migr_mo_only & !migr_fa_only & !migr_both)
+```
+
+```{r Violin plot 1}
+set.seed(1)
+fig_cog <- d_smr |>
+  ggplot(aes(x=`Parental Migration`, y=cog_dif, fill=`Parental Migration`)) + 
+    geom_violin()+
+    xlab('Parental Migration') +
+    theme(legend.position="none") +
+    ylab('Cognitive Test Score Difference') +
+    stat_summary(
+      fun = "mean",
+      geom = "crossbar", 
+      size = 0.4,
+      width = 0.5) +
+  scale_fill_manual(values = alpha(c("green", "red"), .4))
+fig_cog
+```
+
+```{r Violin plot 2}
+set.seed(1)
+fig_ttl <-  d_smr |>
+  ggplot(aes(x=`Parental Migration`, y=avg_dif, fill=`Parental Migration`)) + 
+    geom_violin()+
+    xlab('Parental Migration') +
+    theme(legend.position="none") +
+    ylab('Academic Exam Score Difference') +
+    stat_summary(
+      fun = "mean",
+      geom = "crossbar", 
+      size = 0.4,
+      width = 0.5) +
+  scale_fill_manual(values = alpha(c("green", "red"), .4))
+fig_ttl
+```
+
+```{r Violin plot 3}
+set.seed(1)
+fig_cog_by_migration_type <- d_smr |>
+  ggplot(aes(x=`Parental Migration Type`, y=cog_dif, fill = `Parental Migration Type`)) + 
+    geom_violin()+
+    xlab('Parental Migration Type') +
+    theme(legend.position="none") +
+    ylab('Cognitive Test Score Difference') +
+    stat_summary(
+      fun = "mean",
+      geom = "crossbar", 
+      width = 0.5)+
+  scale_fill_manual(values = alpha(c("green", "tomato1", "tomato2", "tomato3"), .4))
+fig_cog_by_migration_type
+```
+
+```{r Violin plot 4}
+set.seed(1)
+fig_ttl_by_migration_type <- d_smr |>
+  ggplot(aes(x=`Parental Migration Type`, y=avg_dif, fill = `Parental Migration Type`)) + 
+    geom_violin()+
+    xlab('Parental Migration Type') +
+    theme(legend.position="none") +
+    ylab('Academic Exam Score Difference') +
+    stat_summary(
+      fun = "mean",
+      geom = "crossbar", 
+      width = 0.5) +
+  scale_fill_manual(values = alpha(c("green", "tomato1", "tomato2", "tomato3"), .4))
+fig_ttl_by_migration_type
+```
+
+# Econometric models
+## DID without covariates
+```{r Unadjusted regression on cognitive score}
+did_cog <- feols(cog_dif ~ migr + w1cog_100 | schids, data = df) 
+did_cog_m_only <- feols(cog_dif ~ migr_mo_only + w1cog_100 | schids, data = df) 
+did_cog_f_only <- feols(cog_dif ~ migr_fa_only + w1cog_100 | schids, data = df) 
+did_cog_both <- feols(cog_dif ~ migr_both + w1cog_100 | schids, data = df)
+```
+
+```{r Unadjusted regression on exam grade}
+did_ttl <- feols(avg_dif ~ migr + w1avg_100 | schids, data = df) 
+did_ttl_m_only <- feols(avg_dif ~ migr_mo_only + w1avg_100 | schids, data = df) 
+did_ttl_f_only <- feols(avg_dif ~ migr_fa_only + w1avg_100 | schids, data = df) 
+did_ttl_both <- feols(avg_dif ~ migr_both + w1avg_100 | schids, data = df)
+```
+
+```{r}
+models_cog <- list(
+'Any Parent' = did_cog,
+'Only Mother' = did_cog_m_only,
+'Only Father' = did_cog_f_only,
+'Both Parents' = did_cog_both) 
+```
+
+```{r}
+models_ttl <- list(
+'Any Parent' = did_ttl,
+'Only Mother' = did_ttl_m_only,
+'Only Father' = did_ttl_f_only,
+'Both Parents' = did_ttl_both) 
+```
+
+```{r Info for regression tables}
+stars <- c('†' = .1, '*' = .05, '**' = .01, '***' = .001)
+coef_rename <- c("migr" = "Migration", "migr_mo_only" = "Migration", "migr_mo" = "Migration", "migr_fa" = "Migration", "migr_fa_only" = "Migration", "migr_both" = "Migration", "w1cog_100" = "Baseline.score", "w1avg_100" = "Baseline.score")
+title_cog <- 'Parental migration’s effect on children’s cognitive test score'
+title_ttl <- 'Parental migration’s effect on children’s academic exam score'
+gof_omit <- 'R2 Within|R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors'
+note_unadj <- 'No control variables included in these models'
+```
+
+```{r}
+models_cog <- list(
+'Any Parent' = did_cog,
+'Only Mother' = did_cog_m_only,
+'Only Father' = did_cog_f_only,
+'Both Parents' = did_cog_both) 
+```
+
+```{r}
+models_ttl <- list(
+'Any Parent' = did_ttl,
+'Only Mother' = did_ttl_m_only,
+'Only Father' = did_ttl_f_only,
+'Both Parents' = did_ttl_both) 
+```
+
+```{r Table for unadjusted regression on cognitive score}
+table_cog <- models_cog |> msummary(
+  stars =  stars,
+  fmt = 2,
+  title = title_cog,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename,
+  notes = note_unadj,
+  output = 'latex')
+```
+
+```{r Table for unadjusted regression on exam grade}
+table_ttl <- models_ttl |> msummary(
+  stars =  stars,
+  fmt = 2,
+  title = title_ttl,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  notes = note_unadj,
+  output = 'latex')
+```
+
+## DID with covariates
+$$\Delta score_{i,s} = \alpha + \beta \cdot migr_{i,s} + \gamma \cdot FE_{s} + \lambda \cdot score_{i,s;base} + \theta \cdot X_{i,s} + \varepsilon_{i,s}$$
+
+```{r Adjusted regression on cognitive score}
+did_adj_cog <- feols(cog_dif ~ migr + w1cog_100  + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book  + home.has.internet | schids, data = df) 
+did_adj_cog_m_only <- feols(cog_dif ~ migr_mo_only + w1cog_100  + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book  + home.has.internet | schids, data = df) 
+did_adj_cog_f_only <- feols(cog_dif ~ migr_fa_only + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book  + home.has.internet | schids, data = df) 
+did_adj_cog_both <- feols(cog_dif ~ migr_both + w1cog_100  + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book  + home.has.internet | schids, data = df)
+```
+
+```{r Adjusted regression on exam grade}
+did_adj_ttl <- feols(avg_dif ~ migr + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = df) 
+did_adj_ttl_m_only <- feols(avg_dif ~ migr_mo_only + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = df) 
+did_adj_ttl_f_only <- feols(avg_dif ~ migr_fa_only + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = df) 
+did_adj_ttl_both <- feols(avg_dif ~ migr_both + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = df)
+```
+
+```{r}
+models_adj_cog <- list(
+'Any Parent' = did_adj_cog,
+'Only Mother' = did_adj_cog_m_only,
+'Only Father' = did_adj_cog_f_only,
+'Both Parents' = did_adj_cog_both) 
+```
+
+```{r}
+models_adj_ttl <- list(
+'Any Parent' = did_adj_ttl,
+'Only Mother' = did_adj_ttl_m_only,
+'Only Father' = did_adj_ttl_f_only,
+'Both Parents' = did_adj_ttl_both)
+```
+
+```{r Table for adjusted regression on cognitive score}
+table_adj_cog <- models_adj_cog |> msummary(
+  stars =  stars,
+  fmt = 2,
+  title = title_cog,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  output = 'latex'
+  )
+```
+
+```{r Table for adjusted regression on exam grade}
+table_adj_ttl <- models_adj_ttl |> msummary(
+  stars =  stars,
+  fmt = 2,
+  title = title_cog,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  output = 'latex'
+  )
+```
+
+
+## Matching
+```{r Match on any parent migration}
+m.out <- matchit(
+  migr ~ w1cog_100 + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.is.ethnic.minority + child.education.aspiration + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet, 
+  data = df, 
+  ratio = 3,
+  method = "optimal", 
+  distance = "glm",
+  exact = migr ~ ctyids
+  )
+```
+
+```{r}
+dm <- match.data(m.out)
+```
+
+```{r Match on mother-only migration}
+d_mo_only <- d_cl |> drop_na(migr_mo_only)
+m.out_mo_only <- 
+  matchit(migr_mo_only ~ w1cog_100 + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.is.ethnic.minority + child.education.aspiration + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet, 
+  data = d_mo_only, 
+  method = "optimal",
+  distance = "glm",
+  ratio = 3,
+  exact = migr_mo_only ~ ctyids
+  )
+```
+
+```{r}
+dm_mo_only <- match.data(m.out_mo_only)
+```
+
+```{r Match on father-only migration}
+d_fa_only <- d_cl |> drop_na(migr_fa_only)
+m.out_fa_only <- matchit(
+  migr_fa_only ~ w1cog_100 + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.is.ethnic.minority + child.education.aspiration + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet,
+  data = d_fa_only,
+  method = "optimal",
+  distance = "glm",
+  ratio = 3,
+  exact = migr_fa_only ~ ctyids
+  )
+```
+
+```{r}
+dm_fa_only <- match.data(m.out_fa_only)
+```
+
+```{r Match on both parents migration}
+d_both <- d_cl |> drop_na(migr_both) 
+m.out_both <- matchit(
+  migr_both ~ w1cog_100 + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.is.ethnic.minority + child.education.aspiration + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level +  home.economic.resource + home.extracurricular.book + home.has.internet, 
+  data = d_both, 
+  method = "optimal",
+  distance = "glm",
+  ratio = 3,
+  exact = migr_both ~ ctyids
+  )
+```
+
+```{r}
+dm_both <- match.data(m.out_both)
+```
+
+## Balance Assessment
+```{r ASMD plot any-parent}
+m.out |> love.plot(
+  threshold = c(m = .1),
+  binary = "std", 
+  limits = c(0, 0.55),
+  abs = T
+  )
+```
+
+```{r ASMD plot only-mother}
+m.out_mo_only |> love.plot(
+  threshold = c(m = .1),
+  binary = "std", 
+  limits = c(0, 0.55),
+  abs = T
+  )
+```
+
+```{r ASMD plot only-father}
+m.out_fa_only |> love.plot(
+  threshold = c(m = .1),
+  binary = "std", 
+  limits = c(0, 0.55),
+  abs = T
+  )
+```
+
+```{r ASMD plot both-parents}
+m.out_both |> love.plot(
+  threshold = c(m = .1),
+  binary = "std", 
+  limits = c(0, 0.55),
+  abs = T
+  )
+```
+
+## Regression with matching
+
+```{r Unadjusted regression on cognitive score with matching}
+didm_cog <- feols(cog_dif ~ migr + w1cog_100 | schids, data = dm, weights = dm$weights)
+didm_cog_mo_only <- feols(cog_dif ~ migr_mo_only + w1cog_100 | schids, data = dm_mo_only, weights = dm_mo_only$weights)
+didm_cog_fa_only <- feols(cog_dif ~ migr_fa_only + w1cog_100 | schids, data = dm_fa_only, weights = dm_fa_only$weights)
+didm_cog_both <- feols(cog_dif ~ migr_both + w1cog_100 | schids, data = dm_both, weights = dm_both$weights)
+```
+
+```{r Unadjusted regression on exam score with matching}
+didm_ttl <- feols(avg_dif ~ migr + w1avg_100 | schids, data = dm, weights = dm$weights)
+didm_ttl_mo_only <- feols(avg_dif ~ migr_mo_only + w1avg_100 | schids, data = dm_mo_only, weights = dm_mo_only$weights)
+didm_ttl_fa_only <- feols(avg_dif ~ migr_fa_only + w1avg_100 | schids, data = dm_fa_only, weights = dm_fa_only$weights)
+didm_ttl_both <- feols(avg_dif ~ migr_both + w1avg_100 | schids, data = dm_both, weights = dm_both$weights)
+```
+
+```{r Adjusted regression on cognitive score with matching}
+didm_adj_cog <- feols(cog_dif ~ migr + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm, weights = dm$weights)
+didm_adj_cog_mo_only <- feols(cog_dif ~ migr_mo_only + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm_mo_only, weights = dm_mo_only$weights)
+didm_adj_cog_fa_only <- feols(cog_dif ~ migr_fa_only + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm_fa_only, weights = dm_fa_only$weights)
+didm_adj_cog_both <- feols(cog_dif ~ migr_both + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm_both, weights = dm_both$weights)
+```
+
+```{r Adjusted regression on exam score with matching}
+didm_adj_ttl <- feols(avg_dif ~ migr + w1cog_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet | schids, data = dm, weights = dm$weights)
+didm_adj_ttl_mo_only <- feols(avg_dif ~ migr_mo_only + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet  | schids, data = dm_mo_only, weights = dm_mo_only$weights)
+didm_adj_ttl_fa_only <- feols(avg_dif ~ migr_fa_only + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet  | schids, data = dm_fa_only, weights = dm_fa_only$weights)
+didm_adj_ttl_both <- feols(avg_dif ~ migr_both + w1avg_100 + child.age + child.is.girl + child.health + child.has.rural.hukou + child.number.of.sibling + child.went.to.preschool + child.had.skipped.grade + child.had.repeated.grade + child.in.boarding.school + child.education.aspiration + child.is.ethnic.minority + parent.expectation + parent.has.white.collar.job + mother.education.level + father.education.level + home.economic.resource + home.extracurricular.book + home.has.internet  | schids, data = dm_both, weights = dm_both$weights)
+```
+
+```{r Info for regression table with matching}
+title_cog_matching <- 'Parental migration’s effect on children’s cognitive test scores, estimated with matching'
+title_ttl_matching <- 'Parental migration’s effect on children’s academic exam scores, estimated with matching'
+note_matching <- "3:1 optimal pair propensity score matching; exact matching by county"
+```
+
+```{r}
+models_m_cog <- list(
+'Any Parent' = didm_cog,
+'Only Mother' = didm_cog_mo_only,
+'Only Father' = didm_cog_fa_only,
+'Both Parents' = didm_cog_both) 
+```
+
+```{r}
+models_m_ttl <- list(
+'Any Parent' = didm_ttl,
+'Only Mother' = didm_ttl_mo_only,
+'Only Father' = didm_ttl_fa_only,
+'Both Parents' = didm_ttl_both) 
+```
+
+```{r}
+models_m_adj_cog <- list(
+'Any Parent' = didm_adj_cog,
+'Only Mother' = didm_adj_cog_mo_only,
+'Only Father' = didm_adj_cog_fa_only,
+'Both Parents' = didm_adj_cog_both) 
+```
+
+```{r}
+models_m_adj_ttl <- list(
+'Any Parent' = didm_adj_ttl,
+'Only Mother' = didm_adj_ttl_mo_only,
+'Only Father' = didm_adj_ttl_fa_only,
+'Both Parents' = didm_adj_ttl_both) 
+```
+
+```{r Table for unadjusted regression on cognitive score with matching}
+table_m_cog <- models_m_cog |> msummary(
+  stars =  stars,
+  fmt = 2,
+  title = title_cog_matching,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  notes = note_matching,
+  output = 'latex'
+  )
+```
+
+```{r Table for unadjusted regression on exam grade with matching}
+table_m_ttl <- models_m_ttl |> msummary(
+  stars =  stars,
+  fmt = 2,
+  title = title_ttl_matching,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  notes = note_matching,
+  output = 'latex'
+)
+```
+
+```{r Table for adjusted regression on cognitive score with matching}
+table_m_adj_cog <- models_m_adj_cog |> msummary(
+  stars =  stars,
+  fmt = 2,
+  title = title_cog_matching,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  notes = note_matching,
+  output = 'latex'
+  )
+```
+
+```{r Table for adjusted regression on exam grade with matching}
+table_m_adj_ttl <- models_m_adj_ttl |> msummary(
+  stars =  stars,
+  fmt = 2,
+  title = title_ttl_matching,
+  gof_omit = gof_omit,
+  coef_rename =  coef_rename, 
+  notes = note_matching,
+  output = 'latex'
+ )
+```
+
+```{r save image}
+save.image('.RData')
+```
+
