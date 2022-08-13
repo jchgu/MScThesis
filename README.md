@@ -32,15 +32,7 @@ Below are the links to CEPS datasets and documentations:
 
 I adopt `R` (version 4.2.0) for all the analyses. This involves the following packages:
 
-- `tidyverse` (version 1.3.1) and `DescTools` (version 0.99.45) for data cleaning
-
-- `fixest` (version 0.10.4) for econometric modeling
-
-- `MatchIt` (version 4.4.0) and `cobalt` (version 4.3.2) for matching
-
-- `modelsummary` (version 1.0.0), `vtable` (version 1.3.3), and `kableExtra` (version 1.3.4) for presenting the results
-
-- `papaja` (version 0.1.0) for typesetting.
+`tidyverse` (version 1.3.2) and `haven` (version 2.5.0) for data cleaning; `fixest` (version 0.10.4) for econometric modeling; `MatchIt` (version 4.4.0) and `cobalt` (version 4.3.2) for matching; `modelsummary` (version 1.0.2), `vtable` (version 1.3.4), and `kableExtra` (version 1.3.4) for presenting the results; and `papaja` (version 0.1.1) for typesetting.
 
 ## Memory and Runtime 
 
