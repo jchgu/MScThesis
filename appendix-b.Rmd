@@ -18,21 +18,21 @@
 
 (ref:cobalt-both) by both parents migration
 
-```{r v-plot-cog, fig.cap = paste("(ref:cog-dif)", "(ref:migr)"), out.height='40%'}
+```{r v-plot-cog, fig.cap = paste("(ref:cog-dif)", "(ref:migr)"), out.height='40%', warning=FALSE}
 fig_cog
 ```
 
 \newpage
 
-```{r v-plot-ttl, fig.cap = paste("(ref:ttl-dif)", "(ref:migr)"), out.height='40%'}
+```{r v-plot-ttl, fig.cap = paste("(ref:ttl-dif)", "(ref:migr)"), out.height='40%', warning=FALSE}
 fig_ttl
 ```
 
-```{r v-plot-cog-1, fig.cap = paste("(ref:cog-dif)", "(ref:migr-type)"), out.height='40%'}
+```{r v-plot-cog-1, fig.cap = paste("(ref:cog-dif)", "(ref:migr-type)"), out.height='40%', warning=FALSE}
 fig_cog_by_migration_type
 ```
 
-```{r v-plot-ttl-1, fig.cap = paste("(ref:ttl-dif)", "(ref:migr-type)"), out.height='40%'}
+```{r v-plot-ttl-1, fig.cap = paste("(ref:ttl-dif)", "(ref:migr-type)"), out.height='40%', warning=FALSE}
 fig_ttl_by_migration_type
 ```
 
