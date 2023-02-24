@@ -53,7 +53,7 @@ d_cl <- d |>
 ## Variables 
 ```{r Exam grade conversion}
 d_cl <- d_cl |> mutate(
-  w1chn_100 = tr_chn/w2upchn*100, #raw exam scores at 100-point scale
+  w1chn_100 = tr_chn/w2upchn*100, #raw exam score at 100-point scale
   w1mat_100 = tr_mat/w2upmat*100,
   w1eng_100 = tr_eng/w2upeng*100,
   w2chn_100 = w2chn/w2upchn*100,
@@ -575,7 +575,7 @@ table_adj_cog <- models_adj_cog |> msummary(
 table_adj_ttl <- models_adj_ttl |> msummary(
   stars =  stars,
   fmt = 2,
-  title = title_cog,
+  title = title_ttl,
   gof_omit = gof_omit,
   coef_rename =  coef_rename, 
   output = 'latex'
@@ -715,8 +715,8 @@ didm_adj_ttl_both <- feols(avg_dif ~ migr_both + w1avg_100 + child.age + child.i
 ```
 
 ```{r Info for regression table with matching}
-title_cog_matching <- 'Parental migration’s effect on children’s cognitive test scores, estimated with matching'
-title_ttl_matching <- 'Parental migration’s effect on children’s academic exam scores, estimated with matching'
+title_cog_matching <- 'Parental migration’s effect on children’s cognitive test score, estimated with matching'
+title_ttl_matching <- 'Parental migration’s effect on children’s academic exam score, estimated with matching'
 note_matching <- "3:1 optimal pair propensity score matching; exact matching by county"
 ```
 
