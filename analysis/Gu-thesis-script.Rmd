@@ -13,7 +13,6 @@ library(vtable)
 library(labelled)
 library(cobalt) 
 library(DescTools)
-options(modelsummary_get="broom") 
 ```
 
 ## Data cleaning
@@ -39,8 +38,7 @@ d_par1 <- d_par1 |>
 d <- d_stu1 |> 
   left_join(d_par1, by=c('ids', 'schids', 'clsids', 'ctyids', 'fall')) |>
   left_join(d_stu2, by=c('ids', 'schids', 'clsids', 'ctyids')) |>
-  left_join(d_par2, by=c('ids', 'clsids', 'w2clsids', 'schids', 'ctyids', 'w2fall')) |> 
-  remove_labels() #Assemble a panel dataset in wide format
+  left_join(d_par2, by=c('ids', 'clsids', 'w2clsids', 'schids', 'ctyids', 'w2fall')) 
 ```
 
 ```{r Sample}
@@ -100,7 +98,6 @@ d_cl <- d_cl |> mutate(
          child.has.rural.hukou = sthktype, 
          child.in.boarding.school = stbrd, 
          child.is.ethnic.minority = if_else(a03 != 1, 1, 0), 
-         child.health = a17, 
          child.had.skipped.grade = if_else(c03 == 0, 0, 1), 
          child.had.repeated.grade = if_else(c04 == 0, 0, 1), 
          child.went.to.preschool = if_else(c01 == 1, 1, 0), 
@@ -110,8 +107,9 @@ d_cl <- d_cl |> mutate(
          home.has.internet = if_else(b13 == 2, 1, 0), 
          home.extracurricular.book = b12 
 ) |> drop_na(
-child.age, child.is.girl, child.has.rural.hukou, child.health, child.in.boarding.school, child.is.ethnic.minority, child.health, child.had.skipped.grade, child.had.repeated.grade, child.went.to.preschool, child.number.of.sibling, 
-parent.has.white.collar.job, home.has.internet, home.extracurricular.book, home.economic.resource)
+child.age, child.is.girl, child.has.rural.hukou, child.in.boarding.school, child.is.ethnic.minority, child.had.skipped.grade, child.had.repeated.grade, child.went.to.preschool, child.number.of.sibling, 
+parent.has.white.collar.job, 
+home.has.internet, home.extracurricular.book, home.economic.resource)
 ```
 
 ```{r Mother education}
@@ -152,11 +150,40 @@ d_cl$child.education.aspiration[d_cl$c22 == 7] <- 4
 d_cl$child.education.aspiration[d_cl$c22 == 8|d_cl$c22 == 9] <- 5
 ```
 
+```{r Child health}
+d_cl <- d_cl |> remove_labels() |>
+  mutate(
+  child.health = 
+    if_else(
+      is.na(a17),
+        bd13,
+        a17
+    )
+  )
+```
+
+```{ Child short sighted}
+d_cl <- d_cl |> mutate(
+  a15 = if_else(a15 == 3, 0, 1),
+  bd14 = if_else(bd14 == 2, 0, 1)
+  )
+d_cl <- d_cl |> 
+  mutate(child.short.sighted = 
+           if_else(
+             is.na(a15),
+              bd14,
+              a15
+           ))
+
+```
+
 ```{r}
 d_cl <- d_cl |>  drop_na(
   mother.education.level, 
   father.education.level,
   parent.expectation, 
+  child.health,
+  #child.short.sighted,
   child.education.aspiration)
 ```
 
@@ -204,9 +231,9 @@ df <- d_cl |>
   select(
   migr, migr_mo_only, migr_fa_only, migr_both, schids, ctyids,
   w1cog_100, w2cog_100, w1avg_100, w2avg_100, cog_dif, avg_dif,
-  child.age, child.number.of.sibling, child.is.girl, child.has.rural.hukou, child.in.boarding.school, child.is.ethnic.minority, child.had.skipped.grade, child.had.repeated.grade, child.went.to.preschool, parent.has.white.collar.job, home.has.internet,
+  child.age, child.number.of.sibling, child.is.girl, child.has.rural.hukou, child.in.boarding.school, child.is.ethnic.minority, child.had.skipped.grade, child.had.repeated.grade, child.went.to.preschool, parent.has.white.collar.job, parent.expectation, home.has.internet,
   child.health, child.education.aspiration, 
-  mother.education.level, father.education.level, parent.expectation, 
+  mother.education.level, father.education.level, 
   home.extracurricular.book, home.economic.resource) 
 ```
 
@@ -233,7 +260,7 @@ tab_idpvar <- st(
   data = d_idpvar,
   out = 'return'
 )
-tab_idpvar[tab_idpvar == 4062] <- ''
+tab_idpvar[tab_idpvar == 4114] <- ''
 tab_idpvar
 ```
 
@@ -283,7 +310,7 @@ tab_ctvar_dit <-
   out = "return"
   )
 tab_ctvar_dit <- tab_ctvar_dit[-c(1),]
-tab_ctvar_dit[tab_ctvar_dit == 3422|tab_ctvar_dit == 640] <- ''
+tab_ctvar_dit[tab_ctvar_dit == 3465|tab_ctvar_dit == 649] <- ''
 tab_ctvar_dit 
 ```
 
@@ -368,7 +395,7 @@ tab_var <- st(
   data = d_ctvar_label,
   out = 'return'
 )
-tab_var[tab_var == 4062] <- ''
+tab_var[tab_var == 4114] <- ''
 tab_var
 ```
 
@@ -481,11 +508,11 @@ models_ttl <- list(
 ```
 
 ```{r Info for regression tables}
-stars <- c('†' = .1, '*' = .05, '**' = .01, '***' = .001)
+stars <- c('*' = .05, '**' = .01, '***' = .001)
 coef_rename <- c("migr" = "Migration", "migr_mo_only" = "Migration", "migr_mo" = "Migration", "migr_fa" = "Migration", "migr_fa_only" = "Migration", "migr_both" = "Migration", "w1cog_100" = "Baseline.score", "w1avg_100" = "Baseline.score")
 title_cog <- 'Parental migration’s effect on children’s cognitive test score'
 title_ttl <- 'Parental migration’s effect on children’s academic exam score'
-gof_omit <- 'R2 Within|R2 Pseudo|AIC|BIC|Log.Lik.|Std.Errors'
+gof_omit <- 'R2 Within|R2 Pseudo|RMSE|AIC|BIC|Log.Lik.|Std.Errors'
 note_unadj <- 'No control variables included in these models'
 ```
 
@@ -582,6 +609,12 @@ table_adj_ttl <- models_adj_ttl |> msummary(
   )
 ```
 
+```{}
+table_cog
+table_ttl
+table_adj_cog
+table_adj_ttl
+```
 
 ## Matching
 ```{r Match on any parent migration}
@@ -591,7 +624,7 @@ m.out <- matchit(
   ratio = 3,
   method = "optimal", 
   distance = "glm",
-  exact = migr ~ ctyids
+  exact= migr ~ ctyids
   )
 ```
 
@@ -607,7 +640,7 @@ m.out_mo_only <-
   method = "optimal",
   distance = "glm",
   ratio = 3,
-  exact = migr_mo_only ~ ctyids
+  exact= migr_mo_only ~ ctyids
   )
 ```
 
@@ -623,7 +656,7 @@ m.out_fa_only <- matchit(
   method = "optimal",
   distance = "glm",
   ratio = 3,
-  exact = migr_fa_only ~ ctyids
+  exact= migr_fa_only ~ ctyids
   )
 ```
 
@@ -639,12 +672,19 @@ m.out_both <- matchit(
   method = "optimal",
   distance = "glm",
   ratio = 3,
-  exact = migr_both ~ ctyids
+  exact= migr_both ~ ctyids
   )
 ```
 
 ```{r}
 dm_both <- match.data(m.out_both)
+```
+
+```{}
+summary(m.out)
+summary(m.out_mo_only)
+summary(m.out_fa_only)
+summary(m.out_both)
 ```
 
 ## Balance Assessment
@@ -803,4 +843,3 @@ table_m_adj_ttl <- models_m_adj_ttl |> msummary(
 ```{r save image}
 save.image('.RData')
 ```
-
