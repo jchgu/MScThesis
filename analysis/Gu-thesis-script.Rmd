@@ -624,7 +624,7 @@ m.out <- matchit(
   ratio = 3,
   method = "optimal", 
   distance = "glm",
-  exact= migr ~ ctyids
+  exact = migr ~ ctyids
   )
 ```
 
@@ -640,7 +640,7 @@ m.out_mo_only <-
   method = "optimal",
   distance = "glm",
   ratio = 3,
-  exact= migr_mo_only ~ ctyids
+  exact = migr_mo_only ~ ctyids
   )
 ```
 
@@ -656,7 +656,7 @@ m.out_fa_only <- matchit(
   method = "optimal",
   distance = "glm",
   ratio = 3,
-  exact= migr_fa_only ~ ctyids
+  exact = migr_fa_only ~ ctyids
   )
 ```
 
@@ -672,7 +672,7 @@ m.out_both <- matchit(
   method = "optimal",
   distance = "glm",
   ratio = 3,
-  exact= migr_both ~ ctyids
+  exact = migr_both ~ ctyids
   )
 ```
 
