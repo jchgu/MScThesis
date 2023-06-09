@@ -12,8 +12,11 @@ affiliation:
     institution   : "Faculty of Social Sciences, Vrije Universiteit Amsterdam"
 
 note: |
-  An earlier version of this article was submitted in partial fulfillment of the requirements for the degree -- Master of Science in Societal Resilience (Research)
-authornote: |
+  May 15, 2023
+
+authornote: | 
+  This paper's open science repository: https://github.com/jianchenggu/MScThesis
+  An earlier version of this article was submitted in partial fulfillment of the requirements for the degree -- Master of Science in Societal Resilience (Research).
 
 abstract: |
   Millions of children worldwide are "left behind" at home communities as their parents migrate away for work. 
@@ -168,7 +171,7 @@ Below is my first version of DID model: $$\Delta score_{i,j} = \alpha + \beta \c
 
 In addition, I present the second version of DID model: $$\Delta score_{i,j} = \alpha + \beta \cdot migr_{i} + \gamma \cdot score_{i;1} + \lambda \cdot S_{j} + \theta \cdot X_{i} + \varepsilon_{i,j}$$ where $X_{i}$ is the vector of covariates capturing the characteristics of children, their parents, and their households. This model includes covariate adjustment with an assumption: Covariates from the baseline survey may be associated with a coefficient that does not equal equal one.
 
-I adopted `R` (version 4.2.2) for all the analyses [@R-base]. This involved the following packages: `tidyverse` (version 2.0.0) and `haven` (version 2.5.2) for data cleaning [@R-tidyverse; @R-haven]; `fixest` (version 0.11.1) for econometric modeling [@R-fixest]; `MatchIt` (version 4.5.2) and `cobalt` (version 4.5.0) for matching [@ho2011; @R-MatchIt; @R-cobalt]; `modelsummary` (version 1.3.0), `vtable` (version 1.4.2), and `kableExtra` (version 1.3.4) for presenting the results [@R-modelsummary; @R-vtable; @R-kableExtra]; and `papaja` (version 0.1.1) for typesetting [@R-papaja].
+I adopted `R` (version 4.3.0) for all the analyses [@R-base]. This involved the following packages: `tidyverse` (version 2.0.0) and `haven` (version 2.5.2) for data cleaning [@R-tidyverse; @R-haven]; `fixest` (version 0.11.1) for econometric modeling [@R-fixest]; `MatchIt` (version 4.5.3) and `cobalt` (version 4.5.0) for matching [@ho2011; @R-MatchIt; @R-cobalt]; `modelsummary` (version 1.3.0), `vtable` (version 1.4.2), and `kableExtra` (version 1.3.4) for presenting the results [@R-modelsummary; @R-vtable; @R-kableExtra]; and `papaja` (version 0.1.1) for typesetting [@R-papaja].
 
 \newpage
 
@@ -299,7 +302,9 @@ Limitations also arise from unaccounted endogeneity and exogeneity. As @chen2009
 
 From my research, we can find new directions for scholarly inquiry. Researchers can explore interaction and moderation in the pathways of resource generation and family disruption. When the CEPS team releases the next round of data, researchers can capitalize a the three-wave panel dataset to build multi-period DID models. This would help examine the parallel trend assumption. Novel methods also offer new possibilities. Machine learning, for example, can estimate the heterogeneous effects across subgroups [@liu2021]. Looking beyond outbound migration, the return migration of parents also worth studying [@liang2021]. Not many publications have explored return migrants and their formerly left-behind children in China [see @démurger2015; @liu2018].
 
-My research adds to the burgeoning evidence in favor of policy change on the hukou system. China's multilevel citizenship scheme powered by hukou shall not remain as it is, despite the small reduction of newly left-behind children's schooling performance. The slight drop is only the short-term consequence; The lifelong cumulative effect on children may be extensive [@liang2020; @meng2017]. Besides, educational attainment is only part of human development outcomes. Other outcomes like mental health and non-cognitive skills are also subjected to parental absence's influence [@antia2020; @pang2022]. Policymakers should accelerate the reforms on hukou, opening more doors for parents to migrate together with their children. In January 2023, local government officials lifted hukou restrictions in Zhengzhou, a city that hosts twelve million residents and the world's largest iPhone manufacturing plant [@jiemiannews2023; @deng2023]. This metropolis in central China set the precedant for offering hukou to all arriving migrants. Other main cities should follow suit. Besides top-down policymaking, bottom-up approaches are also necessary. School administrators could dedicate more advisory and counseling programs. Social workers could provide paraprofessional training in communities [@wang2020a].
+My research adds to the burgeoning evidence in favor of policy change on the hukou system. China's multilevel citizenship scheme powered by hukou shall not remain as it is, despite the small reduction of newly left-behind children's schooling performance. The slight drop is only the short-term consequence; The lifelong cumulative effect on children may be extensive [@liang2020; @meng2017]. Besides, educational attainment is only part of human development outcomes. Other outcomes like mental health and non-cognitive skills are also subjected to parental absence's influence [@antia2020; @pang2022].
+
+Policymakers should accelerate the reforms on hukou, opening more doors for parents to migrate together with their children. In January 2023, local government officials lifted hukou restrictions in Zhengzhou, a city that hosts twelve million residents and the world's largest iPhone manufacturing plant [@jiemiannews2023; @deng2023]. This metropolis in central China set the precedant for offering hukou to all arriving migrants; Other main cities should follow suit. Besides top-down policymaking, bottom-up approaches are also necessary. School administrators could dedicate more advisory and counseling programs. Social workers could provide paraprofessional training in communities [@wang2020a].
 
 \newpage
 

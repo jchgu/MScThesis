@@ -206,11 +206,18 @@
 
 \shorttitle{Left-Behind Children}
 
+\authornote{
+
+This paper's open science repository: \url{https://github.com/jianchenggu/MScThesis}
+An earlier version of this article was submitted in partial fulfillment of the requirements for the degree -- Master of Science in Societal Resilience (Research).
+
+}
+
 \affiliation{\vspace{0.5cm}\textsuperscript{1} Faculty of Social Sciences, Vrije Universiteit Amsterdam}
 
 \note{
 
-An earlier version of this article was submitted in partial fulfillment of the requirements for the degree -- Master of Science in Societal Resilience (Research)
+May 15, 2023
 
 }
 
@@ -321,7 +328,7 @@ Below is my first version of DID model: \[\Delta score_{i,j} = \alpha + \beta \c
 
 In addition, I present the second version of DID model: \[\Delta score_{i,j} = \alpha + \beta \cdot migr_{i} + \gamma \cdot score_{i;1} + \lambda \cdot S_{j} + \theta \cdot X_{i} + \varepsilon_{i,j}\] where \(X_{i}\) is the vector of covariates capturing the characteristics of children, their parents, and their households. This model includes covariate adjustment with an assumption: Covariates from the baseline survey may be associated with a coefficient that does not equal equal one.
 
-I adopted \texttt{R} (version 4.2.2) for all the analyses (R Core Team, 2022). This involved the following packages: \texttt{tidyverse} (version 2.0.0) and \texttt{haven} (version 2.5.2) for data cleaning (Wickham et al., 2019, 2023); \texttt{fixest} (version 0.11.1) for econometric modeling (Berge et al., 2023); \texttt{MatchIt} (version 4.5.2) and \texttt{cobalt} (version 4.5.0) for matching (Greifer, 2023; Ho et al., 2023, 2011); \texttt{modelsummary} (version 1.3.0), \texttt{vtable} (version 1.4.2), and \texttt{kableExtra} (version 1.3.4) for presenting the results (Arel-Bundock, 2022; Huntington-Klein, 2023; Zhu, 2021); and \texttt{papaja} (version 0.1.1) for typesetting (Aust \& Barth, 2022).
+I adopted \texttt{R} (version 4.3.0) for all the analyses (R Core Team, 2022). This involved the following packages: \texttt{tidyverse} (version 2.0.0) and \texttt{haven} (version 2.5.2) for data cleaning (Wickham et al., 2019, 2023); \texttt{fixest} (version 0.11.1) for econometric modeling (Berge et al., 2023); \texttt{MatchIt} (version 4.5.3) and \texttt{cobalt} (version 4.5.0) for matching (Greifer, 2023; Ho et al., 2023, 2011); \texttt{modelsummary} (version 1.3.0), \texttt{vtable} (version 1.4.2), and \texttt{kableExtra} (version 1.3.4) for presenting the results (Arel-Bundock, 2022; Huntington-Klein, 2023; Zhu, 2021); and \texttt{papaja} (version 0.1.1) for typesetting (Aust \& Barth, 2022).
 
 \newpage
 
@@ -614,14 +621,14 @@ The results from models with matching strongly resemble the models without match
 \toprule
   & Any Parent & Only Mother & Only Father & Both Parents\\
 \midrule
-Migration & \num{-2.53}** & \num{-2.82}* & \num{-2.78}* & \num{-1.72}\\
- & (\num{0.75}) & (\num{1.18}) & (\num{1.16}) & (\num{1.56})\\
-Baseline.score & \num{-0.72}*** & \num{-0.72}*** & \num{-0.65}*** & \num{-0.74}***\\
- & (\num{0.03}) & (\num{0.03}) & (\num{0.04}) & (\num{0.05})\\
+Migration & \num{-2.54}*** & \num{-2.55}* & \num{-2.65}* & \num{-0.34}\\
+ & (\num{0.75}) & (\num{1.14}) & (\num{1.10}) & (\num{1.54})\\
+Baseline.score & \num{-0.70}*** & \num{-0.70}*** & \num{-0.65}*** & \num{-0.71}***\\
+ & (\num{0.03}) & (\num{0.04}) & (\num{0.04}) & (\num{0.05})\\
 \midrule
 Num.Obs. & \num{2540} & \num{1044} & \num{1024} & \num{523}\\
-R2 & \num{0.402} & \num{0.454} & \num{0.405} & \num{0.493}\\
-R2 Adj. & \num{0.375} & \num{0.391} & \num{0.338} & \num{0.382}\\
+R2 & \num{0.396} & \num{0.445} & \num{0.410} & \num{0.486}\\
+R2 Adj. & \num{0.368} & \num{0.380} & \num{0.343} & \num{0.372}\\
 FE: schids & X & X & X & X\\
 \bottomrule
 \multicolumn{5}{l}{\rule{0pt}{1em}* p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
@@ -639,14 +646,14 @@ FE: schids & X & X & X & X\\
 \toprule
   & Any Parent & Only Mother & Only Father & Both Parents\\
 \midrule
-Migration & \num{-1.17}* & \num{-1.61}* & \num{-1.48} & \num{0.05}\\
- & (\num{0.57}) & (\num{0.76}) & (\num{0.89}) & (\num{0.93})\\
-Baseline.score & \num{0.05} & \num{0.10}** & \num{0.06} & \num{0.02}\\
- & (\num{0.03}) & (\num{0.03}) & (\num{0.04}) & (\num{0.04})\\
+Migration & \num{-1.15}* & \num{-1.72}* & \num{-1.53} & \num{0.50}\\
+ & (\num{0.56}) & (\num{0.75}) & (\num{0.81}) & (\num{0.84})\\
+Baseline.score & \num{0.05} & \num{0.08}* & \num{0.04} & \num{0.03}\\
+ & (\num{0.03}) & (\num{0.04}) & (\num{0.04}) & (\num{0.04})\\
 \midrule
 Num.Obs. & \num{2540} & \num{1044} & \num{1024} & \num{523}\\
-R2 & \num{0.462} & \num{0.590} & \num{0.453} & \num{0.513}\\
-R2 Adj. & \num{0.437} & \num{0.542} & \num{0.391} & \num{0.406}\\
+R2 & \num{0.456} & \num{0.574} & \num{0.436} & \num{0.522}\\
+R2 Adj. & \num{0.431} & \num{0.524} & \num{0.373} & \num{0.415}\\
 FE: schids & X & X & X & X\\
 \bottomrule
 \multicolumn{5}{l}{\rule{0pt}{1em}* p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
@@ -675,7 +682,9 @@ Limitations also arise from unaccounted endogeneity and exogeneity. As Chen et a
 
 From my research, we can find new directions for scholarly inquiry. Researchers can explore interaction and moderation in the pathways of resource generation and family disruption. When the CEPS team releases the next round of data, researchers can capitalize a the three-wave panel dataset to build multi-period DID models. This would help examine the parallel trend assumption. Novel methods also offer new possibilities. Machine learning, for example, can estimate the heterogeneous effects across subgroups (R. Liu, 2021). Looking beyond outbound migration, the return migration of parents also worth studying (Liang \& Li, 2021). Not many publications have explored return migrants and their formerly left-behind children in China (see Démurger \& Xu, 2015; Z. Liu et al., 2018).
 
-My research adds to the burgeoning evidence in favor of policy change on the hukou system. China's multilevel citizenship scheme powered by hukou shall not remain as it is, despite the small reduction of newly left-behind children's schooling performance. The slight drop is only the short-term consequence; The lifelong cumulative effect on children may be extensive (Liang \& Sun, 2020; Meng \& Yamauchi, 2017). Besides, educational attainment is only part of human development outcomes. Other outcomes like mental health and non-cognitive skills are also subjected to parental absence's influence (Antia et al., 2020; Pang \& Lu, 2022). Policymakers should accelerate the reforms on hukou, opening more doors for parents to migrate together with their children. In January 2023, local government officials lifted hukou restrictions in Zhengzhou, a city that hosts twelve million residents and the world's largest iPhone manufacturing plant (Deng, 2023; Jiemian News, 2023). This metropolis in central China set the precedant for offering hukou to all arriving migrants. Other main cities should follow suit. Besides top-down policymaking, bottom-up approaches are also necessary. School administrators could dedicate more advisory and counseling programs. Social workers could provide paraprofessional training in communities (M. Wang et al., 2020).
+My research adds to the burgeoning evidence in favor of policy change on the hukou system. China's multilevel citizenship scheme powered by hukou shall not remain as it is, despite the small reduction of newly left-behind children's schooling performance. The slight drop is only the short-term consequence; The lifelong cumulative effect on children may be extensive (Liang \& Sun, 2020; Meng \& Yamauchi, 2017). Besides, educational attainment is only part of human development outcomes. Other outcomes like mental health and non-cognitive skills are also subjected to parental absence's influence (Antia et al., 2020; Pang \& Lu, 2022).
+
+Policymakers should accelerate the reforms on hukou, opening more doors for parents to migrate together with their children. In January 2023, local government officials lifted hukou restrictions in Zhengzhou, a city that hosts twelve million residents and the world's largest iPhone manufacturing plant (Deng, 2023; Jiemian News, 2023). This metropolis in central China set the precedant for offering hukou to all arriving migrants; Other main cities should follow suit. Besides top-down policymaking, bottom-up approaches are also necessary. School administrators could dedicate more advisory and counseling programs. Social workers could provide paraprofessional training in communities (M. Wang et al., 2020).
 
 \newpage
 
@@ -1098,50 +1107,50 @@ FE: schids & X & X & X & X\\
 \toprule
   & Any Parent & Only Mother & Only Father & Both Parents\\
 \midrule
-Migration & \num{-2.43}** & \num{-3.18}** & \num{-3.18}* & \num{-1.80}\\
- & (\num{0.73}) & (\num{1.12}) & (\num{1.21}) & (\num{1.59})\\
-Baseline.score & \num{-0.79}*** & \num{-0.80}*** & \num{-0.75}*** & \num{-0.83}***\\
+Migration & \num{-2.51}*** & \num{-2.44}* & \num{-3.02}* & \num{-0.32}\\
+ & (\num{0.72}) & (\num{1.10}) & (\num{1.18}) & (\num{1.63})\\
+Baseline.score & \num{-0.78}*** & \num{-0.77}*** & \num{-0.74}*** & \num{-0.79}***\\
  & (\num{0.03}) & (\num{0.04}) & (\num{0.04}) & (\num{0.05})\\
-child.age & \num{-2.74}*** & \num{-2.07}* & \num{-3.25}** & \num{-3.93}***\\
- & (\num{0.59}) & (\num{0.92}) & (\num{0.99}) & (\num{1.08})\\
-child.is.girl & \num{-1.12} & \num{0.56} & \num{-1.35} & \num{-2.19}\\
- & (\num{0.72}) & (\num{1.18}) & (\num{1.23}) & (\num{1.48})\\
-child.health & \num{-0.20} & \num{0.56} & \num{-1.40}* & \num{-0.49}\\
- & (\num{0.41}) & (\num{0.58}) & (\num{0.65}) & (\num{0.90})\\
-child.has.rural.hukou & \num{-0.42} & \num{-0.08} & \num{-1.49} & \num{-3.06}\\
- & (\num{0.87}) & (\num{1.28}) & (\num{1.32}) & (\num{2.18})\\
-child.number.of.sibling & \num{-0.75} & \num{-1.15} & \num{-0.32} & \num{-0.08}\\
- & (\num{0.54}) & (\num{0.82}) & (\num{0.72}) & (\num{1.46})\\
-child.went.to.preschool & \num{2.22}* & \num{1.49} & \num{2.93}* & \num{6.00}**\\
- & (\num{0.90}) & (\num{1.57}) & (\num{1.32}) & (\num{1.82})\\
-child.had.skipped.grade & \num{-2.14} & \num{-0.51} & \num{-5.84} & \num{1.59}\\
- & (\num{2.92}) & (\num{3.94}) & (\num{4.78}) & (\num{5.92})\\
-child.had.repeated.grade & \num{-1.04} & \num{-6.67}* & \num{-2.16} & \num{-0.45}\\
- & (\num{0.98}) & (\num{3.09}) & (\num{1.67}) & (\num{2.06})\\
-child.in.boarding.school & \num{1.92} & \num{2.78} & \num{2.32} & \num{0.67}\\
- & (\num{1.35}) & (\num{2.58}) & (\num{2.06}) & (\num{2.31})\\
-child.education.aspiration & \num{1.93}*** & \num{1.03} & \num{1.69}*** & \num{2.20}**\\
- & (\num{0.39}) & (\num{0.58}) & (\num{0.42}) & (\num{0.80})\\
-child.is.ethnic.minority & \num{3.65}** & \num{-0.21} & \num{-0.82} & \num{2.90}\\
- & (\num{1.21}) & (\num{1.77}) & (\num{4.00}) & (\num{4.18})\\
-parent.expectation & \num{2.11}*** & \num{3.46}*** & \num{2.56}*** & \num{1.92}*\\
- & (\num{0.46}) & (\num{0.89}) & (\num{0.59}) & (\num{0.91})\\
-parent.has.white.collar.job & \num{1.49} & \num{1.69} & \num{1.25} & \num{0.98}\\
- & (\num{0.93}) & (\num{1.24}) & (\num{1.55}) & (\num{2.91})\\
-mother.education.level & \num{0.03} & \num{-0.16} & \num{-0.08} & \num{0.29}\\
- & (\num{0.39}) & (\num{0.64}) & (\num{0.79}) & (\num{1.09})\\
-father.education.level & \num{0.41} & \num{0.48} & \num{0.21} & \num{-1.12}\\
- & (\num{0.42}) & (\num{0.47}) & (\num{0.76}) & (\num{0.92})\\
-home.economic.resource & \num{-0.88} & \num{-3.04}** & \num{-0.03} & \num{0.63}\\
- & (\num{0.73}) & (\num{1.13}) & (\num{1.20}) & (\num{1.44})\\
-home.extracurricular.book & \num{-0.12} & \num{0.16} & \num{0.53} & \num{0.62}\\
- & (\num{0.38}) & (\num{0.55}) & (\num{0.51}) & (\num{0.69})\\
-home.has.internet & \num{-0.96} & \num{-0.30} & \num{-1.34} & \num{-2.55}\\
- & (\num{0.70}) & (\num{1.91}) & (\num{1.31}) & (\num{2.37})\\
+child.age & \num{-2.77}*** & \num{-1.37} & \num{-3.19}** & \num{-3.23}*\\
+ & (\num{0.58}) & (\num{1.02}) & (\num{0.96}) & (\num{1.30})\\
+child.is.girl & \num{-1.73}* & \num{0.40} & \num{-1.44} & \num{-1.21}\\
+ & (\num{0.67}) & (\num{1.16}) & (\num{1.22}) & (\num{1.67})\\
+child.health & \num{-0.26} & \num{0.90} & \num{-1.22} & \num{-0.93}\\
+ & (\num{0.41}) & (\num{0.66}) & (\num{0.62}) & (\num{0.96})\\
+child.has.rural.hukou & \num{-0.33} & \num{-0.61} & \num{-1.68} & \num{-2.70}\\
+ & (\num{0.84}) & (\num{1.22}) & (\num{1.24}) & (\num{2.16})\\
+child.number.of.sibling & \num{-0.76} & \num{-1.32} & \num{-0.52} & \num{0.41}\\
+ & (\num{0.55}) & (\num{0.83}) & (\num{0.75}) & (\num{1.31})\\
+child.went.to.preschool & \num{1.97}* & \num{1.33} & \num{2.76}* & \num{6.17}***\\
+ & (\num{0.88}) & (\num{1.43}) & (\num{1.30}) & (\num{1.74})\\
+child.had.skipped.grade & \num{-1.81} & \num{-1.39} & \num{-7.72}* & \num{2.21}\\
+ & (\num{2.98}) & (\num{4.34}) & (\num{3.86}) & (\num{4.77})\\
+child.had.repeated.grade & \num{-1.02} & \num{-5.79}* & \num{-2.10} & \num{-1.29}\\
+ & (\num{1.02}) & (\num{2.69}) & (\num{1.78}) & (\num{2.08})\\
+child.in.boarding.school & \num{1.60} & \num{1.74} & \num{1.70} & \num{-0.47}\\
+ & (\num{1.30}) & (\num{1.85}) & (\num{2.08}) & (\num{2.50})\\
+child.education.aspiration & \num{1.97}*** & \num{0.84} & \num{1.48}*** & \num{2.08}*\\
+ & (\num{0.38}) & (\num{0.61}) & (\num{0.41}) & (\num{0.88})\\
+child.is.ethnic.minority & \num{3.12}* & \num{-2.31} & \num{0.02} & \num{3.82}\\
+ & (\num{1.34}) & (\num{2.56}) & (\num{4.54}) & (\num{4.98})\\
+parent.expectation & \num{2.19}*** & \num{3.56}*** & \num{2.36}*** & \num{2.11}*\\
+ & (\num{0.46}) & (\num{0.77}) & (\num{0.54}) & (\num{0.96})\\
+parent.has.white.collar.job & \num{0.84} & \num{0.14} & \num{0.13} & \num{0.94}\\
+ & (\num{0.95}) & (\num{1.28}) & (\num{1.41}) & (\num{2.98})\\
+mother.education.level & \num{0.26} & \num{-0.02} & \num{0.31} & \num{0.43}\\
+ & (\num{0.38}) & (\num{0.70}) & (\num{0.81}) & (\num{1.03})\\
+father.education.level & \num{0.66} & \num{0.78} & \num{0.41} & \num{-0.29}\\
+ & (\num{0.40}) & (\num{0.49}) & (\num{0.74}) & (\num{1.05})\\
+home.economic.resource & \num{-0.61} & \num{-2.22} & \num{0.00} & \num{0.72}\\
+ & (\num{0.70}) & (\num{1.31}) & (\num{1.11}) & (\num{1.55})\\
+home.extracurricular.book & \num{-0.15} & \num{0.43} & \num{0.58} & \num{1.31}\\
+ & (\num{0.38}) & (\num{0.57}) & (\num{0.50}) & (\num{0.74})\\
+home.has.internet & \num{-1.34} & \num{0.14} & \num{-1.52} & \num{-3.90}*\\
+ & (\num{0.72}) & (\num{1.87}) & (\num{1.20}) & (\num{1.94})\\
 \midrule
 Num.Obs. & \num{2540} & \num{1044} & \num{1024} & \num{523}\\
-R2 & \num{0.448} & \num{0.502} & \num{0.473} & \num{0.566}\\
-R2 Adj. & \num{0.418} & \num{0.434} & \num{0.402} & \num{0.448}\\
+R2 & \num{0.445} & \num{0.490} & \num{0.469} & \num{0.554}\\
+R2 Adj. & \num{0.415} & \num{0.419} & \num{0.397} & \num{0.431}\\
 FE: schids & X & X & X & X\\
 \bottomrule
 \multicolumn{5}{l}{\rule{0pt}{1em}* p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\
@@ -1157,50 +1166,50 @@ FE: schids & X & X & X & X\\
 \toprule
   & Any Parent & Only Mother & Only Father & Both Parents\\
 \midrule
-Migration & \num{-1.18}* & \num{-2.02}** & \num{-1.61} & \num{-0.35}\\
- & (\num{0.55}) & (\num{0.76}) & (\num{0.88}) & (\num{1.02})\\
-Baseline.score & \num{0.06}* & \num{0.04} & \num{-0.02} & \num{-0.03}\\
- & (\num{0.03}) & (\num{0.04}) & (\num{0.04}) & (\num{0.05})\\
-child.age & \num{-0.20} & \num{-0.33} & \num{-0.44} & \num{-0.60}\\
- & (\num{0.29}) & (\num{0.45}) & (\num{0.47}) & (\num{0.54})\\
-child.is.girl & \num{1.83}*** & \num{1.90}*** & \num{1.99}** & \num{1.14}\\
- & (\num{0.47}) & (\num{0.52}) & (\num{0.63}) & (\num{1.21})\\
-child.health & \num{0.68}** & \num{1.18}*** & \num{0.55} & \num{0.89}\\
- & (\num{0.21}) & (\num{0.33}) & (\num{0.31}) & (\num{0.52})\\
-child.has.rural.hukou & \num{0.08} & \num{0.75} & \num{-0.10} & \num{0.95}\\
- & (\num{0.50}) & (\num{0.75}) & (\num{0.71}) & (\num{1.09})\\
-child.number.of.sibling & \num{0.17} & \num{-0.09} & \num{0.26} & \num{0.59}\\
- & (\num{0.26}) & (\num{0.32}) & (\num{0.43}) & (\num{0.65})\\
-child.went.to.preschool & \num{1.11} & \num{1.78}* & \num{0.05} & \num{2.59}*\\
- & (\num{0.67}) & (\num{0.84}) & (\num{0.86}) & (\num{1.21})\\
-child.had.skipped.grade & \num{0.23} & \num{-2.73} & \num{0.15} & \num{7.91}\\
- & (\num{2.71}) & (\num{2.36}) & (\num{2.91}) & (\num{4.33})\\
-child.had.repeated.grade & \num{-0.62} & \num{-2.74} & \num{-1.49} & \num{0.75}\\
- & (\num{0.81}) & (\num{1.54}) & (\num{1.07}) & (\num{1.11})\\
-child.in.boarding.school & \num{0.02} & \num{1.63} & \num{0.05} & \num{-0.98}\\
- & (\num{0.70}) & (\num{1.01}) & (\num{0.90}) & (\num{1.58})\\
-child.education.aspiration & \num{0.49}* & \num{0.85}** & \num{0.91}** & \num{-0.13}\\
- & (\num{0.23}) & (\num{0.26}) & (\num{0.30}) & (\num{0.53})\\
-child.is.ethnic.minority & \num{0.36} & \num{-0.31} & \num{0.54} & \num{-2.08}\\
- & (\num{0.86}) & (\num{0.88}) & (\num{1.42}) & (\num{1.93})\\
-parent.expectation & \num{0.60}** & \num{0.15} & \num{0.62} & \num{1.01}\\
- & (\num{0.22}) & (\num{0.45}) & (\num{0.33}) & (\num{0.62})\\
-parent.has.white.collar.job & \num{0.65} & \num{0.10} & \num{1.08} & \num{-0.39}\\
- & (\num{0.44}) & (\num{0.59}) & (\num{0.80}) & (\num{1.42})\\
-mother.education.level & \num{-0.20} & \num{0.12} & \num{-0.16} & \num{-0.20}\\
- & (\num{0.26}) & (\num{0.28}) & (\num{0.32}) & (\num{0.58})\\
-father.education.level & \num{0.25} & \num{0.10} & \num{0.02} & \num{0.28}\\
- & (\num{0.20}) & (\num{0.30}) & (\num{0.32}) & (\num{0.52})\\
-home.economic.resource & \num{-0.05} & \num{0.18} & \num{-0.14} & \num{-1.00}\\
- & (\num{0.38}) & (\num{0.52}) & (\num{0.55}) & (\num{0.62})\\
-home.extracurricular.book & \num{-0.33} & \num{-0.59}* & \num{-0.25} & \num{0.52}\\
- & (\num{0.22}) & (\num{0.30}) & (\num{0.30}) & (\num{0.40})\\
-home.has.internet & \num{-0.92}* & \num{-0.95} & \num{-0.64} & \num{0.79}\\
- & (\num{0.42}) & (\num{0.73}) & (\num{0.59}) & (\num{1.09})\\
+Migration & \num{-1.18}* & \num{-1.89}* & \num{-1.52} & \num{0.20}\\
+ & (\num{0.55}) & (\num{0.73}) & (\num{0.81}) & (\num{0.87})\\
+Baseline.score & \num{0.06}* & \num{0.02} & \num{-0.04} & \num{-0.01}\\
+ & (\num{0.03}) & (\num{0.04}) & (\num{0.04}) & (\num{0.04})\\
+child.age & \num{-0.15} & \num{-0.13} & \num{-0.67} & \num{-1.00}*\\
+ & (\num{0.30}) & (\num{0.45}) & (\num{0.48}) & (\num{0.48})\\
+child.is.girl & \num{1.74}*** & \num{1.61}** & \num{2.45}*** & \num{0.49}\\
+ & (\num{0.47}) & (\num{0.54}) & (\num{0.64}) & (\num{1.06})\\
+child.health & \num{0.60}** & \num{1.19}** & \num{0.51} & \num{0.65}\\
+ & (\num{0.21}) & (\num{0.36}) & (\num{0.29}) & (\num{0.52})\\
+child.has.rural.hukou & \num{-0.11} & \num{0.63} & \num{-0.13} & \num{0.84}\\
+ & (\num{0.50}) & (\num{0.73}) & (\num{0.69}) & (\num{1.02})\\
+child.number.of.sibling & \num{0.08} & \num{0.14} & \num{0.54} & \num{0.27}\\
+ & (\num{0.25}) & (\num{0.30}) & (\num{0.37}) & (\num{0.65})\\
+child.went.to.preschool & \num{1.34}* & \num{2.36}* & \num{0.02} & \num{2.57}*\\
+ & (\num{0.65}) & (\num{0.98}) & (\num{0.77}) & (\num{1.11})\\
+child.had.skipped.grade & \num{-0.13} & \num{-2.17} & \num{0.28} & \num{6.06}\\
+ & (\num{2.74}) & (\num{2.63}) & (\num{2.84}) & (\num{4.65})\\
+child.had.repeated.grade & \num{-0.19} & \num{-0.64} & \num{-1.02} & \num{0.19}\\
+ & (\num{0.85}) & (\num{1.52}) & (\num{1.06}) & (\num{1.09})\\
+child.in.boarding.school & \num{-0.28} & \num{-0.92} & \num{0.98} & \num{0.01}\\
+ & (\num{0.72}) & (\num{1.54}) & (\num{0.90}) & (\num{1.63})\\
+child.education.aspiration & \num{0.44} & \num{1.18}** & \num{0.78}* & \num{0.01}\\
+ & (\num{0.23}) & (\num{0.38}) & (\num{0.30}) & (\num{0.50})\\
+child.is.ethnic.minority & \num{0.23} & \num{-1.07} & \num{-0.35} & \num{-3.44}\\
+ & (\num{0.88}) & (\num{0.98}) & (\num{1.82}) & (\num{2.15})\\
+parent.expectation & \num{0.67}** & \num{0.02} & \num{0.98}* & \num{0.55}\\
+ & (\num{0.22}) & (\num{0.44}) & (\num{0.40}) & (\num{0.57})\\
+parent.has.white.collar.job & \num{0.37} & \num{-0.10} & \num{1.75}* & \num{-0.18}\\
+ & (\num{0.41}) & (\num{0.60}) & (\num{0.79}) & (\num{1.28})\\
+mother.education.level & \num{-0.08} & \num{-0.06} & \num{-0.15} & \num{-0.03}\\
+ & (\num{0.26}) & (\num{0.31}) & (\num{0.34}) & (\num{0.53})\\
+father.education.level & \num{0.25} & \num{0.24} & \num{-0.06} & \num{-0.01}\\
+ & (\num{0.21}) & (\num{0.33}) & (\num{0.32}) & (\num{0.46})\\
+home.economic.resource & \num{0.03} & \num{0.21} & \num{-0.24} & \num{-1.04}\\
+ & (\num{0.37}) & (\num{0.60}) & (\num{0.54}) & (\num{0.69})\\
+home.extracurricular.book & \num{-0.37} & \num{-0.67}* & \num{-0.08} & \num{0.33}\\
+ & (\num{0.22}) & (\num{0.27}) & (\num{0.31}) & (\num{0.36})\\
+home.has.internet & \num{-1.03}* & \num{-0.50} & \num{-0.55} & \num{0.25}\\
+ & (\num{0.43}) & (\num{0.71}) & (\num{0.68}) & (\num{1.11})\\
 \midrule
 Num.Obs. & \num{2540} & \num{1044} & \num{1024} & \num{523}\\
-R2 & \num{0.489} & \num{0.616} & \num{0.482} & \num{0.545}\\
-R2 Adj. & \num{0.461} & \num{0.563} & \num{0.412} & \num{0.420}\\
+R2 & \num{0.482} & \num{0.601} & \num{0.473} & \num{0.544}\\
+R2 Adj. & \num{0.454} & \num{0.545} & \num{0.402} & \num{0.419}\\
 FE: schids & X & X & X & X\\
 \bottomrule
 \multicolumn{5}{l}{\rule{0pt}{1em}* p $<$ 0.05, ** p $<$ 0.01, *** p $<$ 0.001}\\

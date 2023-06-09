@@ -1,19 +1,74 @@
-# Tables
 
-```{r tab-reg-cog-adj}
-table_adj_cog
+(ref:cog-dif) Changes in cognitive test score
+
+(ref:ttl-dif) Changes in academic exam score
+
+(ref:migr) for newly left-behind students and non-left-behind students
+
+(ref:migr-type) by household migration arrangement
+
+(ref:cobalt-match) Covariate balance before and after matching
+
+(ref:cobalt-any) by any parent migration
+
+(ref:cobalt-fa) by father-only migration
+
+(ref:cobalt-mo) by mother-only migration
+
+(ref:cobalt-both) by both parents migration
+
+```{r v-plot-cog, fig.cap = paste("(ref:cog-dif)", "(ref:migr)"), out.height='40%', warning=FALSE}
+fig_cog
 ```
 
-```{r tab-reg-ttl-adj}
-table_adj_ttl
+```{r v-plot-ttl, fig.cap = paste("(ref:ttl-dif)", "(ref:migr)"), out.height='40%', warning=FALSE}
+fig_ttl
 ```
 
-```{r tab-reg-m-adj-cog}
-table_m_adj_cog
+```{r v-plot-cog-1, fig.cap = paste("(ref:cog-dif)", "(ref:migr-type)"), out.height='40%', warning=FALSE}
+fig_cog_by_migration_type
 ```
 
-```{r tab-reg-m-adj-ttl}
-table_m_adj_ttl
+```{r v-plot-ttl-1, fig.cap = paste("(ref:ttl-dif)", "(ref:migr-type)"), out.height='40%', warning=FALSE}
+fig_ttl_by_migration_type
 ```
 
 \newpage
+
+```{r cobal-any, fig.cap = paste("(ref:cobalt-match)", "(ref:cobalt-any)"), out.height='40%'}
+m.out |> love.plot(
+  threshold = c(m = .1),
+  binary = "std", 
+  limits = c(0, 0.55),
+  abs = T
+  )
+```
+
+```{r cobal-mo, fig.cap = paste("(ref:cobalt-match)", "(ref:cobalt-mo)"), out.height='40%'}
+m.out_mo_only |> love.plot(
+  threshold = c(m = .1),
+  binary = "std", 
+  limits = c(0, 0.55),
+  abs = T
+  )
+```
+
+```{r cobal-fa, fig.cap = paste("(ref:cobalt-match)", "(ref:cobalt-fa)"), out.height='40%'}
+m.out_fa_only |> love.plot(
+  threshold = c(m = .1),
+  binary = "std", 
+  limits = c(0, 0.55),
+  abs = T
+  )
+```
+
+```{r cobal-both, fig.cap = paste("(ref:cobalt-match)", "(ref:cobalt-both)"), out.height='40%'}
+m.out_both |> love.plot(
+  threshold = c(m = .1),
+  binary = "std", 
+  limits = c(0, 0.55),
+  abs = T
+  )
+```
+
+
